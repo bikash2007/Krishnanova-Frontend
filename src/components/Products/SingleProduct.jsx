@@ -1,49 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TextPlugin } from "gsap/TextPlugin";
 import Navigation from "../Navigation/Navigation";
-import { useApi } from "../../Context/baseUrl";
 import axios from "axios";
 import placeholderImg from "../../Media/placeholder.png";
 import { useAuth } from "../../Context/AuthContext";
 import { useCart } from "../../Context/CartContext";
 
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
 const testimonials = [
   {
-    name: "Priya Sharma",
+    name: "Sarah Mitchell",
     rating: 5,
     comment:
       "This sacred item has brought incredible peace to my daily meditation practice. The divine energy is truly palpable.",
-    location: "Mumbai, India",
+    location: "California, USA",
+    verified: true,
   },
   {
-    name: "David Chen",
+    name: "Michael Chen",
     rating: 5,
     comment:
-      "Amazing quality and the spiritual connection is real. I carry it everywhere and feel protected and blessed.",
-    location: "Singapore",
-  },
-  {
-    name: "Sarah Johnson",
-    rating: 5,
-    comment:
-      "Beautiful craftsmanship and the QR code feature is innovative. Love being part of this spiritual community.",
+      "Amazing quality and the spiritual connection is real. The craftsmanship from Nepal is extraordinary.",
     location: "New York, USA",
+    verified: true,
+  },
+  {
+    name: "Emily Johnson",
+    rating: 5,
+    comment:
+      "Beautiful authentic piece! Fast shipping and excellent packaging. Highly recommend Krishnova.",
+    location: "Texas, USA",
+    verified: true,
   },
 ];
-
-const colors = {
-  primary: "#1e40af",
-  secondary: "#2563eb",
-  accent: "#3b82f6",
-  dark: "#1e3a8a",
-  neutral: "#64748b",
-  light: "#f8fafc",
-  white: "#ffffff",
-  success: "#10b981",
-  warning: "#f59e0b",
-  danger: "#ef4444",
-};
 
 export default function SingleProduct() {
   const { id } = useParams();
@@ -52,32 +47,14 @@ export default function SingleProduct() {
   const { user } = useAuth();
   const { addToCart } = useCart();
 
-  // Mouse position tracking for cursor glow
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const rect = document.documentElement.getBoundingClientRect();
-      setMousePos({
-        x: ((e.clientX - rect.left) / window.innerWidth) * 100,
-        y: ((e.clientY - rect.top) / window.innerHeight) * 100,
-      });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  const handleAddToCart = () => {
-    addToCart(product, quantity);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
-  };
-
-  const handleBuyNow = () => {
-    addToCart(product, quantity);
-    navigate("/checkout");
-  };
+  // Refs for GSAP animations
+  const mainRef = useRef(null);
+  const heroRef = useRef(null);
+  const imageRef = useRef(null);
+  const infoRef = useRef(null);
+  const featuresRef = useRef([]);
+  const benefitsRef = useRef([]);
+  const stepsRef = useRef([]);
 
   const [product, setProduct] = useState(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
@@ -85,6 +62,8 @@ export default function SingleProduct() {
   const [quantity, setQuantity] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [imageZoom, setImageZoom] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("description");
 
   // Review state
   const [reviewRating, setReviewRating] = useState(0);
@@ -93,7 +72,334 @@ export default function SingleProduct() {
   const [reviewError, setReviewError] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState(false);
 
-  // Fetch single product from API
+  // Add smooth scrolling CSS
+  useEffect(() => {
+    // Add smooth scroll behavior to html
+    document.documentElement.style.scrollBehavior = "smooth";
+
+    // Optional: Add custom smooth scrolling with Lenis or custom implementation
+    const smoothScroll = () => {
+      document.documentElement.style.scrollBehavior = "smooth";
+      document.body.style.scrollBehavior = "smooth";
+    };
+
+    smoothScroll();
+
+    return () => {
+      document.documentElement.style.scrollBehavior = "auto";
+      document.body.style.scrollBehavior = "auto";
+    };
+  }, []);
+
+  // Dynamic SEO Implementation
+  useEffect(() => {
+    if (product) {
+      // Set dynamic title with product name
+      document.title = `${product.title} | Krishnova - Authentic Krishna Spiritual Products`;
+
+      // Update meta description
+      const metaDescription = document.querySelector(
+        'meta[name="description"]'
+      );
+      const description = `Buy authentic ${product.title} - ${
+        product.desc || product.fullDescription
+      }. Handcrafted in Nepal, blessed by priests. Free US shipping on orders over $99. ⭐ ${
+        product.rating || 5
+      }/5 rating.`;
+
+      if (metaDescription) {
+        metaDescription.content = description;
+      } else {
+        const meta = document.createElement("meta");
+        meta.name = "description";
+        meta.content = description;
+        document.head.appendChild(meta);
+      }
+
+      // Add Open Graph tags for social sharing
+      const ogTags = [
+        { property: "og:title", content: `${product.title} | Krishnova` },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: window.location.href },
+        { property: "og:image", content: getMediaUrl(mediaList[0]?.src) },
+        { property: "product:price:amount", content: product.price },
+        { property: "product:price:currency", content: "USD" },
+      ];
+
+      ogTags.forEach((tag) => {
+        let element = document.querySelector(
+          `meta[property="${tag.property}"]`
+        );
+        if (!element) {
+          element = document.createElement("meta");
+          element.setAttribute("property", tag.property);
+          document.head.appendChild(element);
+        }
+        element.content = tag.content;
+      });
+
+      // Structured data for rich snippets
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.title,
+        description: product.fullDescription || product.desc,
+        image: mediaList.map((m) => getMediaUrl(m.src)),
+        brand: {
+          "@type": "Brand",
+          name: "Krishnova",
+        },
+        offers: {
+          "@type": "Offer",
+          url: window.location.href,
+          priceCurrency: "USD",
+          price: product.price,
+          priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0],
+          availability: product.inStock
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+          seller: {
+            "@type": "Organization",
+            name: "Krishnova",
+          },
+          shippingDetails: {
+            "@type": "OfferShippingDetails",
+            shippingRate: {
+              "@type": "MonetaryAmount",
+              value: product.price >= 99 ? "0" : "9.99",
+              currency: "USD",
+            },
+            shippingDestination: {
+              "@type": "DefinedRegion",
+              addressCountry: "US",
+            },
+            deliveryTime: {
+              "@type": "ShippingDeliveryTime",
+              handlingTime: {
+                "@type": "QuantitativeValue",
+                minValue: 0,
+                maxValue: 1,
+                unitCode: "DAY",
+              },
+              transitTime: {
+                "@type": "QuantitativeValue",
+                minValue: 2,
+                maxValue: 5,
+                unitCode: "DAY",
+              },
+            },
+          },
+        },
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: product.rating || 5,
+          reviewCount: product.numReviews || product.reviews?.length || 1,
+        },
+        review:
+          product.reviews?.map((review) => ({
+            "@type": "Review",
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: review.rating,
+            },
+            author: {
+              "@type": "Person",
+              name: review.name,
+            },
+            reviewBody: review.comment,
+          })) || [],
+      };
+
+      let script = document.querySelector('script[type="application/ld+json"]');
+      if (!script) {
+        script = document.createElement("script");
+        script.type = "application/ld+json";
+        document.head.appendChild(script);
+      }
+      script.text = JSON.stringify(structuredData);
+    }
+
+    return () => {
+      // Cleanup
+      document.title = "Krishnova - Authentic Krishna Spiritual Products";
+    };
+  }, [product, mediaList]);
+
+  // GSAP Animations - Fixed version without ScrollTo
+  useEffect(() => {
+    if (!loading && product && mainRef.current) {
+      // Clear any existing ScrollTriggers
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // Create context for cleanup
+      const ctx = gsap.context(() => {
+        // Hero section parallax - simplified
+        if (heroRef.current) {
+          gsap.fromTo(
+            ".hero-bg-pattern",
+            { y: 0 },
+            {
+              y: -100,
+              ease: "none",
+              scrollTrigger: {
+                trigger: heroRef.current,
+                start: "top top",
+                end: "bottom top",
+                scrub: 1,
+                invalidateOnRefresh: true,
+              },
+            }
+          );
+        }
+
+        // Product image entrance
+        if (imageRef.current) {
+          gsap.fromTo(
+            imageRef.current,
+            {
+              opacity: 0,
+              scale: 0.8,
+              rotationY: -45,
+            },
+            {
+              opacity: 1,
+              scale: 1,
+              rotationY: 0,
+              duration: 1.2,
+              ease: "power3.out",
+              clearProps: "all",
+            }
+          );
+        }
+
+        // Product info stagger animation
+        const infoItems = document.querySelectorAll(".product-info-item");
+        if (infoItems.length > 0) {
+          gsap.fromTo(
+            infoItems,
+            {
+              opacity: 0,
+              x: 50,
+              skewY: 2,
+            },
+            {
+              opacity: 1,
+              x: 0,
+              skewY: 0,
+              duration: 0.8,
+              stagger: 0.1,
+              ease: "power3.out",
+              clearProps: "all",
+            }
+          );
+        }
+
+        // Features animation
+        featuresRef.current.forEach((el, index) => {
+          if (el) {
+            ScrollTrigger.create({
+              trigger: el,
+              start: "top bottom-=100",
+              onEnter: () => {
+                gsap.fromTo(
+                  el,
+                  {
+                    opacity: 0,
+                    x: -50,
+                    scale: 0.9,
+                  },
+                  {
+                    opacity: 1,
+                    x: 0,
+                    scale: 1,
+                    duration: 0.6,
+                    delay: index * 0.1,
+                    ease: "power3.out",
+                    clearProps: "all",
+                  }
+                );
+              },
+              once: true,
+            });
+          }
+        });
+
+        // Benefits floating animation - simplified
+        benefitsRef.current.forEach((el, index) => {
+          if (el) {
+            gsap.to(el, {
+              y: -5,
+              duration: 2,
+              ease: "power1.inOut",
+              repeat: -1,
+              yoyo: true,
+              delay: index * 0.2,
+            });
+          }
+        });
+
+        // Steps timeline animation
+        const stepsSection = document.querySelector(".steps-section");
+        if (stepsSection && stepsRef.current.length > 0) {
+          ScrollTrigger.create({
+            trigger: stepsSection,
+            start: "top center",
+            onEnter: () => {
+              stepsRef.current.forEach((el, index) => {
+                if (el) {
+                  gsap.fromTo(
+                    el,
+                    {
+                      opacity: 0,
+                      y: 50,
+                      scale: 0.8,
+                    },
+                    {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      duration: 0.5,
+                      delay: index * 0.15,
+                      ease: "back.out(1.7)",
+                      clearProps: "all",
+                    }
+                  );
+                }
+              });
+            },
+            once: true,
+          });
+        }
+
+        // Text animation for title - simplified
+        const titleElement = document.querySelector(".product-title");
+        if (titleElement && product.title) {
+          titleElement.textContent = product.title;
+          gsap.fromTo(
+            titleElement,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+          );
+        }
+      }, mainRef);
+
+      // Cleanup function
+      return () => {
+        ctx.revert();
+        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      };
+    }
+  }, [loading, product]);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  // Fetch product data
   useEffect(() => {
     async function fetchProduct() {
       try {
@@ -118,6 +424,38 @@ export default function SingleProduct() {
   const getMediaUrl = (mediaPath) => {
     if (!mediaPath) return placeholderImg;
     return `${baseUrl.replace("/api", "")}${mediaPath}`;
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+    setShowSuccess(true);
+
+    // GSAP success animation
+    const notification = document.querySelector(".success-notification");
+    if (notification) {
+      gsap.fromTo(
+        notification,
+        {
+          scale: 0,
+          rotation: -180,
+          opacity: 0,
+        },
+        {
+          scale: 1,
+          rotation: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+        }
+      );
+    }
+
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
+
+  const handleBuyNow = () => {
+    addToCart(product, quantity);
+    navigate("/checkout");
   };
 
   // Review submission
@@ -155,25 +493,39 @@ export default function SingleProduct() {
   }) => (
     <div className="flex items-center">
       {[1, 2, 3, 4, 5].map((star) => (
-        <span
+        <motion.span
           key={star}
           className={`${size} cursor-pointer transition-all duration-200 ${
-            star <= rating ? "text-yellow-400" : "text-gray-300"
-          } ${editable ? "hover:text-yellow-300" : ""}`}
+            star <= rating ? "text-amber-400" : "text-amber-400/30"
+          } ${editable ? "hover:text-amber-300" : ""}`}
           onClick={editable ? () => setRating(star) : undefined}
+          whileHover={editable ? { scale: 1.2 } : {}}
+          whileTap={editable ? { scale: 0.9 } : {}}
         >
           ★
-        </span>
+        </motion.span>
       ))}
     </div>
   );
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 md:h-20 md:w-20 border-t-4 border-b-4 border-blue-200 mb-4 mx-auto" />
-          <p className="text-slate-600 text-base md:text-lg">
+          <motion.div
+            className="w-24 h-24 mx-auto mb-6"
+            animate={{
+              rotate: 360,
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              rotate: { duration: 3, repeat: Infinity, ease: "linear" },
+              scale: { duration: 1.5, repeat: Infinity },
+            }}
+          >
+            <div className="w-full h-full rounded-full border-4 border-amber-400/30 border-t-amber-400 animate-spin" />
+          </motion.div>
+          <p className="text-amber-200 text-lg animate-pulse">
             Loading divine wisdom...
           </p>
         </div>
@@ -183,20 +535,34 @@ export default function SingleProduct() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div className="text-center text-slate-800 max-w-md">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="text-6xl mb-6"
+          >
+            🔍
+          </motion.div>
+          <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
             Product not found
           </h2>
-          <p className="text-slate-600 mb-8 text-sm md:text-base">
-            The sacred item you're looking for doesn't exist.
+          <p className="text-blue-100/80 mb-8">
+            The sacred item you're looking for doesn't exist in our divine
+            collection.
           </p>
-          <button
+          <motion.button
             onClick={() => navigate(-1)}
-            className="hero-enhanced-button px-6 py-3 md:px-8 md:py-4 rounded-xl font-semibold text-sm md:text-base"
+            className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            Return to Collection
-          </button>
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+            <span className="relative text-white font-semibold">
+              Return to Collection
+            </span>
+          </motion.button>
         </div>
       </div>
     );
@@ -204,463 +570,633 @@ export default function SingleProduct() {
 
   return (
     <div
-      className="min-h-screen bg-white font-[Inter,sans-serif] relative"
-      style={{
-        background: `radial-gradient(400px circle at ${mousePos.x}% ${mousePos.y}%, ${colors.primary}08 0%, ${colors.secondary}04 40%, transparent 70%)`,
-      }}
+      ref={mainRef}
+      className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900"
     >
       <Navigation />
 
-      {/* Back Button */}
-      <div className="relative z-40 pt-4 md:pt-8 px-4">
-        <div className="max-w-7xl mx-auto">
+      {/* Hero Product Section */}
+      <section ref={heroRef} className="relative pt-20 pb-16 overflow-hidden">
+        {/* Background Patterns */}
+        <div className="hero-bg-pattern absolute inset-0 pointer-events-none">
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+              backgroundSize: "30px 30px",
+            }}
+          />
+          <div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `
+              linear-gradient(to right, #fbbf24 1px, transparent 1px),
+              linear-gradient(to bottom, #fbbf24 1px, transparent 1px)`,
+              backgroundSize: "50px 50px",
+            }}
+          />
+        </div>
+
+        {/* Floating Orbs */}
+        <motion.div
+          className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl pointer-events-none"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
+          {/* Back Button */}
           <motion.button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 md:gap-3 text-slate-700 hover:text-blue-600 font-semibold transition-all duration-300 bg-white/80 backdrop-blur-sm px-4 py-2 md:px-6 md:py-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-white/90 shadow-lg hover:shadow-xl group text-sm md:text-base"
+            className="flex items-center gap-2 text-amber-200 hover:text-amber-300 font-semibold mb-8 group"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            whileHover={{ x: -8, scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ x: -8 }}
           >
-            <motion.span
-              className="text-lg md:text-xl"
-              animate={{ x: [0, -4, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-            >
+            <span className="text-xl group-hover:-translate-x-2 transition-transform">
               ←
-            </motion.span>
-            <span className="hidden sm:inline">Back to Divine Collection</span>
-            <span className="sm:hidden">Back</span>
+            </span>
+            <span>Back to Divine Collection</span>
           </motion.button>
-        </div>
-      </div>
 
-      {/* Hero Product Section */}
-      <section className="relative py-8 md:py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-start lg:items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Product Media */}
             <motion.div
-              className="relative order-1"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
+              ref={imageRef}
+              className="relative"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
             >
-              <div className="relative">
-                {/* Main Product Display */}
-                <motion.div
-                  className="aspect-square bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-xl border border-slate-200 flex items-center justify-center relative group"
-                  whileHover={{ scale: 1.02, rotateY: 5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {mediaList.length > 0 ? (
-                    mediaList[activeMediaIndex].type === "image" ? (
-                      <img
-                        src={getMediaUrl(mediaList[activeMediaIndex].src)}
-                        alt={product.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <video
-                        src={getMediaUrl(mediaList[activeMediaIndex].src)}
-                        controls
-                        className="w-full h-full object-cover"
-                        style={{ backgroundColor: "#f8fafc" }}
-                      />
-                    )
-                  ) : (
-                    <img
-                      src={placeholderImg}
-                      alt="placeholder"
-                      className="w-full h-full object-cover opacity-80"
-                    />
-                  )}
-
-                  {/* Subtle Blue Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-50/20 via-transparent to-blue-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </motion.div>
-
-                {/* Media Thumbnails */}
-                <div className="flex gap-2 md:gap-3 mt-4 md:mt-6 justify-center overflow-x-auto pb-2">
-                  {mediaList.map((media, index) =>
-                    media.type === "image" ? (
-                      <motion.button
-                        key={index}
-                        className={`w-12 h-12 md:w-20 md:h-20 flex-shrink-0 rounded-lg md:rounded-xl overflow-hidden border-2 transition-all ${
-                          activeMediaIndex === index
-                            ? "border-blue-500 scale-110 shadow-lg shadow-blue-500/30"
-                            : "border-slate-300 hover:border-blue-400 bg-white"
-                        }`}
-                        onClick={() => setActiveMediaIndex(index)}
-                        whileHover={{
-                          scale: activeMediaIndex === index ? 1.1 : 1.05,
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <img
-                          src={getMediaUrl(media.src)}
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      </motion.button>
-                    ) : (
-                      <motion.button
-                        key={index}
-                        className={`w-12 h-12 md:w-20 md:h-20 flex-shrink-0 rounded-lg md:rounded-xl overflow-hidden border-2 transition-all relative bg-slate-100 ${
-                          activeMediaIndex === index
-                            ? "border-blue-500 scale-110"
-                            : "border-slate-300 hover:border-blue-400"
-                        }`}
-                        onClick={() => setActiveMediaIndex(index)}
-                        whileHover={{
-                          scale: activeMediaIndex === index ? 1.1 : 1.05,
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <video
-                          src={getMediaUrl(media.src)}
-                          className="w-full h-full object-cover"
-                          muted
-                        />
-                        <span className="absolute inset-0 flex items-center justify-center text-lg md:text-2xl text-slate-600 pointer-events-none">
-                          ▶️
-                        </span>
-                      </motion.button>
-                    )
-                  )}
+              {/* Sacred Badge */}
+              <motion.div
+                className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20"
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg">
+                  <span className="text-amber-300 animate-pulse text-lg">
+                    ✦
+                  </span>
+                  <span className="text-amber-100 font-medium tracking-wide text-sm">
+                    Blessed & Authentic
+                  </span>
+                  <span className="text-amber-300 animate-pulse text-lg">
+                    ✦
+                  </span>
                 </div>
+              </motion.div>
+
+              {/* Main Product Display */}
+              <motion.div
+                className="aspect-square backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl overflow-hidden shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 flex items-center justify-center relative group cursor-zoom-in"
+                whileHover={{ scale: 1.02 }}
+                onClick={() => setImageZoom(!imageZoom)}
+              >
+                {mediaList.length > 0 ? (
+                  mediaList[activeMediaIndex].type === "image" ? (
+                    <motion.img
+                      src={getMediaUrl(mediaList[activeMediaIndex].src)}
+                      alt={product.title}
+                      className="w-full h-full object-contain p-8"
+                      animate={{
+                        scale: imageZoom ? 1.5 : 1,
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  ) : (
+                    <video
+                      src={getMediaUrl(mediaList[activeMediaIndex].src)}
+                      controls
+                      className="w-full h-full object-contain p-8"
+                    />
+                  )
+                ) : (
+                  <img
+                    src={placeholderImg}
+                    alt="placeholder"
+                    className="w-full h-full object-contain p-8 opacity-80"
+                  />
+                )}
+
+                {/* Divine Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-400/10 via-transparent to-amber-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+
+                {/* Floating Krishna Elements */}
+                <motion.div
+                  className="absolute top-4 left-4 text-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    duration: 10,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
+                  🦚
+                </motion.div>
+                <motion.div
+                  className="absolute bottom-4 right-4 text-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  🪈
+                </motion.div>
+              </motion.div>
+
+              {/* Media Thumbnails */}
+              <div className="flex gap-3 mt-6 justify-center overflow-x-auto pb-2">
+                {mediaList.map((media, index) => (
+                  <motion.button
+                    key={index}
+                    className={`w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all backdrop-blur-md ${
+                      activeMediaIndex === index
+                        ? "border-amber-400 scale-110 shadow-lg shadow-amber-400/30"
+                        : "border-white/20 hover:border-amber-400/50 bg-white/5"
+                    }`}
+                    onClick={() => setActiveMediaIndex(index)}
+                    whileHover={{
+                      scale: activeMediaIndex === index ? 1.1 : 1.05,
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {media.type === "image" ? (
+                      <img
+                        src={getMediaUrl(media.src)}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="relative w-full h-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 flex items-center justify-center">
+                        <span className="text-2xl">▶️</span>
+                      </div>
+                    )}
+                  </motion.button>
+                ))}
               </div>
             </motion.div>
 
             {/* Product Info */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6 md:space-y-8 text-slate-800 order-2"
-            >
-              <div>
+            <div ref={infoRef} className="space-y-8">
+              <div className="product-info-item">
                 <motion.span
-                  className="inline-block px-4 py-2 md:px-6 md:py-2 bg-blue-100 text-blue-800 rounded-full text-xs md:text-sm font-semibold mb-4 md:mb-6 border border-blue-200"
+                  className="inline-block px-6 py-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-purple-400/30 text-purple-200 rounded-full text-sm font-semibold mb-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
                 >
-                  🕉️ DIVINE COLLECTION
+                  🕉️ KRISHNOVA EXCLUSIVE
                 </motion.span>
 
-                <motion.h1
-                  className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-tight mb-4 md:mb-6"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
+                <h1 className="product-title text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent leading-tight mb-4">
                   {product.title}
-                </motion.h1>
+                </h1>
 
-                <motion.div
-                  className="flex flex-wrap items-center gap-3 md:gap-4 mb-6 md:mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <StarRating
-                    rating={product.rating}
-                    size="text-base md:text-xl"
-                  />
-                  <span className="text-blue-600 font-medium text-sm md:text-base">
+                <p className="text-amber-200/80 text-sm italic mb-4">
+                  कृष्णं वन्दे जगद्गुरुम् • Handcrafted with devotion in Nepal
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  <StarRating rating={product.rating || 5} size="text-xl" />
+                  <span className="text-cyan-300 font-medium">
                     ({product.numReviews || product.reviews?.length || 0}{" "}
-                    reviews)
+                    verified reviews)
                   </span>
-                  <div className="h-4 md:h-6 w-px bg-slate-300"></div>
-                  {product.inStock && (
-                    <span className="text-xs md:text-sm text-green-600 font-semibold flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                      In Stock
+                  <div className="h-6 w-px bg-amber-400/30"></div>
+                  {product.inStock ? (
+                    <span className="text-sm text-green-400 font-semibold flex items-center gap-2">
+                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                      In Stock • Ships from USA
+                    </span>
+                  ) : (
+                    <span className="text-sm text-red-400 font-semibold">
+                      Out of Stock
                     </span>
                   )}
-                </motion.div>
+                </div>
 
-                <motion.p
-                  className="text-base md:text-lg lg:text-xl text-slate-700 leading-relaxed font-light"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  {product.fullDescription}
-                </motion.p>
+                <p className="text-lg text-blue-100/80 leading-relaxed">
+                  {product.fullDescription || product.desc}
+                </p>
               </div>
 
               {/* Pricing */}
-              <motion.div
-                className="flex flex-wrap items-center gap-3 md:gap-6 py-4 md:py-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                  <span className="text-2xl md:text-3xl lg:text-4xl font-bold text-green-600">
-                    ${product.price}
-                  </span>
-                  {product.originalPrice > product.price && (
-                    <>
-                      <span className="text-lg md:text-xl text-slate-400 line-through">
-                        ${product.originalPrice}
-                      </span>
-                      <span className="bg-blue-100 text-blue-800 px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold border border-blue-200">
-                        Save ${product.originalPrice - product.price}
-                      </span>
-                    </>
-                  )}
+              <div className="product-info-item">
+                <div className="flex flex-wrap items-center gap-6 py-6 border-y border-amber-400/20">
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-4xl font-bold text-amber-300">
+                      ${product.price}
+                    </span>
+                    {product.originalPrice > product.price && (
+                      <>
+                        <span className="text-xl text-blue-100/50 line-through">
+                          ${product.originalPrice}
+                        </span>
+                        <motion.span
+                          className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold"
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          Save ${product.originalPrice - product.price}
+                        </motion.span>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </motion.div>
+
+                {/* Free Shipping Badge */}
+                {product.price >= 99 && (
+                  <motion.div
+                    className="mt-4 inline-flex items-center gap-2 text-cyan-300 text-sm font-semibold"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    <span className="text-lg">🚚</span>
+                    <span>FREE US SHIPPING on this item!</span>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Tabs for Description/Features/Shipping */}
+              <div className="product-info-item">
+                <div className="flex gap-4 mb-6 border-b border-amber-400/20">
+                  {["description", "features", "shipping"].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setSelectedTab(tab)}
+                      className={`pb-3 px-4 font-semibold capitalize transition-all ${
+                        selectedTab === tab
+                          ? "text-amber-300 border-b-2 border-amber-400"
+                          : "text-blue-100/60 hover:text-amber-200"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedTab}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-blue-100/80"
+                  >
+                    {selectedTab === "description" && (
+                      <div className="space-y-4">
+                        <p>{product.fullDescription || product.desc}</p>
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {["Handmade", "Blessed", "Authentic", "Sacred"].map(
+                            (tag) => (
+                              <span
+                                key={tag}
+                                className="px-3 py-1 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full text-xs text-amber-200"
+                              >
+                                {tag}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {selectedTab === "features" && (
+                      <ul className="space-y-3">
+                        {(
+                          product.features || [
+                            "Handcrafted by skilled artisans in Nepal",
+                            "Blessed by authentic Hindu priests",
+                            "Made from premium quality materials",
+                            "Includes certificate of authenticity",
+                            "Sacred mantras inscribed",
+                          ]
+                        ).map((feature, index) => (
+                          <motion.li
+                            key={index}
+                            className="flex items-start gap-3"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                          >
+                            <span className="text-amber-400 mt-1">✦</span>
+                            <span>{feature}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    )}
+                    {selectedTab === "shipping" && (
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <span className="text-green-400">✓</span>
+                          <div>
+                            <p className="font-semibold text-amber-200">
+                              Fast US Shipping
+                            </p>
+                            <p className="text-sm">
+                              2-5 business days via USPS/UPS
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <span className="text-green-400">✓</span>
+                          <div>
+                            <p className="font-semibold text-amber-200">
+                              Free Shipping
+                            </p>
+                            <p className="text-sm">On all orders over $99</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <span className="text-green-400">✓</span>
+                          <div>
+                            <p className="font-semibold text-amber-200">
+                              Secure Packaging
+                            </p>
+                            <p className="text-sm">
+                              Each item carefully wrapped with divine care
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
               {/* Quantity and Actions */}
-              <motion.div
-                className="space-y-6 md:space-y-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-              >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6">
-                  <span className="font-semibold text-slate-800 text-base md:text-lg">
+              <div className="product-info-item space-y-6">
+                <div className="flex items-center gap-6">
+                  <span className="font-semibold text-amber-200">
                     Quantity:
                   </span>
-                  <div className="flex items-center bg-white border border-slate-300 rounded-xl overflow-hidden shadow-sm">
+                  <div className="flex items-center backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl overflow-hidden">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-4 py-2 md:px-6 md:py-3 hover:bg-slate-50 transition-colors text-slate-700 font-bold text-lg md:text-xl"
+                      className="px-6 py-3 hover:bg-amber-400/10 transition-colors text-amber-200 font-bold text-xl"
                     >
                       −
                     </button>
-                    <span className="px-6 py-2 md:px-8 md:py-3 font-bold border-x border-slate-300 text-slate-800 bg-slate-50 text-lg md:text-xl min-w-[60px] text-center">
+                    <span className="px-8 py-3 font-bold border-x border-amber-400/30 text-amber-300 text-xl min-w-[80px] text-center">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="px-4 py-2 md:px-6 md:py-3 hover:bg-slate-50 transition-colors text-slate-700 font-bold text-lg md:text-xl"
+                      className="px-6 py-3 hover:bg-amber-400/10 transition-colors text-amber-200 font-bold text-xl"
                     >
                       +
                     </button>
                   </div>
-                  <span className="text-sm md:text-lg text-blue-600 font-semibold">
+                  <span className="text-lg text-cyan-300 font-semibold">
                     Total: ${(product.price * quantity).toFixed(2)}
                   </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <motion.button
                     onClick={handleBuyNow}
-                    className="flex-1 hero-enhanced-button py-4 md:py-5 px-6 md:px-8 rounded-xl font-bold text-base md:text-lg"
-                    whileHover={{ scale: 1.02, y: -2 }}
+                    className="group relative flex-1 px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    Buy Now - ${(product.price * quantity).toFixed(2)}
+                    <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+                    <span className="relative text-white font-bold text-lg flex items-center justify-center gap-2">
+                      <span>🛒</span> Buy Now - $
+                      {(product.price * quantity).toFixed(2)}
+                    </span>
                   </motion.button>
                   <motion.button
                     onClick={handleAddToCart}
-                    className="flex-1 border-2 border-slate-300 text-slate-700 py-4 md:py-5 px-6 md:px-8 rounded-xl font-bold text-base md:text-lg hover:bg-slate-50 hover:border-blue-400 transition-all duration-300 bg-white"
-                    whileHover={{ scale: 1.02, y: -2 }}
+                    className="flex-1 px-8 py-4 border-2 border-amber-400/50 text-amber-200 rounded-full font-bold text-lg backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    Add to Cart
+                    Add to Sacred Cart
                   </motion.button>
                 </div>
-              </motion.div>
 
-              {/* Trust Badges */}
-              <motion.div
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-8 pt-6 md:pt-8 border-t border-slate-200"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-              >
-                <div className="flex items-center gap-2 md:gap-3 text-green-600 font-semibold text-sm md:text-base">
-                  <span className="text-lg md:text-xl">✓</span>
-                  <span>Free Shipping</span>
+                {/* Trust Badges */}
+                <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-amber-400/20">
+                  {[
+                    {
+                      icon: "✓",
+                      text: "Free Returns",
+                      color: "text-green-400",
+                    },
+                    {
+                      icon: "🔒",
+                      text: "Secure Checkout",
+                      color: "text-cyan-400",
+                    },
+                    {
+                      icon: "🪔",
+                      text: "Blessed Items",
+                      color: "text-amber-400",
+                    },
+                    { icon: "📿", text: "Authentic", color: "text-purple-400" },
+                  ].map((badge, index) => (
+                    <motion.div
+                      key={index}
+                      className={`flex items-center gap-2 ${badge.color} font-semibold text-sm`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 1 + index * 0.1 }}
+                    >
+                      <span className="text-lg">{badge.icon}</span>
+                      <span>{badge.text}</span>
+                    </motion.div>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2 md:gap-3 text-green-600 font-semibold text-sm md:text-base">
-                  <span className="text-lg md:text-xl">✓</span>
-                  <span>30-Day Returns</span>
-                </div>
-                <div className="flex items-center gap-2 md:gap-3 text-green-600 font-semibold text-sm md:text-base">
-                  <span className="text-lg md:text-xl">✓</span>
-                  <span>Blessed Items</span>
-                </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features and Benefits Section */}
-      <section className="py-16 md:py-24 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-24 relative">
+        <div
+          className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 50% 50%, #fbbf24 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
           <motion.div
-            className="text-center mb-12 md:mb-20"
+            className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 md:mb-6">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
               Sacred Features & Divine Benefits
             </h2>
-            <p className="text-blue-700 max-w-3xl mx-auto text-base md:text-xl">
-              Discover the transformative power and sacred energy that makes
-              this spiritual companion truly special
+            <p className="text-cyan-300 max-w-3xl mx-auto text-xl">
+              Discover the transformative power that makes this spiritual
+              companion truly special
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="space-y-6 md:space-y-8"
-            >
-              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6 md:mb-8 flex items-center gap-3">
-                <span className="text-blue-600">✨</span>
-                Key Features:
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-amber-200 mb-8 flex items-center gap-3">
+                <span>✨</span>
+                Divine Features:
               </h3>
-              {product.features?.map((feature, index) => (
+              {(
+                product.features || [
+                  "Handcrafted by skilled Nepalese artisans",
+                  "Blessed in sacred temples by Hindu priests",
+                  "Made from ethically sourced materials",
+                  "Includes certificate of authenticity",
+                  "Sacred mantras and symbols inscribed",
+                ]
+              ).map((feature, index) => (
                 <motion.div
                   key={index}
-                  className="flex items-start gap-3 md:gap-4 p-4 md:p-6 bg-white rounded-xl md:rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
+                  ref={(el) => (featuresRef.current[index] = el)}
+                  className="flex items-start gap-4 p-6 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300"
                   whileHover={{ scale: 1.02, x: 10 }}
                 >
-                  <span className="text-green-500 text-xl md:text-2xl mt-1 flex-shrink-0">
+                  <span className="text-green-400 text-2xl mt-1 flex-shrink-0">
                     ✓
                   </span>
-                  <span className="text-slate-700 font-medium text-base md:text-lg leading-relaxed">
+                  <span className="text-blue-100/80 font-medium text-lg leading-relaxed">
                     {feature}
                   </span>
                 </motion.div>
-              )) || (
-                <div className="text-slate-500">Features will be loaded...</div>
-              )}
-            </motion.div>
+              ))}
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl md:rounded-3xl p-6 md:p-10 text-slate-800 border border-blue-200 shadow-xl">
-                <h3 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 flex items-center gap-3 text-slate-900">
-                  <span className="text-blue-600">🌟</span>
-                  Divine Benefits:
+            <div className="relative">
+              <div className="backdrop-blur-md bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-3xl p-10 border border-amber-400/30 shadow-2xl">
+                <h3 className="text-2xl font-bold text-amber-200 mb-8 flex items-center gap-3">
+                  <span>🌟</span>
+                  Spiritual Benefits:
                 </h3>
-                <ul className="space-y-4 md:space-y-6">
-                  {product.benefits?.map((benefit, index) => (
+                <ul className="space-y-6">
+                  {(
+                    product.benefits || [
+                      "Enhances daily meditation and prayer practice",
+                      "Creates sacred space in your home",
+                      "Connects you with divine Krishna consciousness",
+                      "Brings peace and spiritual protection",
+                      "Strengthens devotional practice",
+                    ]
+                  ).map((benefit, index) => (
                     <motion.li
                       key={index}
-                      className="flex items-start gap-3 md:gap-4"
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
+                      ref={(el) => (benefitsRef.current[index] = el)}
+                      className="flex items-start gap-4"
                     >
-                      <span className="text-blue-500 mt-1 text-xl md:text-2xl flex-shrink-0">
+                      <span className="text-cyan-400 mt-1 text-2xl flex-shrink-0">
                         ✨
                       </span>
-                      <span className="leading-relaxed text-base md:text-lg font-medium text-slate-700">
+                      <span className="leading-relaxed text-lg font-medium text-blue-100/80">
                         {benefit}
                       </span>
                     </motion.li>
-                  )) || (
-                    <div className="text-slate-600">
-                      Benefits will be loaded...
-                    </div>
-                  )}
+                  ))}
                 </ul>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="steps-section py-24 relative">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
-            className="text-center mb-12 md:mb-20"
+            className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 md:mb-6">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
               Your Spiritual Journey
             </h2>
-            <p className="text-blue-700 max-w-3xl mx-auto text-base md:text-xl">
-              Experience the divine connection through our innovative spiritual
-              technology and sacred community
+            <p className="text-cyan-300 max-w-3xl mx-auto text-xl">
+              Experience the divine connection through authentic Himalayan
+              spirituality
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
                 step: "1",
-                title: "Receive Your Sacred Item",
-                desc: "Get your blessed spiritual companion delivered with love",
-                icon: "📦",
-                color: "from-blue-500 to-blue-600",
+                title: "Order Your Sacred Item",
+                desc: "Choose from our blessed collection",
+                icon: "🛒",
+                color: "from-amber-400 to-orange-500",
               },
               {
                 step: "2",
-                title: "Scan Divine QR Code",
-                desc: "Access your personal spiritual portal and community",
-                icon: "📱",
-                color: "from-blue-600 to-blue-700",
+                title: "Fast US Delivery",
+                desc: "Receive in 2-5 business days",
+                icon: "📦",
+                color: "from-orange-500 to-amber-500",
               },
               {
                 step: "3",
-                title: "Connect & Personalize",
-                desc: "Name your companion and join our global spiritual family",
-                icon: "🤝",
-                color: "from-blue-700 to-blue-800",
+                title: "Unbox with Reverence",
+                desc: "Each item carefully blessed & packed",
+                icon: "🎁",
+                color: "from-amber-500 to-yellow-500",
               },
               {
                 step: "4",
-                title: "Experience Divine Blessings",
-                desc: "Feel the sacred presence and transformation daily",
+                title: "Experience Divine Energy",
+                desc: "Feel the sacred presence daily",
                 icon: "✨",
-                color: "from-blue-800 to-blue-900",
+                color: "from-yellow-500 to-amber-400",
               },
             ].map((step, index) => (
               <motion.div
                 key={index}
+                ref={(el) => (stepsRef.current[index] = el)}
                 className="text-center relative"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
               >
-                <div className="relative mb-6 md:mb-8">
+                <div className="relative mb-8">
                   <motion.div
-                    className={`w-16 h-16 md:w-24 md:h-24 bg-gradient-to-br ${step.color} rounded-full flex items-center justify-center text-white font-bold text-lg md:text-2xl mx-auto shadow-xl border-2 md:border-4 border-white`}
+                    className={`w-24 h-24 bg-gradient-to-br ${step.color} rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto shadow-xl border-4 border-white/20`}
                     whileHover={{ scale: 1.1, rotate: 5 }}
                   >
                     {step.step}
                   </motion.div>
-                  <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 text-2xl md:text-3xl animate-bounce">
+                  <motion.div
+                    className="absolute -top-3 -right-3 text-3xl"
+                    animate={{
+                      y: [0, -5, 0],
+                      rotate: [0, 10, -10, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      delay: index * 0.2,
+                    }}
+                  >
                     {step.icon}
-                  </div>
+                  </motion.div>
                   {index < 3 && (
-                    <div className="hidden lg:block absolute top-8 md:top-12 left-full w-full h-1 bg-gradient-to-r from-blue-300 to-transparent"></div>
+                    <div className="hidden lg:block absolute top-12 left-full w-full h-1 bg-gradient-to-r from-amber-400/50 to-transparent"></div>
                   )}
                 </div>
-                <h3 className="font-bold text-slate-900 text-base md:text-xl mb-2 md:mb-3">
+                <h3 className="font-bold text-amber-200 text-xl mb-3">
                   {step.title}
                 </h3>
-                <p className="text-slate-600 leading-relaxed text-sm md:text-base">
-                  {step.desc}
-                </p>
+                <p className="text-blue-100/80 leading-relaxed">{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -668,28 +1204,36 @@ export default function SingleProduct() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 md:py-24 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-24 relative">
+        <div
+          className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 25% 25%, #fbbf24 1px, transparent 1px)",
+            backgroundSize: "30px 30px",
+          }}
+        />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
           <motion.div
-            className="text-center mb-12 md:mb-20"
+            className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 md:mb-6">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
               Sacred Testimonials
             </h2>
-            <p className="text-blue-700 max-w-3xl mx-auto text-base md:text-xl">
-              Hear from our blessed community members about their transformative
-              experiences
+            <p className="text-cyan-300 max-w-3xl mx-auto text-xl">
+              Hear from our blessed community members across America
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
-                className="bg-white rounded-xl md:rounded-2xl p-6 md:p-8 border border-slate-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -697,19 +1241,19 @@ export default function SingleProduct() {
                 whileHover={{ scale: 1.02, y: -5 }}
               >
                 <div className="flex items-center gap-2 mb-4">
-                  <StarRating
-                    rating={testimonial.rating}
-                    size="text-base md:text-lg"
-                  />
+                  <StarRating rating={testimonial.rating} size="text-lg" />
+                  {testimonial.verified && (
+                    <span className="text-green-400 text-sm font-semibold">
+                      ✓ Verified
+                    </span>
+                  )}
                 </div>
-                <p className="text-slate-700 leading-relaxed mb-4 md:mb-6 text-base md:text-lg italic">
+                <p className="text-blue-100/80 leading-relaxed mb-6 text-lg italic">
                   "{testimonial.comment}"
                 </p>
-                <div className="border-t border-slate-200 pt-4">
-                  <p className="font-bold text-slate-900 text-sm md:text-base">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-blue-600 text-xs md:text-sm">
+                <div className="border-t border-amber-400/20 pt-4">
+                  <p className="font-bold text-amber-200">{testimonial.name}</p>
+                  <p className="text-cyan-300 text-sm">
                     {testimonial.location}
                   </p>
                 </div>
@@ -720,45 +1264,42 @@ export default function SingleProduct() {
       </section>
 
       {/* Reviews Section */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4">
-          <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8 md:mb-12 text-center">
+      <section className="py-20 relative">
+        <div className="max-w-4xl mx-auto px-6">
+          <h3 className="text-3xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-12 text-center">
             Community Reviews
           </h3>
 
           {/* List reviews */}
           {product.reviews && product.reviews.length > 0 ? (
-            <div className="space-y-4 md:space-y-6 mb-12 md:mb-16">
+            <div className="space-y-6 mb-16">
               {product.reviews.map((review, idx) => (
                 <motion.div
                   key={idx}
-                  className="bg-slate-50 rounded-xl md:rounded-2xl shadow-sm p-6 md:p-8 border border-slate-200"
+                  className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-lg p-8 border border-white/20"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 md:gap-4 mb-4">
-                    <span className="font-bold text-blue-600 text-base md:text-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+                    <span className="font-bold text-amber-200 text-lg">
                       {review.name}
                     </span>
-                    <StarRating
-                      rating={review.rating}
-                      size="text-base md:text-lg"
-                    />
-                    <span className="text-slate-500 text-xs md:text-sm sm:ml-auto">
+                    <StarRating rating={review.rating} size="text-lg" />
+                    <span className="text-blue-100/60 text-sm sm:ml-auto">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-slate-700 leading-relaxed text-base md:text-lg">
+                  <p className="text-blue-100/80 leading-relaxed text-lg">
                     {review.comment}
                   </p>
                 </motion.div>
               ))}
             </div>
           ) : (
-            <div className="text-slate-500 text-center mb-12 md:mb-16 text-base md:text-lg">
-              No reviews yet. Be the first to share your experience!
+            <div className="text-blue-100/60 text-center mb-16 text-lg backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20">
+              No reviews yet. Be the first to share your divine experience!
             </div>
           )}
 
@@ -766,64 +1307,84 @@ export default function SingleProduct() {
           {user ? (
             <motion.form
               onSubmit={handleReviewSubmit}
-              className="bg-slate-50 rounded-xl md:rounded-2xl p-6 md:p-8 border border-slate-200"
+              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h4 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-slate-900 flex items-center gap-3">
-                <span className="text-blue-600">✍️</span>
-                Share Your Experience
+              <h4 className="text-2xl font-bold mb-6 text-amber-200 flex items-center gap-3">
+                <span>✍️</span>
+                Share Your Sacred Experience
               </h4>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 md:gap-6 mb-4 md:mb-6">
-                <span className="font-semibold text-slate-800 text-base md:text-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-6">
+                <span className="font-semibold text-amber-200 text-lg">
                   Your Rating:
                 </span>
                 <StarRating
                   rating={reviewRating}
                   setRating={setReviewRating}
                   editable
-                  size="text-xl md:text-2xl"
+                  size="text-2xl"
                 />
               </div>
               <textarea
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}
-                className="w-full bg-white border border-slate-300 rounded-xl p-4 mb-4 md:mb-6 text-slate-800 placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none text-sm md:text-base"
+                className="w-full backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl p-4 mb-6 text-blue-100 placeholder-blue-100/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all resize-none"
                 placeholder="Share your thoughts about this sacred item..."
                 rows="4"
                 required
               />
-              <button
+              <motion.button
                 type="submit"
-                className="w-full sm:w-auto hero-enhanced-button px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold text-base md:text-lg disabled:opacity-50"
+                className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl disabled:opacity-50"
                 disabled={reviewSubmitting || !reviewRating}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                {reviewSubmitting ? "Sharing..." : "Share Review"}
-              </button>
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+                <span className="relative text-white font-bold">
+                  {reviewSubmitting ? "Sharing..." : "Share Review"}
+                </span>
+              </motion.button>
               {reviewError && (
-                <div className="mt-4 text-red-600 font-semibold bg-red-50 border border-red-200 rounded-lg p-4 text-sm md:text-base">
+                <motion.div
+                  className="mt-4 text-red-400 font-semibold bg-red-400/10 border border-red-400/30 rounded-lg p-4"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
                   {reviewError}
-                </div>
+                </motion.div>
               )}
               {reviewSuccess && (
-                <div className="mt-4 text-green-600 font-semibold bg-green-50 border border-green-200 rounded-lg p-4 text-sm md:text-base">
-                  Thank you! Your review has been shared with our community.
-                </div>
+                <motion.div
+                  className="mt-4 text-green-400 font-semibold bg-green-400/10 border border-green-400/30 rounded-lg p-4"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
+                  Thank you! Your review has been shared with our divine
+                  community.
+                </motion.div>
               )}
             </motion.form>
           ) : (
             <div className="text-center">
-              <div className="bg-slate-50 rounded-xl md:rounded-2xl p-6 md:p-8 border border-slate-200">
-                <p className="text-slate-600 text-base md:text-lg mb-4">
-                  Please login to share your experience with our community
+              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20">
+                <p className="text-blue-100/80 text-lg mb-4">
+                  Please login to share your divine experience with our
+                  community
                 </p>
-                <button
+                <motion.button
                   onClick={() => navigate("/login")}
-                  className="hero-enhanced-button px-6 md:px-8 py-3 rounded-xl font-semibold text-sm md:text-base"
+                  className="group relative px-8 py-3 overflow-hidden rounded-full shadow-2xl"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Login to Review
-                </button>
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+                  <span className="relative text-white font-semibold">
+                    Login to Review
+                  </span>
+                </motion.button>
               </div>
             </div>
           )}
@@ -834,16 +1395,21 @@ export default function SingleProduct() {
       <AnimatePresence>
         {showSuccess && (
           <motion.div
-            className="fixed top-20 md:top-24 right-4 md:right-6 bg-green-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl shadow-2xl z-50 border border-green-400 max-w-sm"
+            className="success-notification fixed top-24 right-6 backdrop-blur-md bg-gradient-to-br from-green-500/90 to-green-600/90 text-white px-8 py-4 rounded-xl shadow-2xl z-50 border border-green-400/50 max-w-sm"
             initial={{ opacity: 0, x: 100, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 100, scale: 0.8 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
-            <div className="flex items-center gap-2 md:gap-3">
-              <span className="text-xl md:text-2xl">✓</span>
-              <span className="font-semibold text-sm md:text-base">
-                Added to cart successfully!
+            <div className="flex items-center gap-3">
+              <motion.span
+                className="text-2xl"
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 0.5 }}
+              >
+                ✓
+              </motion.span>
+              <span className="font-semibold">
+                Added to sacred cart successfully!
               </span>
             </div>
           </motion.div>

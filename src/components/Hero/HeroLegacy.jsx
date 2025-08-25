@@ -12,7 +12,74 @@ const HeroLegacy = ({
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
 
-  // Seed particles using your exact structure
+  // Enhanced shooting stars with peacock colors
+  const shootingStars = useMemo(
+    () => [
+      {
+        id: 1,
+        startX: 10,
+        startY: 10,
+        endX: 80,
+        endY: 60,
+        delay: 0,
+        duration: 3000,
+        color: "var(--peacock-gold)",
+      },
+      {
+        id: 2,
+        startX: 90,
+        startY: 20,
+        endX: 20,
+        endY: 70,
+        delay: 5000,
+        duration: 2500,
+        color: "var(--peacock-teal)",
+      },
+      {
+        id: 3,
+        startX: 5,
+        startY: 80,
+        endX: 95,
+        endY: 15,
+        delay: 10000,
+        duration: 4000,
+        color: "var(--peacock-emerald)",
+      },
+      {
+        id: 4,
+        startX: 85,
+        startY: 5,
+        endX: 15,
+        endY: 85,
+        delay: 15000,
+        duration: 3500,
+        color: "var(--peacock-purple)",
+      },
+      {
+        id: 5,
+        startX: 50,
+        startY: 0,
+        endX: 20,
+        endY: 100,
+        delay: 20000,
+        duration: 2800,
+        color: "var(--peacock-bronze)",
+      },
+      {
+        id: 6,
+        startX: 100,
+        startY: 40,
+        endX: 0,
+        endY: 90,
+        delay: 25000,
+        duration: 3200,
+        color: "var(--peacock-azure)",
+      },
+    ],
+    []
+  );
+
+  // Seed particles with peacock theme
   const seed = useMemo(
     () => [
       {
@@ -20,51 +87,63 @@ const HeroLegacy = ({
         left: "10%",
         delay: "0s",
         dur: "8s",
-        colorVar: "--golden-sunrise",
+        colorVar: "--peacock-gold",
       },
-      { id: 2, left: "20%", delay: "-1s", dur: "9s", colorVar: "--neon-cyan" },
+      {
+        id: 2,
+        left: "20%",
+        delay: "-1s",
+        dur: "9s",
+        colorVar: "--peacock-teal",
+      },
       {
         id: 3,
         left: "30%",
         delay: "-2s",
         dur: "10s",
-        colorVar: "--electric-magenta",
+        colorVar: "--peacock-emerald",
       },
       {
         id: 4,
         left: "40%",
         delay: "-3s",
         dur: "7s",
-        colorVar: "--golden-sunrise",
+        colorVar: "--peacock-purple",
       },
-      { id: 5, left: "50%", delay: "-4s", dur: "8s", colorVar: "--neon-cyan" },
+      {
+        id: 5,
+        left: "50%",
+        delay: "-4s",
+        dur: "8s",
+        colorVar: "--peacock-azure",
+      },
       {
         id: 6,
         left: "60%",
         delay: "-5s",
         dur: "9s",
-        colorVar: "--electric-magenta",
+        colorVar: "--peacock-bronze",
       },
       {
         id: 7,
         left: "70%",
         delay: "-1.5s",
         dur: "10s",
-        colorVar: "--golden-sunrise",
+        colorVar: "--peacock-gold",
       },
       {
         id: 8,
         left: "80%",
         delay: "-2.5s",
         dur: "8s",
-        colorVar: "--neon-cyan",
+        colorVar: "--peacock-teal",
       },
       {
         id: 9,
         left: "90%",
         delay: "-3.5s",
         dur: "9s",
-        colorVar: "--electric-magenta",
+        colorVar: "--peacock-emerald",
       },
     ],
     []
@@ -102,7 +181,7 @@ const HeroLegacy = ({
     }
   }, []);
 
-  // Scroll parallax for sprinkle background and energy-flow shift
+  // Scroll parallax
   useEffect(() => {
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -142,10 +221,12 @@ const HeroLegacy = ({
 
     let id = 1000;
     const colors = [
-      "--golden-sunrise",
-      "--neon-cyan",
-      "--electric-magenta",
-      "--cosmic-purple",
+      "--peacock-gold",
+      "--peacock-teal",
+      "--peacock-emerald",
+      "--peacock-purple",
+      "--peacock-azure",
+      "--peacock-bronze",
     ];
     const iv = setInterval(() => {
       setParticles((prev) => {
@@ -164,76 +245,172 @@ const HeroLegacy = ({
     return () => clearInterval(iv);
   }, []);
 
+  // Shooting star animation effect
+  useEffect(() => {
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reduce) return;
+
+    const animateShootingStar = (star) => {
+      const starElement = document.getElementById(`shooting-star-${star.id}`);
+      if (!starElement) return;
+
+      const startX = (star.startX / 100) * window.innerWidth;
+      const startY = (star.startY / 100) * window.innerHeight;
+      const endX = (star.endX / 100) * window.innerWidth;
+      const endY = (star.endY / 100) * window.innerHeight;
+
+      starElement.style.left = `${startX}px`;
+      starElement.style.top = `${startY}px`;
+      starElement.style.opacity = "0";
+
+      setTimeout(() => {
+        starElement.style.transition = `all ${star.duration}ms linear`;
+        starElement.style.left = `${endX}px`;
+        starElement.style.top = `${endY}px`;
+        starElement.style.opacity = "1";
+
+        setTimeout(() => {
+          starElement.style.opacity = "0";
+        }, star.duration * 0.8);
+      }, 100);
+    };
+
+    shootingStars.forEach((star) => {
+      const animate = () => {
+        animateShootingStar(star);
+        setTimeout(animate, star.delay + star.duration + Math.random() * 5000);
+      };
+      setTimeout(animate, star.delay);
+    });
+  }, [shootingStars]);
+
   return (
     <>
       <style jsx>{`
         :root {
-          /* Krishnova core */
-          --primary: #39c0cd;
-          /* Krishna Blue */
-          --red: #e53e3e;
-          /* Sacred Red */
-          --accent: #d4a574;
-          /* Divine Gold */
-          --dark: #2d3748;
-          --white: #ffffff;
+          /* ========================================
+             PEACOCK FEATHER COLOR GRADING SYSTEM
+             Use these colors throughout your app
+             ======================================== */
 
-          /* Legacy hero palette */
-          --golden-sunrise: #ffd700;
-          --electric-magenta: #ff1493;
-          --neon-cyan: #00ffff;
-          --cosmic-purple: #8a2be2;
-          --royal-krishna-blue: #1e3a8a;
-          --deep-space-blue: #191970;
-          --divine-orange: #ff8c00;
-          --iridescent-white: #f8f8ff;
+          /* Primary Peacock Colors */
+          --peacock-deep-blue: #003153; /* Deep Krishna Blue */
+          --peacock-royal-blue: #005b8c; /* Royal Blue */
+          --peacock-azure: #0099cc; /* Bright Azure */
+          --peacock-teal: #00a896; /* Peacock Teal */
+          --peacock-emerald: #02c39a; /* Emerald Green */
+          --peacock-jade: #00bfa5; /* Jade Green */
+
+          /* Accent Colors */
+          --peacock-gold: #ffb700; /* Golden Eye */
+          --peacock-bronze: #b08d57; /* Bronze Shimmer */
+          --peacock-copper: #c77e23; /* Copper Accent */
+          --peacock-purple: #6b46c1; /* Royal Purple */
+          --peacock-indigo: #4c1d95; /* Deep Indigo */
+          --peacock-violet: #7c3aed; /* Bright Violet */
+
+          /* Light Variants (for backgrounds) */
+          --peacock-blue-light: #e0f2fe;
+          --peacock-teal-light: #ccfbf1;
+          --peacock-emerald-light: #d1fae5;
+          --peacock-gold-light: #fef3c7;
+          --peacock-purple-light: #ede9fe;
+
+          /* Dark Variants (for text/shadows) */
+          --peacock-blue-dark: #001e3c;
+          --peacock-teal-dark: #065f46;
+          --peacock-emerald-dark: #064e3b;
+          --peacock-gold-dark: #92400e;
+          --peacock-purple-dark: #2e1065;
+
+          /* Gradient Combinations */
+          --gradient-peacock-primary: linear-gradient(
+            135deg,
+            var(--peacock-deep-blue) 0%,
+            var(--peacock-teal) 50%,
+            var(--peacock-emerald) 100%
+          );
+
+          --gradient-peacock-accent: linear-gradient(
+            135deg,
+            var(--peacock-gold) 0%,
+            var(--peacock-bronze) 50%,
+            var(--peacock-copper) 100%
+          );
+
+          --gradient-peacock-mystical: linear-gradient(
+            135deg,
+            var(--peacock-indigo) 0%,
+            var(--peacock-purple) 35%,
+            var(--peacock-violet) 70%,
+            var(--peacock-azure) 100%
+          );
+
+          /* Opacity Variants */
+          --peacock-overlay-light: rgba(0, 153, 204, 0.1);
+          --peacock-overlay-medium: rgba(0, 153, 204, 0.3);
+          --peacock-overlay-dark: rgba(0, 49, 83, 0.8);
+
+          /* Text Colors */
+          --text-peacock-primary: var(--peacock-deep-blue);
+          --text-peacock-secondary: var(--peacock-teal-dark);
+          --text-peacock-accent: var(--peacock-gold-dark);
+
+          /* Shadow Colors */
+          --shadow-peacock-soft: 0 4px 20px rgba(0, 153, 204, 0.15);
+          --shadow-peacock-medium: 0 10px 40px rgba(0, 91, 140, 0.25);
+          --shadow-peacock-strong: 0 20px 60px rgba(0, 49, 83, 0.35);
+          --shadow-peacock-glow: 0 0 40px rgba(255, 183, 0, 0.4);
         }
 
         .bg-krishnova-hero {
           background: radial-gradient(
-              ellipse at center,
-              rgba(255, 20, 147, 0.1) 0%,
-              transparent 70%
+              ellipse at top,
+              var(--peacock-overlay-light) 0%,
+              transparent 50%
+            ),
+            radial-gradient(
+              ellipse at bottom,
+              rgba(255, 183, 0, 0.05) 0%,
+              transparent 50%
             ),
             linear-gradient(
               135deg,
-              var(--deep-space-blue) 0%,
-              var(--royal-krishna-blue) 50%,
-              var(--cosmic-purple) 100%
+              var(--peacock-deep-blue) 0%,
+              var(--peacock-royal-blue) 25%,
+              var(--peacock-indigo) 50%,
+              var(--peacock-purple) 75%,
+              var(--peacock-deep-blue) 100%
             );
         }
 
-        .cursor-bell {
-          cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32"><path d="M12 2C8 2 5 5 5 9v6c0 2 1 4 3 5l-1 3h10l-1-3c2-1 3-3 3-5V9c0-4-3-7-7-7zm0 2c3 0 5 2 5 5v6c0 1-1 2-2 3H9c-1-1-2-2-2-3V9c0-3 2-5 5-5z" fill="%23FFD700"/><circle cx="12" cy="25" r="2" fill="%23FFD700"/><path d="M10 24h4v4h-4z" fill="%23FFD700"/></svg>')
-              12 16,
-            auto;
-        }
-
-        .cursor-bell .interactive:hover {
-          cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="32" viewBox="0 0 24 32"><g transform="rotate(10 12 16)"><path d="M12 2C8 2 5 5 5 9v6c0 2 1 4 3 5l-1 3h10l-1-3c2-1 3-3 3-5V9c0-4-3-7-7-7zm0 2c3 0 5 2 5 5v6c0 1-1 2-2 3H9c-1-1-2-2-2-3V9c0-3 2-5 5-5z" fill="%23FFD700"/><circle cx="12" cy="25" r="2" fill="%23FFD700"/><path d="M10 24h4v4h-4z" fill="%23FFD700"/></g></svg>')
-              12 16,
+        .cursor-peacock {
+          cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="8" fill="%2300A896" opacity="0.8"/><circle cx="16" cy="16" r="4" fill="%23FFB700"/><path d="M16 8 Q24 16 16 24 Q8 16 16 8" fill="%23005B8C" opacity="0.6"/></svg>')
+              16 16,
             auto;
         }
 
         .hero-parallax {
           background-image: radial-gradient(
               circle at 20px 20px,
-              rgba(255, 215, 0, 0.3) 2px,
+              rgba(255, 183, 0, 0.3) 2px,
               transparent 2px
             ),
             radial-gradient(
               circle at 80px 30px,
-              rgba(0, 255, 255, 0.4) 1.5px,
+              rgba(0, 168, 150, 0.3) 1.5px,
               transparent 1.5px
             ),
             radial-gradient(
               circle at 60px 70px,
-              rgba(255, 20, 147, 0.3) 1px,
+              rgba(107, 70, 193, 0.2) 1px,
               transparent 1px
             ),
             radial-gradient(
               circle at 30px 80px,
-              rgba(138, 43, 226, 0.2) 2.5px,
+              rgba(2, 195, 154, 0.25) 2.5px,
               transparent 2.5px
             );
           background-size: 100px 100px;
@@ -243,31 +420,27 @@ const HeroLegacy = ({
         .particle-dot {
           position: absolute;
           top: 0;
-          width: 4px;
-          height: 4px;
-          border-radius: 9999px;
-          opacity: 0.75;
-          background: var(--golden-sunrise);
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          opacity: 0.8;
+          filter: blur(0.5px);
+          box-shadow: 0 0 10px currentColor;
         }
 
-        .particle-dot:nth-child(2n) {
-          background: var(--neon-cyan);
-        }
-
-        .particle-dot:nth-child(3n) {
-          background: var(--electric-magenta);
-        }
-
-        .pendulum-ball {
-          width: 60px;
-          height: 60px;
-          border-radius: 9999px;
+        .peacock-eye {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
           background: radial-gradient(
-            circle,
-            var(--golden-sunrise) 0%,
-            var(--divine-orange) 100%
+            circle at 30% 30%,
+            var(--peacock-gold) 0%,
+            var(--peacock-bronze) 30%,
+            var(--peacock-teal) 60%,
+            var(--peacock-deep-blue) 100%
           );
-          box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+          box-shadow: 0 0 40px var(--peacock-gold), 0 0 60px var(--peacock-teal),
+            inset 0 0 20px rgba(255, 255, 255, 0.3);
           position: relative;
           margin: 0 auto;
           display: flex;
@@ -275,48 +448,90 @@ const HeroLegacy = ({
           justify-content: center;
         }
 
-        .pendulum-v {
+        .peacock-eye::before {
+          content: "";
           position: absolute;
           width: 30px;
-          height: 40px;
-          top: 8px;
-          background: #fff;
-          transform: rotate(180deg);
-          clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+          height: 30px;
+          background: radial-gradient(
+            circle,
+            var(--peacock-gold) 0%,
+            var(--peacock-bronze) 100%
+          );
+          border-radius: 50%;
+          box-shadow: 0 0 20px var(--peacock-gold);
         }
 
         .energy-flow {
           position: absolute;
           top: 0;
-          width: 2px;
-          height: 100px;
+          width: 3px;
+          height: 120px;
           background: linear-gradient(
             to bottom,
             transparent,
-            var(--neon-cyan),
+            var(--peacock-teal),
+            var(--peacock-emerald),
             transparent
           );
+          filter: blur(1px);
         }
 
-        .text-iridescent {
-          color: var(--iridescent-white);
+        .text-peacock-shimmer {
+          background: linear-gradient(
+            135deg,
+            var(--peacock-gold) 0%,
+            var(--peacock-teal) 25%,
+            var(--peacock-emerald) 50%,
+            var(--peacock-purple) 75%,
+            var(--peacock-gold) 100%
+          );
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
 
-        .text-shadow-gold {
-          text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        /* Shooting Stars with peacock colors */
+        .shooting-star {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          opacity: 0;
+          pointer-events: none;
+          z-index: 5;
+          filter: brightness(1.5);
         }
 
-        @keyframes parallaxFloat {
-          0% {
-            transform: translateY(0) translateX(0);
-          }
-          100% {
-            transform: translateY(-100px) translateX(50px);
-          }
+        .shooting-star::before {
+          content: "";
+          position: absolute;
+          top: 50%;
+          right: 100%;
+          width: 150px;
+          height: 2px;
+          background: linear-gradient(
+            to left,
+            currentColor 0%,
+            transparent 100%
+          );
+          transform: translateY(-50%);
+          border-radius: 1px;
+          box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
         }
 
-        .animate-parallax {
-          animation: parallaxFloat 20s linear infinite;
+        .shooting-star::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 8px;
+          height: 8px;
+          background: radial-gradient(circle, currentColor 0%, transparent 70%);
+          transform: translate(-50%, -50%);
+          border-radius: 50%;
+          box-shadow: 0 0 12px currentColor;
         }
 
         @keyframes floatUp {
@@ -326,65 +541,70 @@ const HeroLegacy = ({
             opacity: 0;
           }
           10% {
-            opacity: 0.7;
+            opacity: 0.8;
           }
           90% {
-            opacity: 0.7;
+            opacity: 0.8;
           }
           50% {
-            transform: translateY(50vh) translateX(50px) rotate(180deg);
+            transform: translateY(50vh) translateX(30px) rotate(180deg);
           }
         }
 
         .animate-particle {
-          animation: floatUp 8s ease-in-out infinite;
+          animation: floatUp 10s ease-in-out infinite;
         }
 
-        @keyframes pendulumSwing {
+        @keyframes peacockSwing {
           0%,
           100% {
-            transform: rotate(-15deg);
+            transform: rotate(-20deg) scale(1);
           }
           50% {
-            transform: rotate(15deg);
+            transform: rotate(20deg) scale(1.1);
           }
         }
 
-        .animate-pendulum {
-          animation: pendulumSwing 4s ease-in-out infinite;
+        .animate-peacock {
+          animation: peacockSwing 5s ease-in-out infinite;
           transform-origin: top center;
         }
 
         @keyframes energyFlow {
           0% {
             opacity: 0;
-            transform: translateY(-100px);
+            transform: translateY(-100px) scaleY(0.5);
           }
-          50% {
+          20% {
             opacity: 1;
+            transform: translateY(0) scaleY(1);
+          }
+          80% {
+            opacity: 1;
+            transform: translateY(calc(100vh - 100px)) scaleY(1);
           }
           100% {
             opacity: 0;
-            transform: translateY(100vh);
+            transform: translateY(100vh) scaleY(0.5);
           }
         }
 
         .animate-energy {
-          animation: energyFlow 4s ease-in-out infinite;
+          animation: energyFlow 5s ease-in-out infinite;
         }
 
         @keyframes gentleFloat {
           0%,
           100% {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
           }
           50% {
-            transform: translateY(-20px);
+            transform: translateY(-15px) scale(1.02);
           }
         }
 
         .animate-gentle-float {
-          animation: gentleFloat 3s ease-in-out infinite;
+          animation: gentleFloat 4s ease-in-out infinite;
         }
 
         @keyframes gradientShift {
@@ -398,147 +618,332 @@ const HeroLegacy = ({
         }
 
         .animate-gradient-shift {
-          background-size: 200% 200%;
-          animation: gradientShift 12s ease-in-out infinite;
+          animation: gradientShift 8s ease-in-out infinite;
         }
 
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-120%) skewX(-20deg);
-          }
-          100% {
-            transform: translateX(120%) skewX(-20deg);
-          }
-        }
+        /* ===========================
+           MODERN BUTTON DESIGNS
+           =========================== */
 
-        .animate-shimmer {
-          animation: shimmer 1.8s linear infinite;
-        }
-
-        /* Enhanced button styles - FIXED VERSION */
-        .hero-enhanced-button {
+        /* Enhanced Modern Peacock Button with Better Contrast */
+        .peacock-cta-button {
           position: relative;
           background: linear-gradient(
             135deg,
-            var(--golden-sunrise) 0%,
-            var(--electric-magenta) 50%,
-            var(--neon-cyan) 100%
+            #ffffff 0%,
+            #f0f9ff 50%,
+            #ffffff 100%
           );
-          background-size: 200% 200%;
-          border: none;
-          border-radius: 50px;
-          padding: 16px 32px;
-          font-weight: 600;
-          color: white;
+          border: 2px solid rgba(255, 255, 255, 0.9);
+          border-radius: 60px;
+          padding: 20px 48px;
+          font-weight: 700;
+          font-size: 1.15rem;
+          letter-spacing: 0.5px;
+          color: var(--peacock-deep-blue);
           text-decoration: none;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-          /* Force hardware acceleration for smoother rendering */
-          transform: translateZ(0);
-          backface-visibility: hidden;
-          -webkit-font-smoothing: antialiased;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3),
+            0 2px 10px rgba(0, 0, 0, 0.2), 0 0 60px rgba(255, 183, 0, 0.4),
+            0 0 100px rgba(0, 168, 150, 0.2),
+            inset 0 0 20px rgba(255, 183, 0, 0.1);
+          backdrop-filter: blur(20px) saturate(1.5);
+          transform: translateZ(0) scale(1);
+          overflow: hidden;
+          isolation: isolate;
+          cursor: pointer;
         }
 
-        .hero-enhanced-button:hover {
-          background-position: 100% 0;
-          transform: translateY(-4px) translateZ(0) scale(1.05);
-          box-shadow: 0 0 30px rgba(255, 215, 0, 0.6),
-            0 0 60px rgba(255, 20, 147, 0.4), 0 0 90px rgba(0, 255, 255, 0.3),
-            0 15px 40px rgba(0, 0, 0, 0.3);
-          filter: brightness(1.1);
-        }
-
-        /* Animated border glow effect */
-        .hero-enhanced-button::before {
-          content: "";
-          position: absolute;
-          inset: -3px;
+        /* Gradient text effect */
+        .peacock-cta-button span {
           background: linear-gradient(
-            45deg,
-            var(--golden-sunrise),
-            var(--electric-magenta),
-            var(--neon-cyan),
-            var(--cosmic-purple),
-            var(--golden-sunrise)
+            135deg,
+            var(--peacock-deep-blue) 0%,
+            var(--peacock-purple) 50%,
+            var(--peacock-deep-blue) 100%
           );
-          background-size: 300% 300%;
-          border-radius: inherit;
-          z-index: -1;
-          opacity: 0;
-          transition: opacity 0.4s ease;
-          animation: gradientRotate 4s ease infinite;
-          /* Ensure smooth edges */
-          filter: blur(1px);
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-weight: 700;
+          position: relative;
+          z-index: 2;
+          animation: textShine 3s ease-in-out infinite;
         }
 
-        .hero-enhanced-button:hover::before {
-          opacity: 0.8;
-        }
-
-        /* Inner content wrapper for clean text rendering */
-        .hero-enhanced-button::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: inherit;
-          border-radius: inherit;
-          z-index: -1;
-        }
-
-        @keyframes gradientRotate {
-          0% {
-            background-position: 0% 50%;
-          }
-          25% {
-            background-position: 100% 50%;
-          }
-          50% {
-            background-position: 100% 100%;
-          }
-          75% {
-            background-position: 0% 100%;
-          }
+        @keyframes textShine {
+          0%,
           100% {
             background-position: 0% 50%;
           }
+          50% {
+            background-position: 100% 50%;
+          }
         }
 
-        /* Additional anti-aliasing for button text */
-        .hero-enhanced-button span {
+        /* Glowing border effect */
+        .peacock-cta-button::before {
+          content: "";
+          position: absolute;
+          inset: -4px;
+          background: linear-gradient(
+            90deg,
+            #ffb700 0%,
+            #00f5ff 20%,
+            #ff00ff 40%,
+            #00ff88 60%,
+            #ffb700 80%,
+            #00f5ff 100%
+          );
+          background-size: 300% 100%;
+          border-radius: 60px;
+          z-index: -1;
+          opacity: 1;
+          animation: borderGlow 4s linear infinite;
+          filter: blur(8px);
+        }
+
+        @keyframes borderGlow {
+          0% {
+            background-position: 0% 50%;
+          }
+          100% {
+            background-position: 300% 50%;
+          }
+        }
+
+        /* Inner glow */
+        .peacock-cta-button::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            circle at center,
+            rgba(255, 183, 0, 0.2) 0%,
+            transparent 70%
+          );
+          border-radius: 60px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        /* Hover state */
+        .peacock-cta-button:hover {
+          transform: translateY(-4px) scale(1.05);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+            0 10px 30px rgba(0, 0, 0, 0.3), 0 0 100px rgba(255, 183, 0, 0.6),
+            0 0 150px rgba(0, 168, 150, 0.4),
+            inset 0 0 30px rgba(255, 183, 0, 0.2);
+          background: linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #fff9e6 50%,
+            #ffffff 100%
+          );
+        }
+
+        .peacock-cta-button:hover::after {
+          opacity: 1;
+        }
+
+        .peacock-cta-button:hover span {
+          animation-duration: 1s;
+        }
+
+        /* Shimmer effect */
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%) skewX(-15deg);
+          }
+          100% {
+            transform: translateX(200%) skewX(-15deg);
+          }
+        }
+
+        .shimmer-effect {
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+          );
+          transform: skewX(-15deg);
+          animation: shimmer 3s ease-in-out infinite;
+        }
+
+        /* Alternative Modern Glass Button Design */
+        .glass-peacock-button {
           position: relative;
-          z-index: 1;
-          text-rendering: optimizeLegibility;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
+          background: rgba(255, 255, 255, 0.95);
+          border: none;
+          border-radius: 50px;
+          padding: 22px 52px;
+          font-weight: 800;
+          font-size: 1.2rem;
+          letter-spacing: 0.8px;
+          color: #003153;
+          text-transform: uppercase;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 8px 32px rgba(255, 255, 255, 0.3),
+            0 4px 16px rgba(0, 0, 0, 0.2),
+            inset 0 2px 8px rgba(255, 255, 255, 0.9),
+            inset 0 -2px 8px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(10px) brightness(1.1);
+          overflow: hidden;
+          cursor: pointer;
+        }
+
+        .glass-peacock-button::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 183, 0, 0.4),
+            transparent
+          );
+          transition: left 0.5s ease;
+        }
+
+        .glass-peacock-button:hover::before {
+          left: 100%;
+        }
+
+        .glass-peacock-button:hover {
+          transform: translateY(-6px) scale(1.02);
+          background: rgba(255, 255, 255, 1);
+          box-shadow: 0 12px 48px rgba(255, 255, 255, 0.5),
+            0 6px 24px rgba(0, 0, 0, 0.3), 0 0 80px rgba(255, 183, 0, 0.5);
+        }
+
+        /* Neon Outline Button Alternative */
+        .neon-peacock-button {
+          position: relative;
+          background: rgba(9, 43, 156, 0.9);
+          border: 3px solid #00f5ff;
+          border-radius: 50px;
+          padding: 20px 50px;
+          font-weight: 700;
+          font-size: 1.15rem;
+          letter-spacing: 1px;
+          color: #ffffff;
+          text-transform: uppercase;
+          text-decoration: none;
+          text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          box-shadow: 0 0 40px rgba(0, 245, 255, 0.5),
+            inset 0 0 20px rgba(0, 245, 255, 0.2), 0 4px 20px rgba(0, 0, 0, 0.5);
+          animation: neonPulse 2s ease-in-out infinite;
+          cursor: pointer;
+        }
+
+        @keyframes neonPulse {
+          0%,
+          100% {
+            box-shadow: 0 0 40px rgba(0, 245, 255, 0.5),
+              inset 0 0 20px rgba(0, 245, 255, 0.2),
+              0 4px 20px rgba(0, 0, 0, 0.5);
+          }
+          50% {
+            box-shadow: 0 0 60px rgba(0, 245, 255, 0.7),
+              inset 0 0 30px rgba(0, 245, 255, 0.3),
+              0 4px 30px rgba(0, 0, 0, 0.6);
+          }
+        }
+
+        .neon-peacock-button:hover {
+          transform: translateY(-4px);
+          background: rgba(0, 245, 255, 0.1);
+          border-color: #ffb700;
+          color: #ffb700;
+          text-shadow: 0 0 20px rgba(255, 183, 0, 0.8);
+          box-shadow: 0 0 60px rgba(255, 183, 0, 0.6),
+            inset 0 0 30px rgba(255, 183, 0, 0.2), 0 6px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Ripple effect */
+        .ripple {
+          position: absolute;
+          inset: 0;
+          border-radius: 60px;
+          background: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.3) 0%,
+            transparent 70%
+          );
+          transform: scale(0);
+          animation: rippleEffect 0.6s ease-out;
+        }
+
+        @keyframes rippleEffect {
+          to {
+            transform: scale(2);
+            opacity: 0;
+          }
         }
       `}</style>
+
       <section
         ref={heroRef}
         id="home"
-        className="
-          krishnova-hero relative min-h-[100svh] flex items-center justify-center text-center overflow-hidden
-          cursor-bell bg-krishnova-hero
-        "
+        className="krishnova-hero relative min-h-[100svh] flex items-center justify-center text-center overflow-hidden cursor-peacock bg-krishnova-hero"
         style={{
           background: `
             radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, 
-              rgba(255, 215, 0, 0.08) 0%, 
-              rgba(255, 20, 147, 0.04) 25%, 
-              rgba(0, 255, 255, 0.03) 50%, 
+              rgba(255, 183, 0, 0.06) 0%, 
+              rgba(0, 168, 150, 0.04) 25%, 
+              rgba(107, 70, 193, 0.03) 50%, 
               transparent 70%),
-            radial-gradient(ellipse at center, rgba(255, 20, 147, 0.1) 0%, transparent 70%),
-            linear-gradient(135deg, var(--deep-space-blue) 0%, var(--royal-krishna-blue) 50%, var(--cosmic-purple) 100%)
+            radial-gradient(ellipse at top, var(--peacock-overlay-light) 0%, transparent 50%),
+            linear-gradient(135deg, 
+              var(--peacock-deep-blue) 0%, 
+              var(--peacock-royal-blue) 25%, 
+              var(--peacock-indigo) 50%, 
+              var(--peacock-purple) 75%, 
+              var(--peacock-deep-blue) 100%)
           `,
         }}
       >
-        {/* Parallax sprinkle background */}
+        {/* Parallax background */}
         <div
           ref={parallaxRef}
-          className="hero-parallax absolute inset-0 pointer-events-none animate-parallax"
+          className="hero-parallax absolute inset-0 pointer-events-none"
         />
+
+        {/* Shooting Stars */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {shootingStars.map((star) => (
+            <div
+              key={star.id}
+              id={`shooting-star-${star.id}`}
+              className="shooting-star"
+              style={{
+                color: star.color,
+                background: star.color,
+              }}
+            />
+          ))}
+        </div>
 
         {/* Floating particles */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -551,59 +956,54 @@ const HeroLegacy = ({
                 animationDelay: p.delay,
                 animationDuration: p.dur,
                 background: `var(${p.colorVar})`,
+                color: `var(${p.colorVar})`,
               }}
             />
           ))}
         </div>
 
-        {/* Pendulum with V insert */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-16 h-16">
-          <div className="pendulum-ball animate-pendulum">
-            <span className="pendulum-v" />
-          </div>
+        {/* Peacock Eye Animation */}
+        <div className="absolute top-16 left-1/2 -translate-x-1/2">
+          <div className="peacock-eye animate-peacock" />
         </div>
 
-        {/* Floating content */}
-        <div className="relative z-10 max-w-[800px] px-5 text-iridescent">
-          <h1
-            className="
-              font-playfair font-bold mb-5
-              text-transparent bg-clip-text
-              bg-gradient-to-r from-[#FFD700] via-[#FF1493] to-[#00FFFF]
-              text-shadow-gold
-              text-[clamp(2.6rem,6vw,4rem)]
-              animate-gentle-float animate-gradient-shift
-            "
-          >
+        {/* Main Content */}
+        <div className="relative z-10 max-w-[900px] px-6">
+          <h1 className="font-playfair font-bold mb-6 text-peacock-shimmer text-[clamp(2.8rem,7vw,4.5rem)] animate-gentle-float animate-gradient-shift">
             {title}
           </h1>
 
-          <p className="text-[clamp(1.1rem,2.5vw,1.5rem)] opacity-90 mb-9 animate-gentle-float">
+          <p className="text-[clamp(1.2rem,2.5vw,1.6rem)] text-white/90 mb-12 animate-gentle-float font-light">
             {subtitle}
           </p>
 
-          <button
+          {/* Primary Button - Best contrast and modern look */}
+          {/* <button
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => (window.location.href = ctaHref)}
-            className="hero-enhanced-button interactive cursor-pointer"
+            className="peacock-cta-button flex"
           >
-            {/* Shimmer sweep */}
-            <span className="pointer-events-none absolute inset-0 -translate-x-[120%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)] animate-shimmer rounded-full" />
+            <span className="shimmer-effect flex" />
+            {isHovered && <span className="ripple" />}
+            <span>{ctaText}</span>
+          </button> */}
 
-            {/* Ripple effect on hover */}
-            {isHovered && (
-              <span
-                className="
-                absolute inset-0 rounded-full
-                bg-gradient-to-r from-transparent via-white to-transparent
-                opacity-15 animate-ping
-              "
-              />
-            )}
+          {/* Optional: You can switch to these alternatives */}
 
-            <span className="relative z-10">{ctaText}</span>
+          <button
+            onClick={() => (window.location.href = ctaHref)}
+            className="glass-peacock-button"
+          >
+            {ctaText}
           </button>
+
+          {/* <button
+            onClick={() => (window.location.href = ctaHref)}
+            className="neon-peacock-button"
+          >
+            {ctaText}
+          </button> */}
         </div>
 
         {/* Energy flows */}
@@ -611,7 +1011,7 @@ const HeroLegacy = ({
           <span
             key={i}
             ref={(el) => (flowsRef.current[i] = el)}
-            className="energy-flow animate-energy absolute top-0"
+            className="energy-flow animate-energy"
             style={{ left: f.left, animationDelay: f.delay }}
           />
         ))}

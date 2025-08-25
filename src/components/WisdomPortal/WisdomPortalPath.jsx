@@ -1,314 +1,370 @@
-import React, { useEffect, useRef } from "react";
-import SectionTitle from "../UI/SectionTitle";
-import TextBox from "../UI/TextBox";
-import Button from "../UI/Button";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const WisdomPortalPath = () => {
-  const cardRef = useRef(null);
+  const sectionRef = useRef(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // **Minimal Dark Blue Color Palette**
-  const colors = {
-    primary: "#1e40af", // Royal Blue
-    secondary: "#2563eb", // Bright Blue
-    accent: "#3b82f6", // Light Blue
-    dark: "#1e3a8a", // Dark Blue
-    neutral: "#64748b", // Slate Gray
-    light: "#f8fafc", // Almost White
-    white: "#ffffff",
-  };
-
+  // SEO Implementation
   useEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
+    const originalTitle = document.title;
+    document.title = "Divine Wisdom Portal - GPT Gita | Krishnova";
 
-    const handleMouseMove = (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      card.style.setProperty("--mouse-x", `${x}px`);
-      card.style.setProperty("--mouse-y", `${y}px`);
-    };
-
-    card.addEventListener("mousemove", handleMouseMove);
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const originalDescription = metaDescription?.content;
+    if (metaDescription) {
+      metaDescription.content =
+        "Experience Krishnova's AI-powered GPT Gita integration. Ask Krishna any question and receive personalized wisdom from the Bhagavad Gita.";
+    } else {
+      const meta = document.createElement("meta");
+      meta.name = "description";
+      meta.content =
+        "Experience Krishnova's AI-powered GPT Gita integration. Ask Krishna any question and receive personalized wisdom from the Bhagavad Gita.";
+      document.head.appendChild(meta);
+    }
 
     return () => {
-      card.removeEventListener("mousemove", handleMouseMove);
+      document.title = originalTitle;
+      if (metaDescription && originalDescription) {
+        metaDescription.content = originalDescription;
+      }
     };
   }, []);
 
+  // Fixed mouse tracking - smooth movement without glitch
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+      }
+    };
+
+    const section = sectionRef.current;
+    if (section) {
+      section.addEventListener("mousemove", handleMouseMove);
+      return () => {
+        section.removeEventListener("mousemove", handleMouseMove);
+      };
+    }
+  }, []);
+
+  const features = [
+    {
+      icon: "🤖",
+      title: "AI-Powered Wisdom",
+      desc: "Advanced GPT integration with sacred Krishna texts",
+      gradient: "from-amber-400 to-orange-500",
+    },
+    {
+      icon: "📖",
+      title: "Authentic Teachings",
+      desc: "Direct insights from Bhagavad Gita verses",
+      gradient: "from-cyan-400 to-blue-500",
+    },
+    {
+      icon: "✨",
+      title: "Personal Guidance",
+      desc: "Customized spiritual advice for your journey",
+      gradient: "from-purple-400 to-indigo-500",
+    },
+  ];
+
   return (
-    <>
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20"
+    >
+      {/* Animated Mandala Background - matching homepage */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
+          animation: "float 30s linear infinite",
+        }}
+      />
+
+      {/* Grid Pattern - matching homepage */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #fbbf24 1px, transparent 1px),
+            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
+
+      {/* Static Floating Orbs - No mouse interaction */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
+            style={{
+              left: `${i * 12.5 + 6}%`,
+              top: `${(i % 2 === 0 ? 20 : 70) + i * 5}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, i % 2 === 0 ? 10 : -10, 0],
+            }}
+            transition={{
+              duration: 10 + i * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <div className="w-32 h-32 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-full blur-xl" />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Fixed Mouse Glow Effect - Smooth following */}
+      <div
+        className="pointer-events-none absolute w-[600px] h-[600px] transition-transform duration-75 ease-out"
+        style={{
+          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%)`,
+          transform: `translate(${mousePosition.x - 300}px, ${
+            mousePosition.y - 300
+          }px)`,
+          willChange: "transform",
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-6">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          {/* Sacred Badge - matching homepage style */}
+          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+            <span className="text-amber-100 font-medium tracking-wide text-sm">
+              दिव्य ज्ञान पोर्टल
+            </span>
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+          </div>
+
+          {/* Main Title with gradient */}
+          <h1 className="text-5xl lg:text-7xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+              Divine Wisdom Portal
+            </span>
+          </h1>
+
+          <p className="text-xl text-blue-100/80 max-w-2xl mx-auto">
+            Where ancient Krishna wisdom meets modern AI technology
+          </p>
+        </motion.div>
+
+        {/* Main Content Card - Glassmorphism */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="max-w-4xl mx-auto mb-16"
+        >
+          <div className="relative group">
+            {/* Static Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 via-purple-400/20 to-amber-400/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition-opacity duration-1000" />
+
+            {/* Card Content */}
+            <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-12 border border-white/20 shadow-2xl hover:border-amber-400/30 transition-all duration-300">
+              {/* Animated Icon */}
+              <motion.div
+                animate={{
+                  rotate: [0, 10, -10, 0],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="text-6xl text-center mb-8"
+              >
+                🔮
+              </motion.div>
+
+              <h2 className="text-4xl font-bold text-center mb-6">
+                <span className="bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
+                  Sacred Wisdom Coming Soon
+                </span>
+              </h2>
+
+              <p className="text-lg md:text-xl text-blue-100/80 text-center mb-8 leading-relaxed">
+                <span className="text-amber-300 font-bold">Krishnova's</span>{" "}
+                revolutionary{" "}
+                <span className="font-semibold text-cyan-300">GPT Gita</span>{" "}
+                integration launches in{" "}
+                <span className="font-bold bg-gradient-to-r from-amber-200 to-yellow-300 bg-clip-text text-transparent text-2xl">
+                  2 days!
+                </span>
+              </p>
+
+              <p className="text-base text-blue-200/70 text-center mb-10">
+                Ask Lord Krishna any question and receive personalized wisdom
+                from the <span className="text-amber-200">Bhagavad Gita</span>.
+                Experience the divine convergence of eternal teachings and
+                modern AI.
+              </p>
+
+              {/* Sanskrit Quote */}
+              <div className="bg-white/5 rounded-2xl p-4 mb-10 border border-amber-400/20">
+                <p className="text-center text-amber-200/80 font-sanskrit text-lg mb-2">
+                  "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन"
+                </p>
+                <p className="text-center text-blue-100/60 text-sm">
+                  You have the right to perform your duty, but not to the fruits
+                  of action
+                </p>
+              </div>
+
+              {/* CTA Button - matching homepage style */}
+              <div className="text-center">
+                <Link to="/wishdomportal">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <span className="relative z-10 text-indigo-900 font-bold tracking-wide flex items-center gap-2">
+                      Explore Wisdom Portal
+                      <motion.span
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        →
+                      </motion.span>
+                    </span>
+                  </motion.button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Feature Cards Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * index }}
+              whileHover={{ scale: 1.05, y: -10 }}
+              className="group relative"
+            >
+              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300 h-full">
+                {/* Floating Animation for Icon */}
+                <motion.div
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: index * 0.3,
+                  }}
+                  className="text-5xl mb-6 text-center"
+                >
+                  {feature.icon}
+                </motion.div>
+
+                <h3 className="text-xl font-bold text-amber-300 mb-3 text-center">
+                  {feature.title}
+                </h3>
+
+                <p className="text-blue-100/80 text-sm text-center leading-relaxed">
+                  {feature.desc}
+                </p>
+
+                {/* Static Hover Gradient Effect */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500 rounded-2xl pointer-events-none`}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Coming Soon Counter */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.6 }}
+          className="mt-16 text-center"
+        >
+          <div className="inline-flex items-center space-x-6 backdrop-blur-md bg-gradient-to-r from-white/5 to-white/10 rounded-full px-8 py-4 border border-white/20">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-amber-300">02</div>
+              <div className="text-xs text-blue-100/60 uppercase tracking-wider">
+                Days
+              </div>
+            </div>
+            <div className="text-amber-400">:</div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-cyan-300">00</div>
+              <div className="text-xs text-blue-100/60 uppercase tracking-wider">
+                Hours
+              </div>
+            </div>
+            <div className="text-amber-400">:</div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-purple-300">00</div>
+              <div className="text-xs text-blue-100/60 uppercase tracking-wider">
+                Minutes
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bottom Quote */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.8 }}
+          className="text-center mt-12"
+        >
+          <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-sm">
+            <span>🪔</span>
+            <span className="italic">
+              "Where technology meets transcendence - Krishnova"
+            </span>
+            <span>🪔</span>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Custom CSS for animations */}
       <style jsx>{`
-        /* Clean animations */
-        @keyframes float-slow {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-          }
-        }
-
-        @keyframes float-slower {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-15px) rotate(-180deg);
-          }
-        }
-
-        @keyframes shimmer {
+        @keyframes float {
           0% {
-            transform: translateX(-120%) skewX(-20deg);
+            transform: translate(0, 0);
           }
           100% {
-            transform: translateX(120%) skewX(-20deg);
-          }
-        }
-
-        .animate-float-slow {
-          animation: float-slow 8s ease-in-out infinite;
-        }
-
-        .animate-float-slower {
-          animation: float-slower 12s ease-in-out infinite;
-        }
-
-        .animate-shimmer {
-          animation: shimmer 2s linear infinite;
-        }
-
-        /* Enhanced button styles */
-        .hero-enhanced-button {
-          background: linear-gradient(
-            135deg,
-            ${colors.primary} 0%,
-            ${colors.secondary} 100%
-          );
-          background-size: 200% 200%;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-        }
-
-        .hero-enhanced-button:hover {
-          background-position: 100% 0;
-          box-shadow: 0 10px 30px ${colors.primary}40;
-          filter: brightness(1.1);
-          border-color: ${colors.accent} !important;
-        }
-
-        .hero-enhanced-button::before {
-          content: "";
-          position: absolute;
-          inset: -2px;
-          background: linear-gradient(
-            45deg,
-            ${colors.primary},
-            ${colors.accent},
-            ${colors.secondary},
-            ${colors.primary}
-          );
-          background-size: 400% 400%;
-          border-radius: inherit;
-          z-index: -1;
-          opacity: 0;
-          transition: opacity 0.4s ease;
-          animation: gradientRotate 3s ease infinite;
-        }
-
-        .hero-enhanced-button:hover::before {
-          opacity: 0.8;
-        }
-
-        @keyframes gradientRotate {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
+            transform: translate(30px, 30px);
           }
         }
       `}</style>
-
-      <section id="wisdom" className="relative py-24 overflow-hidden bg-white">
-        {/* Minimal subtle background elements */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div
-            className="absolute -top-32 -left-32 w-80 h-80 rounded-full animate-float-slow opacity-5"
-            style={{
-              background: `radial-gradient(circle, ${colors.primary}, transparent 70%)`,
-            }}
-          />
-          <div
-            className="absolute bottom-12 right-12 w-96 h-96 rounded-full animate-float-slower opacity-3"
-            style={{
-              background: `radial-gradient(circle, ${colors.secondary}, transparent 80%)`,
-            }}
-          />
-          <div
-            className="absolute top-1/4 right-1/4 w-40 h-40 rounded-full animate-pulse opacity-4"
-            style={{
-              background: `radial-gradient(circle, ${colors.accent}, transparent 90%)`,
-            }}
-          />
-        </div>
-
-        <div className="relative z-10 container max-w-4xl mx-auto px-6 md:px-0">
-          {/* Updated SectionTitle with minimal colors */}
-          <div className="text-center mb-12">
-            <motion.h2
-              className="text-4xl md:text-5xl font-bold mb-4"
-              style={{
-                background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              Divine Wisdom Portal
-            </motion.h2>
-            <div
-              className="w-24 h-1 mx-auto rounded-full"
-              style={{ backgroundColor: colors.primary }}
-            />
-          </div>
-
-          <TextBox
-            variant="mysticalAurora"
-            scrollAnimation="scroll-slide-left"
-            className="backdrop-blur-xl rounded-3xl p-12 shadow-2xl"
-          >
-            {/* Updated content with minimal colors */}
-            <h3
-              className="text-4xl font-extrabold mb-8 text-center drop-shadow-lg"
-              style={{ color: colors.primary }}
-            >
-              🔮 Sacred Wisdom Coming Soon
-            </h3>
-
-            <p
-              className="text-lg md:text-xl leading-relaxed text-center mb-12 max-w-xl mx-auto drop-shadow-sm"
-              style={{ color: colors.neutral }}
-            >
-              Our{" "}
-              <span
-                className="font-semibold"
-                style={{ color: colors.secondary }}
-              >
-                GPT Gita
-              </span>{" "}
-              integration launches in <span className="font-bold">2 days!</span>{" "}
-              Ask Krishna any question & receive personalized wisdom from the{" "}
-              <span
-                className="font-semibold"
-                style={{ color: colors.secondary }}
-              >
-                Bhagavad Gita
-              </span>
-              . ✨ Bridging eternal teachings & modern AI.
-            </p>
-
-            <div className="text-center">
-              <Link to="/wishdomportal" className="group relative inline-block">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="hero-enhanced-button interactive relative font-bold py-5 px-12 rounded-xl shadow-xl transition-all duration-500 border-2 border-transparent cursor-pointer overflow-hidden"
-                  onMouseEnter={(e) => e.target.classList.add("hovered")}
-                  onMouseLeave={(e) => e.target.classList.remove("hovered")}
-                >
-                  {/* Shimmer sweep */}
-                  <span className="pointer-events-none absolute inset-0 -translate-x-[120%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent)] animate-shimmer" />
-
-                  {/* Ripple effect on hover */}
-                  <span className="ripple-effect absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white to-transparent opacity-0 transition-opacity duration-300" />
-
-                  <span className="relative z-10 flex items-center gap-3 text-white">
-                    <span>Explore Wisdom Portal</span>
-                    <motion.span
-                      animate={{ x: [0, 8, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="text-xl"
-                    >
-                      →
-                    </motion.span>
-                  </span>
-                </motion.button>
-              </Link>
-            </div>
-          </TextBox>
-
-          {/* Added feature highlights for better UX */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-16 grid md:grid-cols-3 gap-8"
-          >
-            {[
-              {
-                icon: "🤖",
-                title: "AI-Powered Wisdom",
-                desc: "Advanced GPT integration with sacred texts",
-                color: colors.primary,
-              },
-              {
-                icon: "📚",
-                title: "Authentic Teachings",
-                desc: "Direct insights from Bhagavad Gita verses",
-                color: colors.secondary,
-              },
-              {
-                icon: "💫",
-                title: "Personal Guidance",
-                desc: "Customized spiritual advice for your journey",
-                color: colors.accent,
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                className="text-center p-6 rounded-2xl border bg-white shadow-sm"
-                style={{
-                  borderColor: `${feature.color}20`,
-                }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: `0 10px 25px ${feature.color}15`,
-                  borderColor: `${feature.color}40`,
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h4
-                  className="text-lg font-bold mb-2"
-                  style={{ color: feature.color }}
-                >
-                  {feature.title}
-                </h4>
-                <p className="text-sm" style={{ color: colors.neutral }}>
-                  {feature.desc}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-    </>
+    </section>
   );
 };
 

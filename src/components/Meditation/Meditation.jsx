@@ -7,585 +7,434 @@ const Meditation = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  // **Enhanced Dark Royal Blue Palette**
-  const colors = {
-    primary: "#1e3a8a", // Deep Royal Blue
-    secondary: "#1e40af", // Royal Blue
-    accent: "#2563eb", // Bright Blue
-    dark: "#0f172a", // Very Dark Blue
-    neutral: "#475569", // Dark Slate
-    light: "#f1f5f9", // Light Blue Gray
-    white: "#ffffff",
-    success: "#059669", // Emerald
-    gradient: "linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%)",
-    shadow: "rgba(30, 58, 138, 0.15)",
-  };
-
-  // Cursor tracking
-  const handleMouseMove = (e) => {
-    if (!sectionRef.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height,
-    });
-  };
-
+  // SEO Implementation
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    section.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => section.removeEventListener("mousemove", handleMouseMove);
+    document.title = "Daily Krishna Meditation Guide | Krishnova";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.content =
+        "Transform your Krishnova keychain into a powerful meditation tool. Learn sacred practices, morning prayers, and connect with divine Krishna energy.";
+    }
   }, []);
 
+  // Mouse tracking for interactive effects
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+      }
+    };
+
+    const section = sectionRef.current;
+    if (section) {
+      section.addEventListener("mousemove", handleMouseMove);
+      return () => section.removeEventListener("mousemove", handleMouseMove);
+    }
+  }, []);
+
+  const benefits = [
+    {
+      icon: "🕉️",
+      title: "Inner Peace",
+      desc: "Find tranquility in daily chaos",
+      gradient: "from-amber-400 to-orange-500",
+    },
+    {
+      icon: "💝",
+      title: "Divine Connection",
+      desc: "Strengthen your bond with Krishna",
+      gradient: "from-cyan-400 to-blue-500",
+    },
+    {
+      icon: "🌟",
+      title: "Spiritual Growth",
+      desc: "Evolve on your sacred journey",
+      gradient: "from-purple-400 to-indigo-500",
+    },
+  ];
+
   return (
-    <>
-      <style jsx>{`
-        /* Enhanced button styles */
-        .hero-enhanced-button {
-          background: ${colors.gradient};
-          background-size: 200% 200%;
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          overflow: hidden;
-        }
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20"
+    >
+      {/* Animated Mandala Background */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
+          animation: "float 30s linear infinite",
+        }}
+      />
 
-        .hero-enhanced-button:hover {
-          background-position: 100% 0;
-          box-shadow: 0 15px 40px ${colors.shadow};
-          filter: brightness(1.15);
-          transform: translateY(-2px);
-        }
+      {/* Grid Pattern */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #fbbf24 1px, transparent 1px),
+            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
 
-        .hero-enhanced-button::before {
-          content: "";
-          position: absolute;
-          inset: -2px;
-          background: linear-gradient(
-            45deg,
-            ${colors.primary},
-            ${colors.accent},
-            ${colors.secondary},
-            ${colors.primary}
-          );
-          background-size: 400% 400%;
-          border-radius: inherit;
-          z-index: -1;
-          opacity: 0;
-          transition: opacity 0.4s ease;
-          animation: gradientRotate 3s ease infinite;
-        }
-
-        .hero-enhanced-button:hover::before {
-          opacity: 0.9;
-        }
-
-        @keyframes gradientRotate {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-120%) skewX(-20deg);
-          }
-          100% {
-            transform: translateX(120%) skewX(-20deg);
-          }
-        }
-
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        @keyframes pulse-glow {
-          0%,
-          100% {
-            box-shadow: 0 0 20px ${colors.primary}40;
-          }
-          50% {
-            box-shadow: 0 0 30px ${colors.primary}60;
-          }
-        }
-
-        .animate-shimmer {
-          animation: shimmer 2s linear infinite;
-        }
-
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-
-        .animate-pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
-      `}</style>
-
-      <section
-        ref={sectionRef}
-        className="section py-24 relative overflow-hidden"
-        onMouseMove={handleMouseMove}
-        style={{ background: "transparent" }}
-      >
-        {/* Enhanced cursor tracking with royal blue colors */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none opacity-30"
-          style={{
-            background: `radial-gradient(circle 400px at ${
-              mousePosition.x * 100
-            }% ${mousePosition.y * 100}%,
-              ${colors.primary}20 0%, 
-              ${colors.secondary}10 40%, 
-              transparent 70%)`,
-          }}
-        />
-
-        <div className="container max-w-6xl mx-auto px-8 relative z-10">
-          {/* Enhanced Header */}
+      {/* Floating Sacred Elements */}
+      <div className="absolute inset-0">
+        {[...Array(12)].map((_, i) => (
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              className="text-5xl font-bold mb-6"
-              style={{ color: colors.dark }}
-            >
-              Spiritual Practice Guide
-            </motion.h2>
-
-            {/* Enhanced divider */}
-            <motion.div
-              className="w-32 h-1 mx-auto rounded-full mb-4"
-              style={{
-                background: colors.gradient,
-              }}
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-          </motion.div>
-
-          {/* Enhanced Main Card with Left Design */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="rounded-3xl shadow-2xl border overflow-hidden bg-white relative"
+            key={i}
+            className="absolute"
             style={{
-              borderColor: colors.light,
-              boxShadow: `0 25px 50px ${colors.shadow}`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 20 + Math.random() * 10,
+              repeat: Infinity,
+              ease: "linear",
             }}
           >
-            {/* Left Side Decorative Panel */}
-            <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-transparent via-blue-600 to-transparent opacity-60"></div>
+            <div className="text-2xl opacity-20">
+              {["🕉️", "🪔", "🦚", "✨"][i % 4]}
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
-            <div className="flex flex-col lg:flex-row">
-              {/* Left Side - Enhanced Visual Design */}
-              <div className="lg:w-1/3 relative overflow-hidden">
-                <div
-                  className="h-full min-h-[400px] p-8 flex flex-col justify-center items-center relative"
-                  style={{
-                    background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 50%, ${colors.accent} 100%)`,
-                  }}
-                >
-                  {/* Floating Sacred Symbols */}
+      {/* Mouse Glow Effect */}
+      <div
+        className="pointer-events-none absolute w-[600px] h-[600px] transition-transform duration-75 ease-out"
+        style={{
+          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%)`,
+          transform: `translate(${mousePosition.x - 300}px, ${
+            mousePosition.y - 300
+          }px)`,
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-6">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          {/* Sacred Badge */}
+          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+            <span className="text-amber-100 font-medium tracking-wide text-sm">
+              आध्यात्मिक अभ्यास
+            </span>
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+          </div>
+
+          <h1 className="text-5xl lg:text-7xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+              Spiritual Practice Guide
+            </span>
+          </h1>
+
+          <p className="text-xl text-blue-100/80 max-w-2xl mx-auto">
+            Transform your daily routine into a sacred journey with Krishna
+          </p>
+        </motion.div>
+
+        {/* Main Card - Glassmorphism */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="max-w-6xl mx-auto"
+        >
+          <div className="relative group">
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 via-purple-400/20 to-amber-400/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition duration-1000" />
+
+            {/* Card Content */}
+            <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
+              <div className="flex flex-col lg:flex-row">
+                {/* Left Side - Visual Design */}
+                <div className="lg:w-1/3 relative bg-gradient-to-br from-amber-400/20 via-purple-400/20 to-indigo-400/20 p-8 flex flex-col justify-center items-center min-h-[400px]">
+                  {/* Rotating Mandala Background */}
                   <motion.div
                     className="absolute inset-0 opacity-10"
-                    style={{
-                      backgroundImage: `
-                        radial-gradient(circle at 20% 20%, white 2px, transparent 2px),
-                        radial-gradient(circle at 80% 20%, white 1px, transparent 1px),
-                        radial-gradient(circle at 20% 80%, white 1.5px, transparent 1.5px),
-                        radial-gradient(circle at 80% 80%, white 1px, transparent 1px)
-                      `,
-                      backgroundSize:
-                        "60px 60px, 40px 40px, 50px 50px, 45px 45px",
-                    }}
                     animate={{ rotate: 360 }}
                     transition={{
                       duration: 120,
                       repeat: Infinity,
                       ease: "linear",
                     }}
-                  />
+                  >
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage: `
+                        radial-gradient(circle at 30% 30%, #fbbf24 2px, transparent 2px),
+                        radial-gradient(circle at 70% 70%, #fbbf24 1px, transparent 1px)
+                      `,
+                        backgroundSize: "60px 60px, 40px 40px",
+                      }}
+                    />
+                  </motion.div>
 
-                  {/* Central Sacred Symbol */}
+                  {/* Central Om Symbol */}
                   <motion.div
-                    className="relative z-10 text-center"
                     initial={{ scale: 0, rotate: -180 }}
                     animate={isInView ? { scale: 1, rotate: 0 } : {}}
                     transition={{ duration: 1, delay: 0.5, type: "spring" }}
+                    className="relative z-10"
                   >
-                    {/* Om Symbol Container */}
                     <motion.div
-                      className="w-24 h-24 mx-auto mb-6 rounded-full bg-white bg-opacity-20 backdrop-blur-sm flex items-center justify-center relative animate-pulse-glow"
-                      animate={{ scale: [1, 1.1, 1] }}
+                      className="w-32 h-32 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-500/30 backdrop-blur-md border-2 border-amber-400/50 flex items-center justify-center shadow-2xl"
+                      animate={{
+                        scale: [1, 1.1, 1],
+                        boxShadow: [
+                          "0 0 30px rgba(251, 191, 36, 0.3)",
+                          "0 0 50px rgba(251, 191, 36, 0.5)",
+                          "0 0 30px rgba(251, 191, 36, 0.3)",
+                        ],
+                      }}
                       transition={{ duration: 3, repeat: Infinity }}
                     >
-                      <span className="text-5xl text-white font-bold">ॐ</span>
+                      <span className="text-6xl text-amber-300">ॐ</span>
+                    </motion.div>
 
-                      {/* Orbiting dots */}
+                    {/* Orbiting Elements */}
+                    {[0, 120, 240].map((angle, i) => (
                       <motion.div
-                        className="absolute w-3 h-3 bg-white rounded-full opacity-80"
-                        style={{ top: "10%", left: "50%" }}
-                        animate={{ rotate: 360 }}
-                        transition={{
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: "linear",
+                        key={i}
+                        className="absolute w-4 h-4 bg-gradient-to-br from-amber-300 to-orange-400 rounded-full"
+                        style={{
+                          top: "50%",
+                          left: "50%",
                         }}
-                      />
-                      <motion.div
-                        className="absolute w-2 h-2 bg-white rounded-full opacity-60"
-                        style={{ bottom: "10%", right: "20%" }}
-                        animate={{ rotate: -360 }}
-                        transition={{
-                          duration: 6,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
-                      />
-                    </motion.div>
-
-                    {/* Sacred Text */}
-                    <motion.div
-                      className="text-white text-center"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.8, delay: 0.8 }}
-                    >
-                      <h3 className="text-2xl font-bold mb-2">
-                        Sacred Practice
-                      </h3>
-                      <p className="text-blue-100 text-sm font-medium">
-                        Connect with Divine Energy
-                      </p>
-                    </motion.div>
-
-                    {/* Floating Elements */}
-                    <motion.div
-                      className="absolute -top-8 -left-8 text-6xl text-white opacity-20 animate-float"
-                      style={{ animationDelay: "0s" }}
-                    >
-                      🕉️
-                    </motion.div>
-                    <motion.div
-                      className="absolute -bottom-4 -right-4 text-4xl text-white opacity-30 animate-float"
-                      style={{ animationDelay: "1s" }}
-                    >
-                      🙏
-                    </motion.div>
-                  </motion.div>
-
-                  {/* Bottom Decorative Wave */}
-                  <div className="absolute bottom-0 left-0 right-0">
-                    <svg
-                      viewBox="0 0 400 100"
-                      className="w-full h-16 text-white opacity-10"
-                      preserveAspectRatio="none"
-                    >
-                      <motion.path
-                        d="M0,50 Q100,10 200,50 T400,50 L400,100 L0,100 Z"
-                        fill="currentColor"
                         animate={{
-                          d: [
-                            "M0,50 Q100,10 200,50 T400,50 L400,100 L0,100 Z",
-                            "M0,50 Q100,90 200,50 T400,50 L400,100 L0,100 Z",
-                            "M0,50 Q100,10 200,50 T400,50 L400,100 L0,100 Z",
+                          x: [
+                            60 * Math.cos((angle * Math.PI) / 180),
+                            60 * Math.cos(((angle + 360) * Math.PI) / 180),
+                          ],
+                          y: [
+                            60 * Math.sin((angle * Math.PI) / 180),
+                            60 * Math.sin(((angle + 360) * Math.PI) / 180),
                           ],
                         }}
                         transition={{
-                          duration: 4,
+                          duration: 8,
                           repeat: Infinity,
-                          ease: "easeInOut",
+                          ease: "linear",
                         }}
                       />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+                    ))}
+                  </motion.div>
 
-              {/* Right Side - Content */}
-              <div className="lg:w-2/3 p-8">
-                {/* Header */}
-                <div className="mb-8">
-                  <motion.h3
-                    className="text-3xl font-bold mb-4"
-                    style={{ color: colors.dark }}
+                  {/* Sacred Text */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.8 }}
+                    className="text-center mt-8"
+                  >
+                    <h3 className="text-2xl font-bold text-amber-300 mb-2">
+                      Sacred Practice
+                    </h3>
+                    <p className="text-blue-100/80 text-sm">
+                      Connect with Divine Energy
+                    </p>
+                  </motion.div>
+                </div>
+
+                {/* Right Side - Content */}
+                <div className="lg:w-2/3 p-8 lg:p-12">
+                  {/* Title */}
+                  <motion.h2
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.6, delay: 0.4 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-3xl font-bold mb-6 bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent"
                   >
                     Daily Krishna Meditation
-                  </motion.h3>
+                  </motion.h2>
 
+                  {/* Description */}
                   <motion.p
-                    className="text-lg leading-relaxed"
-                    style={{ color: colors.neutral }}
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.6, delay: 0.5 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-lg text-blue-100/80 mb-8 leading-relaxed"
                   >
                     Transform your{" "}
-                    <motion.span
-                      className="font-semibold px-2 py-1 rounded"
-                      style={{
-                        color: colors.primary,
-                        backgroundColor: `${colors.primary}10`,
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      Krishna keychain
-                    </motion.span>{" "}
+                    <span className="text-amber-300 font-semibold">
+                      Krishnova keychain
+                    </span>{" "}
                     into a powerful meditation tool. Hold it during prayer, feel
                     its{" "}
-                    <motion.span
-                      className="font-semibold px-2 py-1 rounded"
-                      style={{
-                        color: colors.secondary,
-                        backgroundColor: `${colors.secondary}10`,
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                    >
+                    <span className="text-cyan-300 font-semibold">
                       sacred energy
-                    </motion.span>
+                    </span>
                     , and let it remind you of{" "}
-                    <motion.span
-                      className="font-semibold px-2 py-1 rounded"
-                      style={{
-                        color: colors.accent,
-                        backgroundColor: `${colors.accent}10`,
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                    >
+                    <span className="text-purple-300 font-semibold">
                       divine presence
-                    </motion.span>{" "}
+                    </span>{" "}
                     throughout your day.
                   </motion.p>
-                </div>
 
-                {/* Morning Prayer Section */}
-                <motion.div
-                  className="mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                >
-                  <div className="flex items-center mb-4">
-                    <motion.div
-                      className="w-10 h-10 rounded-full flex items-center justify-center mr-4"
-                      style={{
-                        background: colors.gradient,
-                      }}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      animate={{
-                        boxShadow: [
-                          `0 0 20px ${colors.primary}40`,
-                          `0 0 30px ${colors.primary}60`,
-                          `0 0 20px ${colors.primary}40`,
-                        ],
-                      }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      <span className="text-white text-lg font-bold">॥</span>
-                    </motion.div>
-                    <h4
-                      className="text-2xl font-semibold"
-                      style={{ color: colors.dark }}
-                    >
-                      Morning Prayer
-                    </h4>
-                  </div>
-
+                  {/* Morning Prayer Section */}
                   <motion.div
-                    className="rounded-2xl p-6 border-l-4 relative overflow-hidden bg-gradient-to-r from-blue-50 to-white shadow-sm"
-                    style={{
-                      borderColor: colors.primary,
-                    }}
-                    whileHover={{
-                      scale: 1.02,
-                      boxShadow: `0 10px 30px ${colors.shadow}`,
-                    }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.6 }}
+                    className="mb-8"
                   >
-                    <blockquote
-                      className="text-xl font-medium text-center leading-relaxed italic relative z-10 mb-4"
-                      style={{ color: colors.dark }}
-                    >
-                      "Hare Krishna, Hare Krishna, Krishna Krishna, Hare Hare
-                      <br />
-                      Hare Rama, Hare Rama, Rama Rama, Hare Hare"
-                    </blockquote>
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center mr-4 shadow-lg">
+                        <span className="text-indigo-900 font-bold">॥</span>
+                      </div>
+                      <h3 className="text-2xl font-semibold text-amber-300">
+                        Morning Prayer
+                      </h3>
+                    </div>
 
-                    <motion.p
-                      className="text-sm text-center font-medium px-4 py-2 rounded-full inline-block"
-                      style={{
-                        color: colors.primary,
-                        backgroundColor: `${colors.primary}10`,
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      Chant with devotion while holding your sacred keychain
-                    </motion.p>
+                    <div className="backdrop-blur-md bg-gradient-to-br from-white/5 to-white/10 rounded-2xl p-6 border border-amber-400/20">
+                      <blockquote className="text-xl font-medium text-center text-amber-200 mb-4 italic">
+                        "Hare Krishna, Hare Krishna, Krishna Krishna, Hare Hare
+                        <br />
+                        Hare Rama, Hare Rama, Rama Rama, Hare Hare"
+                      </blockquote>
+                      <p className="text-sm text-center text-blue-100/60">
+                        Chant with devotion while holding your sacred keychain
+                      </p>
+                    </div>
                   </motion.div>
-                </motion.div>
 
-                {/* Enhanced Benefits Grid */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.7 }}
-                >
-                  <h4
-                    className="text-xl font-semibold mb-6 text-center"
-                    style={{ color: colors.dark }}
+                  {/* Benefits Grid */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.7 }}
                   >
-                    Benefits of Daily Practice:
-                  </h4>
+                    <h3 className="text-xl font-semibold text-amber-300 mb-6 text-center">
+                      Benefits of Daily Practice
+                    </h3>
 
-                  <div className="grid md:grid-cols-3 gap-4">
-                    {[
-                      {
-                        icon: "🕉️",
-                        title: "Inner Peace",
-                        desc: "Find tranquility in daily chaos",
-                        color: colors.primary,
-                      },
-                      {
-                        icon: "💝",
-                        title: "Divine Connection",
-                        desc: "Strengthen your bond with Krishna",
-                        color: colors.secondary,
-                      },
-                      {
-                        icon: "🌟",
-                        title: "Spiritual Growth",
-                        desc: "Evolve on your sacred journey",
-                        color: colors.accent,
-                      },
-                    ].map((benefit, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-                        whileHover={{
-                          y: -8,
-                          scale: 1.05,
-                          boxShadow: `0 15px 30px ${benefit.color}20`,
-                        }}
-                        className="text-center p-6 rounded-xl border transition-all duration-300 bg-white shadow-sm cursor-pointer group"
-                        style={{
-                          borderColor: colors.light,
-                        }}
-                      >
+                    <div className="grid md:grid-cols-3 gap-4">
+                      {benefits.map((benefit, index) => (
                         <motion.div
-                          className="text-3xl mb-3"
-                          animate={{
-                            scale: [1, 1.2, 1],
-                            rotate: [0, 10, -10, 0],
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            delay: index * 0.5,
-                          }}
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={isInView ? { opacity: 1, y: 0 } : {}}
+                          transition={{ delay: 0.8 + index * 0.1 }}
+                          whileHover={{ scale: 1.05, y: -5 }}
+                          className="backdrop-blur-md bg-gradient-to-br from-white/5 to-white/10 rounded-xl p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 text-center group"
                         >
-                          {benefit.icon}
+                          <motion.div
+                            className="text-4xl mb-3"
+                            animate={{
+                              scale: [1, 1.2, 1],
+                              rotate: [0, 10, -10, 0],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              delay: index * 0.5,
+                            }}
+                          >
+                            {benefit.icon}
+                          </motion.div>
+                          <h4 className="font-semibold text-amber-300 mb-2">
+                            {benefit.title}
+                          </h4>
+                          <p className="text-sm text-blue-100/70">
+                            {benefit.desc}
+                          </p>
+                          <div
+                            className={`w-12 h-1 mx-auto mt-3 rounded-full bg-gradient-to-r ${benefit.gradient} opacity-50 group-hover:w-full group-hover:opacity-100 transition-all duration-300`}
+                          />
                         </motion.div>
-
-                        <h5
-                          className="font-semibold mb-2 group-hover:scale-105 transition-transform"
-                          style={{ color: colors.dark }}
-                        >
-                          {benefit.title}
-                        </h5>
-
-                        <p
-                          className="text-sm mb-3"
-                          style={{ color: colors.neutral }}
-                        >
-                          {benefit.desc}
-                        </p>
-
-                        <motion.div
-                          className="w-12 h-1 mx-auto rounded-full"
-                          style={{ backgroundColor: benefit.color }}
-                          whileHover={{ width: "100%" }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
 
-          {/* Enhanced CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.9 }}
-            className="text-center mt-16"
-          >
-            <Link to="/productpage" className="group relative inline-block">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="hero-enhanced-button relative font-bold py-6 px-16 rounded-2xl shadow-2xl transition-all duration-500 border-2 border-transparent cursor-pointer overflow-hidden"
-              >
-                {/* Enhanced shimmer effect */}
-                <span className="pointer-events-none absolute inset-0 -translate-x-[120%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)] animate-shimmer" />
-
-                <span className="relative z-10 flex items-center gap-4 text-white text-lg">
-                  <motion.span
-                    animate={{ rotate: [0, 360] }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  >
-                    🕉️
-                  </motion.span>
-                  <span>Start Your Sacred Journey</span>
-                  <motion.span
-                    animate={{ x: [0, 10, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="text-2xl"
-                  >
-                    →
-                  </motion.span>
-                </span>
-              </motion.button>
-            </Link>
-
-            <motion.p
-              className="mt-6 text-base font-medium"
-              style={{ color: colors.neutral }}
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.9 }}
+          className="text-center mt-16"
+        >
+          <Link to="/productpage">
+            <motion.button
               whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
             >
-              Transform your spiritual practice today ✨
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-    </>
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="relative z-10 text-indigo-900 font-bold tracking-wide flex items-center gap-3">
+                <motion.span
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                >
+                  🕉️
+                </motion.span>
+                <span>Start Your Sacred Journey</span>
+                <span className="group-hover:translate-x-1 transition-transform">
+                  →
+                </span>
+              </span>
+            </motion.button>
+          </Link>
+
+          <p className="mt-6 text-blue-100/60">
+            Transform your spiritual practice with Krishnova ✨
+          </p>
+        </motion.div>
+
+        {/* Bottom Quote */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 1 }}
+          className="text-center mt-12"
+        >
+          <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-sm">
+            <span>🪔</span>
+            <span className="italic">
+              "मन्मना भव मद्भक्तो मद्याजी मां नमस्कुरु" - Bhagavad Gita 18.65
+            </span>
+            <span>🪔</span>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Custom CSS */}
+      <style jsx>{`
+        @keyframes float {
+          0% {
+            transform: translate(0, 0);
+          }
+          100% {
+            transform: translate(30px, 30px);
+          }
+        }
+      `}</style>
+    </section>
   );
 };
 

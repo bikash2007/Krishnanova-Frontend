@@ -1,564 +1,422 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useCallback, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const Mission = () => {
   const sectionRef = useRef(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0.5, y: 0.5 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  // **Minimal Dark Blue Color Palette**
-  const colors = {
-    primary: "#1e40af", // Royal Blue
-    secondary: "#2563eb", // Bright Blue
-    accent: "#3b82f6", // Light Blue
-    dark: "#1e3a8a", // Dark Blue
-    neutral: "#64748b", // Slate Gray
-    light: "#f8fafc", // Almost White
-    white: "#ffffff",
-    success: "#10b981", // Green accent
-  };
+  // SEO Implementation without external packages
+  useEffect(() => {
+    const originalTitle = document.title;
+    document.title = "Our Sacred Mission - Krishnova | Divine Krishna Products";
 
-  // **Optimized mouse tracking**
-  const handleMouseMove = useCallback((e) => {
-    if (!sectionRef.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height,
-    });
+    // Meta tags
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const originalDescription = metaDescription?.content;
+    if (metaDescription) {
+      metaDescription.content =
+        "Discover Krishnova's sacred mission to bridge ancient Krishna wisdom with modern technology through blessed artifacts and spiritual products.";
+    } else {
+      const meta = document.createElement("meta");
+      meta.name = "description";
+      meta.content =
+        "Discover Krishnova's sacred mission to bridge ancient Krishna wisdom with modern technology through blessed artifacts and spiritual products.";
+      document.head.appendChild(meta);
+    }
+
+    // Structured data
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Krishnova",
+      description: "Bridging ancient Krishna wisdom with modern technology",
+      url: window.location.origin,
+      mission:
+        "Transform everyday moments into spiritual experiences through blessed Krishna artifacts",
+    };
+
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.text = JSON.stringify(structuredData);
+    document.head.appendChild(script);
+
+    return () => {
+      document.title = originalTitle;
+      if (metaDescription && originalDescription) {
+        metaDescription.content = originalDescription;
+      }
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
   }, []);
 
-  // **Floating Sacred Elements**
-  const floatingElements = [
-    // Sanskrit Om symbols
-    { icon: "ॐ", size: "text-4xl", x: "10%", y: "15%", duration: 20, delay: 0 },
-    { icon: "ॐ", size: "text-2xl", x: "85%", y: "25%", duration: 25, delay: 5 },
-    {
-      icon: "ॐ",
-      size: "text-3xl",
-      x: "20%",
-      y: "70%",
-      duration: 22,
-      delay: 10,
-    },
+  // Mouse tracking for interactive effects
+  const handleMouseMove = useCallback((e) => {
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (rect) {
+      setMousePosition({
+        x: (e.clientX - rect.left) / rect.width,
+        y: (e.clientY - rect.top) / rect.height,
+      });
+    }
+  }, []);
 
-    // Lotus symbols
-    { icon: "🪷", size: "text-3xl", x: "75%", y: "60%", duration: 18, delay: 2 },
-    { icon: "🪷", size: "text-2xl", x: "15%", y: "40%", duration: 24, delay: 8 },
-    { icon: "🪷", size: "text-xl", x: "90%", y: "80%", duration: 20, delay: 12 },
-
-    // Peacock feathers
+  const missionPillars = [
     {
-      icon: "🪶",
-      size: "text-2xl",
-      x: "65%",
-      y: "20%",
-      duration: 26,
-      delay: 4,
+      icon: "🕉️",
+      title: "Spiritual Heritage",
+      description: "Preserving ancient Krishna wisdom for modern souls",
+      gradient: "from-amber-400 to-orange-500",
     },
     {
-      icon: "🪶",
-      size: "text-xl",
-      x: "30%",
-      y: "85%",
-      duration: 19,
-      delay: 15,
+      icon: "🦚",
+      title: "Divine Connection",
+      description: "Creating sacred touchpoints in everyday life",
+      gradient: "from-cyan-400 to-blue-500",
     },
-
-    // Flutes
-    { icon: "🪈", size: "text-xl", x: "80%", y: "45%", duration: 23, delay: 6 },
     {
-      icon: "🪈",
-      size: "text-2xl",
-      x: "25%",
-      y: "25%",
-      duration: 21,
-      delay: 11,
+      icon: "🪔",
+      title: "Global Sangha",
+      description: "Uniting devotees across continents",
+      gradient: "from-purple-400 to-indigo-500",
     },
+    {
+      icon: "📿",
+      title: "Blessed Artifacts",
+      description: "Each product infused with divine energy",
+      gradient: "from-amber-400 to-yellow-500",
+    },
+  ];
 
-    // Sacred geometry (using Unicode symbols)
-    { icon: "◇", size: "text-lg", x: "45%", y: "15%", duration: 28, delay: 3 },
-    { icon: "◆", size: "text-xl", x: "55%", y: "75%", duration: 17, delay: 9 },
-    { icon: "○", size: "text-2xl", x: "5%", y: "55%", duration: 24, delay: 7 },
-    { icon: "◯", size: "text-lg", x: "95%", y: "35%", duration: 22, delay: 13 },
-
-    // Additional sacred symbols
-    { icon: "✦", size: "text-xl", x: "40%", y: "90%", duration: 25, delay: 1 },
-    { icon: "✧", size: "text-lg", x: "70%", y: "10%", duration: 20, delay: 14 },
-    { icon: "※", size: "text-xl", x: "35%", y: "60%", duration: 23, delay: 16 },
-    { icon: "⟐", size: "text-lg", x: "85%", y: "70%", duration: 27, delay: 18 },
+  const values = [
+    {
+      title: "Authenticity",
+      desc: "Every Krishnova product carries genuine spiritual energy",
+      icon: "🛡️",
+      color: "amber",
+    },
+    {
+      title: "Community",
+      desc: "Building bridges between devotees worldwide",
+      icon: "👥",
+      color: "cyan",
+    },
+    {
+      title: "Innovation",
+      desc: "Merging ancient wisdom with modern technology",
+      icon: "⚡",
+      color: "purple",
+    },
+    {
+      title: "Devotion",
+      desc: "Deepening spiritual practice through mindful experiences",
+      icon: "💜",
+      color: "blue",
+    },
   ];
 
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 overflow-hidden bg-transparent"
+      className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20"
       onMouseMove={handleMouseMove}
     >
-      {/* **Enhanced Background with Floating Elements** */}
-      <div className="absolute inset-0">
-        {/* Base gradient backgrounds */}
-        <div className="absolute inset-0 opacity-3">
-          <div
-            className="absolute top-20 left-20 w-96 h-96 rounded-full"
-            style={{
-              background: `radial-gradient(circle, ${colors.primary} 0%, transparent 70%)`,
-              filter: "blur(80px)",
-            }}
-          />
-          <div
-            className="absolute bottom-20 right-20 w-80 h-80 rounded-full"
-            style={{
-              background: `radial-gradient(circle, ${colors.secondary} 0%, transparent 70%)`,
-              filter: "blur(80px)",
-            }}
-          />
-        </div>
-
-        {/* **Floating Sacred Elements** */}
-        {floatingElements.map((element, index) => (
-          <motion.div
-            key={index}
-            className={`absolute ${element.size} pointer-events-none select-none`}
-            style={{
-              left: element.x,
-              top: element.y,
-              color: colors.primary,
-              opacity: 0.08,
-              filter: "blur(0.5px)",
-            }}
-            animate={{
-              y: [-20, 20, -20],
-              x: [-10, 10, -10],
-              rotate: [0, 360],
-              opacity: [0.05, 0.12, 0.05],
-            }}
-            transition={{
-              duration: element.duration,
-              delay: element.delay,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            {element.icon}
-          </motion.div>
-        ))}
-
-        {/* **Additional Geometric Patterns** */}
-        <div className="absolute inset-0 opacity-4">
-          {/* Sacred geometry lines */}
-          <motion.div
-            className="absolute top-1/4 left-1/4 w-32 h-32"
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          >
-            <div
-              className="w-full h-full border rounded-full"
-              style={{
-                borderColor: colors.accent,
-                borderWidth: "1px",
-                borderStyle: "dashed",
-              }}
-            />
-            <div
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border rounded-full"
-              style={{
-                borderColor: colors.secondary,
-                borderWidth: "1px",
-              }}
-            />
-          </motion.div>
-
-          <motion.div
-            className="absolute bottom-1/4 right-1/4 w-24 h-24"
-            animate={{ rotate: [360, 0] }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          >
-            <div
-              className="w-full h-full"
-              style={{
-                borderLeft: `1px solid ${colors.primary}`,
-                borderTop: `1px solid ${colors.primary}`,
-                transform: "rotate(45deg)",
-              }}
-            />
-            <div
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12"
-              style={{
-                borderRight: `1px solid ${colors.accent}`,
-                borderBottom: `1px solid ${colors.accent}`,
-                transform: "rotate(45deg)",
-              }}
-            />
-          </motion.div>
-        </div>
-
-        {/* **Mandala-inspired Elements** */}
-        <div className="absolute inset-0 opacity-6">
-          <motion.div
-            className="absolute top-10 right-10 w-20 h-20"
-            animate={{
-              rotate: [0, 360],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <div className="relative w-full h-full">
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-1 h-8 rounded-full"
-                  style={{
-                    backgroundColor: colors.primary,
-                    left: "50%",
-                    top: "50%",
-                    transformOrigin: "50% 100%",
-                    transform: `translate(-50%, -100%) rotate(${i * 45}deg)`,
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="absolute bottom-10 left-10 w-16 h-16"
-            animate={{
-              rotate: [360, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <div className="relative w-full h-full">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-0.5 h-6 rounded-full"
-                  style={{
-                    backgroundColor: colors.secondary,
-                    left: "50%",
-                    top: "50%",
-                    transformOrigin: "50% 100%",
-                    transform: `translate(-50%, -100%) rotate(${i * 60}deg)`,
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* **Particle-like Sacred Dots** */}
-        {[...Array(15)].map((_, index) => (
-          <motion.div
-            key={`particle-${index}`}
-            className="absolute w-1 h-1 rounded-full"
-            style={{
-              backgroundColor: colors.accent,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              opacity: 0.1,
-            }}
-            animate={{
-              y: [-30, 30, -30],
-              x: [-20, 20, -20],
-              opacity: [0.05, 0.15, 0.05],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 10 + Math.random() * 10,
-              delay: Math.random() * 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* **Enhanced Mouse Interaction** */}
+      {/* Animated Mandala Background - matching homepage */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-8"
+        className="absolute inset-0 opacity-20"
         style={{
-          background: `radial-gradient(400px circle at ${
-            mousePosition.x * 100
-          }% ${mousePosition.y * 100}%, 
-            ${colors.primary}12 0%, 
-            ${colors.secondary}08 40%, 
-            ${colors.accent}04 70%, 
-            transparent 80%)`,
+          backgroundImage:
+            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
+          animation: "float 30s linear infinite",
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        {/* **Clean Header** */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-16"
-        >
-          <div
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6 border bg-white/90 backdrop-blur-sm shadow-sm"
+      {/* Grid Pattern - matching homepage */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #fbbf24 1px, transparent 1px),
+            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
+
+      {/* Floating Sacred Elements */}
+      <div className="absolute inset-0">
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
             style={{
-              borderColor: colors.primary,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 15 + Math.random() * 10,
+              repeat: Infinity,
+              ease: "linear",
             }}
           >
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: colors.primary }}
-            >
-              <span className="text-white text-sm font-bold">॥</span>
-            </div>
-            <span className="font-semibold" style={{ color: colors.dark }}>
-              OUR MISSION
+            <div className="w-2 h-2 bg-amber-400/20 rounded-full blur-sm" />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Interactive Mouse Gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(600px circle at ${
+            mousePosition.x * 100
+          }% ${mousePosition.y * 100}%, 
+            rgba(251, 191, 36, 0.1) 0%, 
+            transparent 40%)`,
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-6">
+        {/* Header Section */}
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          {/* Sacred Badge - matching homepage style */}
+          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+            <span className="text-amber-100 font-medium tracking-wide text-sm">
+              कृष्णोवा का संकल्प
             </span>
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
           </div>
 
-          {/* **Clean Title** */}
-          <motion.h2
-            className="text-5xl md:text-7xl font-bold mb-6"
-            style={{ color: colors.dark }}
-          >
-            Our Sacred Mission
-          </motion.h2>
+          {/* Main Title with gradient */}
+          <h1 className="text-5xl lg:text-7xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+              Our Sacred Mission
+            </span>
+          </h1>
 
-          <div
-            className="w-24 h-1 mx-auto rounded-full"
-            style={{ backgroundColor: colors.primary }}
-          />
+          {/* Sanskrit Subtitle */}
+          <p className="text-lg text-amber-200/80 font-sanskrit mb-2">
+            सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः
+          </p>
+          <p className="text-sm text-blue-100/60">
+            May all beings be happy, may all be free from illness
+          </p>
+
+          {/* Decorative Divider */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="h-px w-24 bg-gradient-to-r from-transparent to-amber-400/50" />
+            <span className="text-amber-300 text-xl">🪔</span>
+            <div className="h-px w-24 bg-gradient-to-l from-transparent to-amber-400/50" />
+          </div>
+        </motion.header>
+
+        {/* Mission Statement Card - Glassmorphism style */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mb-20"
+        >
+          <div className="max-w-5xl mx-auto">
+            <div className="relative group">
+              {/* Glow Effect */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 to-orange-500/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition duration-1000" />
+
+              {/* Card Content */}
+              <article className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-12 md:p-16 border border-white/20 shadow-2xl hover:border-amber-400/30 transition-all duration-300">
+                <p className="text-2xl md:text-3xl leading-relaxed text-center text-blue-100">
+                  <span className="font-bold text-amber-300">Krishnova</span>{" "}
+                  bridges{" "}
+                  <span className="font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
+                    ancient Krishna wisdom
+                  </span>{" "}
+                  with modern innovation, creating a global spiritual ecosystem
+                  through{" "}
+                  <span className="font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                    blessed artifacts
+                  </span>{" "}
+                  that connect souls worldwide in divine consciousness.
+                </p>
+
+                {/* Decorative Corner Elements */}
+                <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-amber-400/30 rounded-tl-lg" />
+                <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-amber-400/30 rounded-tr-lg" />
+                <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-amber-400/30 rounded-bl-lg" />
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-amber-400/30 rounded-br-lg" />
+              </article>
+            </div>
+          </div>
         </motion.div>
 
-        {/* **Clean Mission Statement** */}
+        {/* Mission Pillars Grid */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-16"
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20"
         >
-          <div className="max-w-5xl mx-auto">
-            <div
-              className="rounded-3xl p-12 md:p-16 border shadow-lg bg-white/95 backdrop-blur-sm"
-              style={{
-                borderColor: colors.light,
-              }}
-            >
-              <p
-                className="text-2xl md:text-3xl leading-relaxed text-center"
-                style={{ color: colors.neutral }}
-              >
-                We bridge{" "}
-                <span className="font-bold" style={{ color: colors.primary }}>
-                  ancient Krishna wisdom
-                </span>{" "}
-                with modern technology, creating a global spiritual ecosystem
-                through blessed keychains and sacred offerings that{" "}
-                <span className="font-bold" style={{ color: colors.secondary }}>
-                  connect souls worldwide
-                </span>
-                .
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* **Clean Three Pillars** */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {[
-            {
-              title: "Sacred Connection",
-              description:
-                "Transform everyday moments into spiritual experiences through our blessed Krishna keychains that carry divine energy.",
-              icon: "🕉️",
-              color: colors.primary,
-            },
-            {
-              title: "Global Unity",
-              description:
-                "Unite devotees across continents through shared Krishna consciousness, creating bonds that transcend boundaries.",
-              icon: "🌍",
-              color: colors.secondary,
-            },
-            {
-              title: "Timeless Wisdom",
-              description:
-                "Preserve and share Krishna's profound teachings through authentic spiritual products crafted with devotion.",
-              icon: "📿",
-              color: colors.accent,
-            },
-          ].map((pillar, index) => (
+          {missionPillars.map((pillar, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
-              whileHover={{
-                y: -5,
-                boxShadow: `0 10px 30px ${colors.primary}20`,
-                transition: { duration: 0.2 },
-              }}
-              className="group"
+              transition={{ delay: 0.1 * index }}
+              whileHover={{ scale: 1.05, y: -10 }}
+              className="group relative"
             >
-              <div
-                className="rounded-2xl p-8 border shadow-sm h-full transition-all duration-300 bg-white/95 backdrop-blur-sm"
-                style={{
-                  borderColor: colors.light,
-                }}
-              >
-                <div className="text-5xl mb-6 text-center">{pillar.icon}</div>
+              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 h-full">
+                {/* Icon */}
+                <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                  {pillar.icon}
+                </div>
 
-                <h3
-                  className="text-xl font-bold mb-4 text-center"
-                  style={{ color: colors.dark }}
-                >
+                {/* Title */}
+                <h3 className="text-xl font-bold text-amber-300 mb-3">
                   {pillar.title}
                 </h3>
 
-                <p
-                  className="leading-relaxed text-center"
-                  style={{ color: colors.neutral }}
-                >
+                {/* Description */}
+                <p className="text-blue-100/80 text-sm leading-relaxed">
                   {pillar.description}
                 </p>
 
-                <div
-                  className="w-0 group-hover:w-12 h-1 rounded-full mx-auto mt-4 transition-all duration-300"
-                  style={{ backgroundColor: pillar.color }}
-                />
+                {/* Hover Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/5 to-amber-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
               </div>
             </motion.div>
           ))}
-        </div>
-
-        {/* **Clean Values Section** */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mb-16"
-        >
-          <div
-            className="rounded-3xl p-12 border shadow-lg bg-white/95 backdrop-blur-sm"
-            style={{
-              borderColor: colors.light,
-            }}
-          >
-            <h3
-              className="text-3xl font-bold text-center mb-8"
-              style={{ color: colors.dark }}
-            >
-              Our Core Values
-            </h3>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {[
-                {
-                  title: "Authenticity",
-                  desc: "Every product carries genuine spiritual energy",
-                  emoji: "✨",
-                  color: colors.primary,
-                },
-                {
-                  title: "Community",
-                  desc: "Building bridges between devotees worldwide",
-                  emoji: "🤝",
-                  color: colors.secondary,
-                },
-                {
-                  title: "Innovation",
-                  desc: "Merging ancient wisdom with modern technology",
-                  emoji: "🚀",
-                  color: colors.accent,
-                },
-                {
-                  title: "Devotion",
-                  desc: "Deepening spiritual practice through mindful experiences",
-                  emoji: "🙏",
-                  color: colors.success,
-                },
-              ].map((value, index) => (
-                <div key={index} className="flex items-start space-x-4">
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: `${value.color}15` }}
-                  >
-                    <span className="text-xl">{value.emoji}</span>
-                  </div>
-                  <div>
-                    <h4
-                      className="text-lg font-semibold mb-1"
-                      style={{ color: colors.dark }}
-                    >
-                      {value.title}
-                    </h4>
-                    <p style={{ color: colors.neutral }}>{value.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </motion.div>
 
-        {/* **Clean CTA Button** */}
+        {/* Core Values Section */}
+        <motion.section
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mb-20"
+        >
+          <div className="relative">
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-purple-400/10 to-amber-400/10 rounded-3xl blur-2xl" />
+
+            <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-12 border border-white/20 shadow-2xl">
+              <h2 className="text-3xl font-bold text-center mb-12">
+                <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                  Our Guiding Principles
+                </span>
+              </h2>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                {values.map((value, index) => (
+                  <motion.div
+                    key={index}
+                    whileHover={{ x: 8 }}
+                    className="flex items-start space-x-4 group cursor-pointer"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl">{value.icon}</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1 text-amber-300">
+                        {value.title}
+                      </h3>
+                      <p className="text-blue-100/80 text-sm">{value.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 1 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
           className="text-center"
         >
-          <Link to="/productpage" className="group relative inline-block">
+          <Link to="/productpage">
             <motion.button
-              whileHover={{
-                scale: 1.05,
-                boxShadow: `0 10px 30px ${colors.primary}30`,
-              }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="relative font-bold py-5 px-12 rounded-xl shadow-lg transition-all duration-300 border-2 text-white overflow-hidden"
-              style={{
-                background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`,
-                borderColor: colors.primary,
-              }}
+              className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
             >
-              {/* Clean shimmer effect */}
-              <span className="pointer-events-none absolute inset-0 -translate-x-[120%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent)] animate-shimmer" />
-
-              <span className="relative z-10 flex items-center gap-3">
-                <span>🛒 Start Your Sacred Journey</span>
-                <motion.span
-                  animate={{ x: [0, 8, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-xl"
-                >
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="relative z-10 text-indigo-900 font-bold tracking-wide flex items-center gap-2">
+                Begin Your Sacred Journey
+                <span className="group-hover:translate-x-1 transition-transform">
                   →
-                </motion.span>
+                </span>
               </span>
             </motion.button>
           </Link>
 
-          <p className="mt-4" style={{ color: colors.neutral }}>
-            Join thousands of devotees worldwide
+          <p className="mt-6 text-blue-100/80">
+            Join <span className="font-bold text-amber-300">10,000+</span>{" "}
+            devotees on the path to enlightenment
           </p>
+
+          {/* Trust Indicators */}
+          <div className="flex items-center justify-center gap-8 mt-8">
+            <div className="flex items-center gap-2">
+              <span className="text-amber-300">⭐</span>
+              <span className="text-sm text-blue-100/60">4.9/5 Rating</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyan-300">🛡️</span>
+              <span className="text-sm text-blue-100/60">Blessed Products</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-purple-300">🌍</span>
+              <span className="text-sm text-blue-100/60">
+                Worldwide Delivery
+              </span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bottom Decorative Quote */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 1, delay: 1 }}
+          className="text-center mt-20"
+        >
+          <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-sm">
+            <span>🪔</span>
+            <span className="italic font-sanskrit">
+              "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत" - Bhagavad Gita 4.7
+            </span>
+            <span>🪔</span>
+          </div>
         </motion.div>
       </div>
 
-      {/* **Add shimmer animation** */}
+      {/* Custom CSS for animations */}
       <style jsx>{`
-        @keyframes shimmer {
+        @keyframes float {
           0% {
-            transform: translateX(-120%) skewX(-20deg);
+            transform: translate(0, 0);
           }
           100% {
-            transform: translateX(120%) skewX(-20deg);
+            transform: translate(30px, 30px);
           }
-        }
-        .animate-shimmer {
-          animation: shimmer 2s linear infinite;
         }
       `}</style>
     </section>

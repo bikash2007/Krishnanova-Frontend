@@ -15,7 +15,7 @@ import logo from "../../../public/logo.png";
 
 const Footer = () => {
   const footerRef = useRef(null);
-  const [mouse, setMouse] = useState({ x: 50, y: 50 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -24,46 +24,27 @@ const Footer = () => {
   const { user } = useAuth();
   const baseUrl = useApi();
 
-  // **Minimal Dark Blue Color Palette**
-  const colors = {
-    primary: "#1e40af", // Royal Blue
-    secondary: "#2563eb", // Bright Blue
-    accent: "#3b82f6", // Light Blue
-    dark: "#1e3a8a", // Dark Blue
-    neutral: "#64748b", // Slate Gray
-    light: "#f8fafc", // Almost White
-    white: "#ffffff",
-    success: "#10b981", // Green accent
-    danger: "#ef4444", // Red for errors
-  };
-
-  // Clean title styles
-  const titleStyle = {
-    color: colors.dark,
-    fontWeight: "bold",
-  };
-
-  const highlightStyle = {
-    color: colors.primary,
-    fontWeight: "600",
-  };
-
   useEffect(() => {
     if (user?.email && !email) setEmail(user.email);
   }, [user, email]);
 
+  // Mouse tracking
   useEffect(() => {
-    const el = footerRef.current;
-    if (!el) return;
-    const onMove = (e) => {
-      const r = el.getBoundingClientRect();
-      setMouse({
-        x: ((e.clientX - r.left) / r.width) * 100,
-        y: ((e.clientY - r.top) / r.height) * 100,
-      });
+    const handleMouseMove = (e) => {
+      if (footerRef.current) {
+        const rect = footerRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        });
+      }
     };
-    el.addEventListener("mousemove", onMove, { passive: true });
-    return () => el.removeEventListener("mousemove", onMove);
+
+    const footer = footerRef.current;
+    if (footer) {
+      footer.addEventListener("mousemove", handleMouseMove);
+      return () => footer.removeEventListener("mousemove", handleMouseMove);
+    }
   }, []);
 
   const scrollToSection = (id) => {
@@ -75,15 +56,6 @@ const Footer = () => {
     if (!email?.trim() || !message?.trim()) {
       setEmailStatus("error");
       setStatusMessage("Please fill in both email and message fields.");
-      setTimeout(() => {
-        setEmailStatus(null);
-        setStatusMessage("");
-      }, 4000);
-      return;
-    }
-    if (message.trim().length < 10) {
-      setEmailStatus("error");
-      setStatusMessage("Message must be at least 10 characters long.");
       setTimeout(() => {
         setEmailStatus(null);
         setStatusMessage("");
@@ -111,7 +83,7 @@ const Footer = () => {
       const data = await res.json();
       if (res.ok && data.success) {
         setEmailStatus("success");
-        setStatusMessage(data.message);
+        setStatusMessage(data.message || "Message sent successfully!");
         setEmail("");
         setMessage("");
       } else {
@@ -144,112 +116,98 @@ const Footer = () => {
   return (
     <footer
       ref={footerRef}
-      className="relative py-20 overflow-hidden"
-      style={{ background: "transparent" }}
+      className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20"
     >
-      <div className="container max-w-7xl mx-auto px-6 md:px-8 relative">
-        {/* Clean Glass Panel */}
+      {/* Animated Mandala Background */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
+          animation: "float 30s linear infinite",
+        }}
+      />
+
+      {/* Grid Pattern */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #fbbf24 1px, transparent 1px),
+            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
+
+      {/* Mouse Glow Effect */}
+      <div
+        className="pointer-events-none absolute w-[600px] h-[600px] transition-transform duration-75 ease-out"
+        style={{
+          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%)`,
+          transform: `translate(${mousePosition.x - 300}px, ${
+            mousePosition.y - 300
+          }px)`,
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-6">
+        {/* Main Footer Card */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
-          className="relative rounded-3xl border shadow-lg p-10 md:p-12 overflow-hidden bg-white"
-          style={{
-            borderColor: colors.light,
-            boxShadow: `0 20px 40px ${colors.primary}10`,
-            background:
-              mouse.x || mouse.y
-                ? `
-                white,
-                radial-gradient(420px circle at ${mouse.x}% ${mouse.y}%,
-                  ${colors.primary}08 0%,
-                  ${colors.secondary}05 35%,
-                  transparent 70%)
-                `
-                : "white",
-          }}
+          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 shadow-2xl p-10 md:p-12"
         >
           {/* Header */}
-          <div className="text-center mb-12 relative z-10">
-            <div className="inline-flex items-center justify-center mb-3">
-              <img src={logo} alt="Krishnova" className="h-10 mr-3" />
-              <motion.h3
-                className="text-3xl md:text-4xl font-extrabold font-playfair"
-                style={titleStyle}
-              >
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center mb-4">
+              <img src={logo} alt="Krishnova" className="h-12 mr-3" />
+              <h3 className="text-4xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
                 Krishnova
-              </motion.h3>
+              </h3>
             </div>
-
-            <p
-              className="max-w-2xl mx-auto leading-relaxed"
-              style={{ color: colors.neutral }}
-            >
-              Where Ancient Wisdom Meets Modern Technology
+            <p className="text-blue-100/80 max-w-2xl mx-auto">
+              Where Ancient Krishna Wisdom Meets Modern Technology
             </p>
-            <p style={{ color: colors.neutral }}>
-              <span style={highlightStyle}>
-                Connecting Souls Through Divine Love
-              </span>
+            <p className="text-amber-300 font-semibold mt-2">
+              Connecting Souls Through Divine Love
             </p>
           </div>
 
-          {/* Grid */}
-          <div className="grid md:grid-cols-2 gap-10 mb-12 relative z-10">
-            {/* Info & Social */}
+          {/* Grid Content */}
+          <div className="grid md:grid-cols-2 gap-10 mb-12">
+            {/* Left Side - Info & Social */}
             <div className="space-y-8">
               <div>
-                <h4
-                  className="text-xl font-semibold mb-3"
-                  style={{ color: colors.primary }}
-                >
+                <h4 className="text-xl font-semibold text-amber-300 mb-3">
                   Sacred Digital Ecosystem
                 </h4>
-                <p style={{ color: colors.neutral }}>
+                <p className="text-blue-100/70">
                   Bridging spirituality and technology to create meaningful
-                  connections.
+                  connections with Lord Krishna.
                 </p>
-                <div
-                  className="flex items-center gap-2 mt-4"
-                  style={{ color: colors.neutral }}
-                >
+                <div className="flex items-center gap-2 mt-4 text-cyan-300">
                   <span>🕉️</span>
-                  <span>Est. 2024 • Built for spiritual seekers</span>
+                  <span>Est. 2024 • Built for Krishna devotees worldwide</span>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h5
-                  className="text-sm font-semibold uppercase tracking-wider"
-                  style={{ color: colors.neutral }}
-                >
-                  Connect with us
+                <h5 className="text-sm font-semibold uppercase tracking-wider text-amber-200/80">
+                  Connect with Krishnova
                 </h5>
                 <div className="space-y-3">
                   <a
                     href="mailto:hello@krishnova.com"
-                    className="flex items-center gap-3 transition-colors"
-                    style={{ color: colors.neutral }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.color = colors.primary)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.color = colors.neutral)
-                    }
+                    className="flex items-center gap-3 text-blue-100/70 hover:text-amber-300 transition-colors"
                   >
                     <span>📧</span> hello@krishnova.com
                   </a>
                   <a
                     href="tel:+15555474746"
-                    className="flex items-center gap-3 transition-colors"
-                    style={{ color: colors.neutral }}
-                    onMouseEnter={(e) =>
-                      (e.target.style.color = colors.primary)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.target.style.color = colors.neutral)
-                    }
+                    className="flex items-center gap-3 text-blue-100/70 hover:text-amber-300 transition-colors"
                   >
                     <span>📞</span> +1 (555) KRISHNA
                   </a>
@@ -257,121 +215,86 @@ const Footer = () => {
               </div>
 
               <div>
-                <h5
-                  className="text-sm font-semibold uppercase tracking-wider mb-3"
-                  style={{ color: colors.neutral }}
-                >
-                  Social
+                <h5 className="text-sm font-semibold uppercase tracking-wider text-amber-200/80 mb-4">
+                  Join Our Community
                 </h5>
                 <div className="flex gap-3">
                   {social.map((s) => {
                     const Icon = s.icon;
                     return (
-                      <a
+                      <motion.a
                         key={s.name}
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-full border bg-white flex items-center justify-center transition relative overflow-hidden"
-                        style={{
-                          borderColor: colors.light,
-                          color: colors.neutral,
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.color = colors.primary;
-                          e.target.style.borderColor = colors.primary;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.color = colors.neutral;
-                          e.target.style.borderColor = colors.light;
-                        }}
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="w-12 h-12 rounded-full backdrop-blur-md bg-white/10 border border-amber-400/30 flex items-center justify-center text-amber-300 hover:bg-amber-400/20 hover:border-amber-400/50 transition-all duration-300"
                       >
-                        {/* Blue shimmer on hover */}
-                        <motion.span
-                          className="absolute inset-0 pointer-events-none"
-                          initial={{ x: "-120%" }}
-                          whileHover={{ x: "120%" }}
-                          transition={{ duration: 0.8, ease: "easeOut" }}
-                          style={{
-                            background: `linear-gradient(90deg, transparent, ${colors.primary}25, transparent)`,
-                          }}
-                        />
-                        <Icon size={18} />
-                      </a>
+                        <Icon size={20} />
+                      </motion.a>
                     );
                   })}
                 </div>
               </div>
             </div>
 
-            {/* Form */}
+            {/* Right Side - Contact Form */}
             <div className="space-y-5">
-              <h4
-                className="text-xl font-semibold"
-                style={{ color: colors.primary }}
-              >
-                Send Us a Message
+              <h4 className="text-xl font-semibold text-amber-300">
+                Send Us a Divine Message
               </h4>
-              <p style={{ color: colors.neutral }}>
-                Questions about our sacred products or spiritual technology?
-                We'd love to hear from you.
+              <p className="text-blue-100/70">
+                Questions about our sacred products or spiritual journey? We'd
+                love to hear from you.
               </p>
 
+              {/* Status Message */}
               {emailStatus && (
-                <div
-                  className={`p-3 rounded-lg border flex items-start gap-2 ${
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-4 rounded-xl backdrop-blur-md border flex items-start gap-3 ${
                     emailStatus === "success"
-                      ? "border-green-200 bg-green-50"
-                      : "border-red-200 bg-red-50"
+                      ? "bg-green-400/10 border-green-400/30"
+                      : "bg-red-400/10 border-red-400/30"
                   }`}
                 >
                   {emailStatus === "success" ? (
-                    <FaCheckCircle
-                      className="mt-0.5"
-                      style={{ color: colors.success }}
-                    />
+                    <FaCheckCircle className="text-green-400 mt-0.5" />
                   ) : (
-                    <FaExclamationTriangle
-                      className="mt-0.5"
-                      style={{ color: colors.danger }}
-                    />
+                    <FaExclamationTriangle className="text-red-400 mt-0.5" />
                   )}
                   <div>
                     <p
-                      className="font-medium"
-                      style={{
-                        color:
-                          emailStatus === "success"
-                            ? colors.success
-                            : colors.danger,
-                      }}
+                      className={`font-medium ${
+                        emailStatus === "success"
+                          ? "text-green-400"
+                          : "text-red-400"
+                      }`}
                     >
-                      {emailStatus === "success" ? "Message sent" : "Error"}
+                      {emailStatus === "success" ? "Message sent!" : "Error"}
                     </p>
                     <p
-                      className="text-sm"
-                      style={{
-                        color:
-                          emailStatus === "success"
-                            ? colors.success
-                            : colors.danger,
-                      }}
+                      className={`text-sm ${
+                        emailStatus === "success"
+                          ? "text-green-300/80"
+                          : "text-red-300/80"
+                      }`}
                     >
                       {statusMessage}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               )}
 
+              {/* Form */}
               <div className="space-y-4">
                 <div>
-                  <label
-                    className="block text-xs font-medium mb-2"
-                    style={{ color: colors.neutral }}
-                  >
-                    Your Email{" "}
+                  <label className="block text-xs font-medium text-amber-200/80 mb-2">
+                    Your Email
                     {user && (
-                      <span style={{ color: colors.primary }}>
+                      <span className="text-cyan-300 ml-2">
                         (from your account)
                       </span>
                     )}
@@ -380,90 +303,44 @@ const Footer = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
+                    placeholder="devotee@example.com"
                     disabled={isLoading}
-                    className="w-full px-4 py-3 rounded-xl border bg-white transition disabled:opacity-60"
-                    style={{
-                      borderColor: colors.light,
-                      color: colors.dark,
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = colors.primary;
-                      e.target.style.boxShadow = `0 0 0 3px ${colors.primary}20`;
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = colors.light;
-                      e.target.style.boxShadow = "none";
-                    }}
+                    className="w-full px-4 py-3 rounded-xl backdrop-blur-md bg-white/10 border border-white/20 text-blue-100 placeholder-blue-100/40 focus:border-amber-400/50 focus:bg-white/15 transition-all duration-300 disabled:opacity-60"
                   />
                 </div>
+
                 <div>
-                  <label
-                    className="block text-xs font-medium mb-2"
-                    style={{ color: colors.neutral }}
-                  >
+                  <label className="block text-xs font-medium text-amber-200/80 mb-2">
                     Your Message
                   </label>
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={4}
-                    placeholder="Share your spiritual journey or ask any questions..."
+                    placeholder="Share your spiritual journey or ask about Krishnova..."
                     disabled={isLoading}
                     maxLength={1000}
-                    className="w-full px-4 py-3 rounded-xl border bg-white transition resize-none disabled:opacity-60"
-                    style={{
-                      borderColor: colors.light,
-                      color: colors.dark,
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = colors.primary;
-                      e.target.style.boxShadow = `0 0 0 3px ${colors.primary}20`;
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = colors.light;
-                      e.target.style.boxShadow = "none";
-                    }}
+                    className="w-full px-4 py-3 rounded-xl backdrop-blur-md bg-white/10 border border-white/20 text-blue-100 placeholder-blue-100/40 focus:border-amber-400/50 focus:bg-white/15 transition-all duration-300 resize-none disabled:opacity-60"
                   />
-                  <div
-                    className="text-right text-xs mt-1"
-                    style={{ color: colors.neutral }}
-                  >
+                  <div className="text-right text-xs mt-1 text-blue-100/50">
                     {message.length}/1000
                   </div>
                 </div>
 
-                {/* Clean blue send button */}
+                {/* Send Button */}
                 <motion.button
                   whileHover={!isLoading ? { scale: 1.02 } : {}}
                   whileTap={!isLoading ? { scale: 0.98 } : {}}
                   onClick={handleSendMessage}
                   disabled={isLoading}
-                  className="w-full px-6 py-3 rounded-xl font-semibold text-white shadow-sm transition relative overflow-hidden"
-                  style={{
-                    background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
-                    boxShadow: `0 4px 12px ${colors.primary}30`,
-                  }}
+                  className="group relative w-full px-6 py-3 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
                 >
-                  {/* shimmer */}
-                  <motion.span
-                    className="absolute inset-0 opacity-25"
-                    initial={{ x: "-120%" }}
-                    animate={{ x: ["-120%", "120%"] }}
-                    transition={{
-                      duration: 2.2,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                    style={{
-                      background:
-                        "linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent)",
-                    }}
-                  />
-                  <span className="relative inline-flex items-center gap-2">
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <span className="relative z-10 text-indigo-900 font-bold tracking-wide flex items-center justify-center gap-2">
                     {isLoading ? (
                       <>
-                        <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                        <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-indigo-900 border-t-transparent" />
                         Sending...
                       </>
                     ) : (
@@ -478,51 +355,63 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick actions */}
-          <div className="flex flex-wrap justify-center gap-3 mb-10 relative z-10">
+          {/* Quick Actions */}
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
             {[
               { label: "🛍️ Shop Sacred Items", id: "products" },
               { label: "📚 Wisdom Portal", id: "wisdom" },
               { label: "🤝 Join Community", id: "community" },
             ].map((cta) => (
-              <button
+              <motion.button
                 key={cta.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => scrollToSection(cta.id)}
-                className="px-5 py-2.5 rounded-xl border bg-white transition"
-                style={{
-                  borderColor: colors.light,
-                  color: colors.neutral,
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = colors.light;
-                  e.target.style.color = colors.primary;
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = colors.white;
-                  e.target.style.color = colors.neutral;
-                }}
+                className="px-5 py-2.5 rounded-full backdrop-blur-md bg-white/10 border border-amber-400/30 text-amber-200 hover:bg-amber-400/20 hover:border-amber-400/50 transition-all duration-300"
               >
                 {cta.label}
-              </button>
+              </motion.button>
             ))}
           </div>
 
-          {/* Bottom */}
-          <div
-            className="border-t pt-6 text-center text-sm relative z-10"
-            style={{
-              borderColor: colors.light,
-              color: colors.neutral,
-            }}
-          >
-            © 2024{" "}
-            <span style={{ color: colors.primary, fontWeight: "600" }}>
-              Krishnova
-            </span>{" "}
-            • Sacred Digital Ecosystem • 🕉️
+          {/* Bottom Section */}
+          <div className="border-t border-white/10 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="text-center md:text-left">
+                <p className="text-blue-100/60 text-sm">
+                  © 2024{" "}
+                  <span className="text-amber-300 font-semibold">
+                    Krishnova
+                  </span>{" "}
+                  • Sacred Digital Ecosystem
+                </p>
+              </div>
+
+              {/* Sanskrit Quote */}
+              <div className="flex items-center gap-2 text-amber-200/60 text-sm">
+                <span>🪔</span>
+                <span className="italic">
+                  "सर्वं कृष्णार्पणं अस्तु" - May everything be offered to
+                  Krishna
+                </span>
+                <span>🪔</span>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
+
+      {/* Custom CSS */}
+      <style jsx>{`
+        @keyframes float {
+          0% {
+            transform: translate(0, 0);
+          }
+          100% {
+            transform: translate(30px, 30px);
+          }
+        }
+      `}</style>
     </footer>
   );
 };

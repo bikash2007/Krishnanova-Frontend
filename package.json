@@ -21,6 +21,7 @@
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.6",
+    "gsap": "^3.13.0",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.536.0",
     "react": "^19.1.0",

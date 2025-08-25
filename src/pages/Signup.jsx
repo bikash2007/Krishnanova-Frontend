@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../Context/AuthContext";
-import axios from "axios";
 import Navigation from "../components/Navigation/Navigation";
 import {
   FaUser,
@@ -18,7 +17,7 @@ import {
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { signup, setUser } = useAuth();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -42,7 +41,6 @@ export default function Signup() {
   const handleFileChange = (file) => {
     if (!file) return;
 
-    // Validate file type
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       setErrors({
@@ -52,7 +50,6 @@ export default function Signup() {
       return;
     }
 
-    // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       setErrors({ ...errors, avatar: "File size must be less than 5MB" });
       return;
@@ -61,14 +58,6 @@ export default function Signup() {
     setProfilePhoto(file);
     setPreviewUrl(URL.createObjectURL(file));
     setErrors({ ...errors, avatar: "" });
-
-    // Debug: Log file details
-    console.log("File selected:", {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: file.lastModified,
-    });
   };
 
   const handleFileInputChange = (e) => {
@@ -133,7 +122,6 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Update your handleSubmit function in the signup component
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -146,17 +134,10 @@ export default function Signup() {
       data.append("email", formData.email.trim());
       data.append("password", formData.password);
 
-      // Append file if selected
       if (profilePhoto) {
         data.append("avatar", profilePhoto);
-        console.log("Appending avatar file:", {
-          name: profilePhoto.name,
-          type: profilePhoto.type,
-          size: profilePhoto.size,
-        });
       }
 
-      // Use the updated signup function from AuthContext
       const result = await signup(data);
 
       if (result.success) {
@@ -197,7 +178,7 @@ export default function Signup() {
       case 2:
         return "bg-yellow-500";
       case 3:
-        return "bg-blue-500";
+        return "bg-cyan-400";
       case 4:
         return "bg-green-500";
       default:
@@ -222,33 +203,61 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#01abfd] via-[#eec6d3]/20 to-[#2e8b57]/10 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center p-4 md:p-8">
       <Navigation />
+
+      {/* Background Patterns */}
+      <div
+        className="fixed inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
+        }}
+      />
+      <div
+        className="fixed inset-0 opacity-10 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #fbbf24 1px, transparent 1px),
+            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-lg mx-auto mt-20"
+        className="w-full max-w-lg mx-auto mt-20 relative z-10"
       >
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+        <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-[#01abfd] to-[#2e8b57] p-8 text-center">
+          <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-8 text-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="text-5xl mb-4"
+            >
+              🕉️
+            </motion.div>
             <motion.h2
-              className="text-3xl font-bold text-white mb-2"
+              className="text-3xl font-bold text-indigo-900 mb-2"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              Create Your Account
-            </motion.h2>
-            <motion.p
-              className="text-white/90"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              Join our community today
+              Join Krishnova
+            </motion.h2>
+            <motion.p
+              className="text-indigo-800"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              Begin your spiritual journey today
             </motion.p>
           </div>
 
@@ -258,16 +267,16 @@ export default function Signup() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl flex items-center gap-2"
+                className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl flex items-center gap-2"
               >
-                <FaTimes className="text-red-500" />
+                <FaTimes />
                 {errors.general}
               </motion.div>
             )}
 
             {/* Profile Photo Upload */}
             <div className="space-y-2">
-              <label className="block font-semibold text-gray-700 mb-3">
+              <label className="block font-semibold text-amber-300 mb-3">
                 Profile Photo (Optional)
               </label>
 
@@ -278,22 +287,19 @@ export default function Signup() {
                     <img
                       src={previewUrl}
                       alt="Profile Preview"
-                      className="w-24 h-24 rounded-full object-cover border-4 border-[#01abfd]/20 shadow-lg transition-transform duration-300 group-hover:scale-105"
+                      className="w-24 h-24 rounded-full object-cover border-4 border-amber-400/30 shadow-lg"
                     />
                     <button
                       type="button"
                       onClick={removePhoto}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors shadow-lg"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
                     >
                       <FaTimes />
                     </button>
-                    <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <FaCamera className="text-white text-lg" />
-                    </div>
                   </div>
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#01abfd]/20 to-[#2e8b57]/20 flex items-center justify-center border-2 border-dashed border-[#01abfd]/30 hover:border-[#01abfd] transition-colors duration-300">
-                    <FaCamera className="text-[#01abfd]/50 text-2xl" />
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 flex items-center justify-center border-2 border-dashed border-amber-400/30">
+                    <FaCamera className="text-amber-400/50 text-2xl" />
                   </div>
                 )}
 
@@ -301,8 +307,8 @@ export default function Signup() {
                 <div
                   className={`w-full border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 cursor-pointer ${
                     dragActive
-                      ? "border-[#01abfd] bg-[#01abfd]/5 scale-105"
-                      : "border-gray-300 hover:border-[#01abfd] hover:bg-[#01abfd]/5"
+                      ? "border-amber-400 bg-amber-400/10"
+                      : "border-white/20 hover:border-amber-400/50 hover:bg-white/5"
                   }`}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -312,20 +318,15 @@ export default function Signup() {
                     document.getElementById("avatar-input").click()
                   }
                 >
-                  <motion.div
-                    animate={dragActive ? { scale: 1.1 } : { scale: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <FaUpload className="mx-auto text-2xl text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600 mb-1 font-medium">
-                      {dragActive
-                        ? "Drop your photo here!"
-                        : "Drag & drop your photo here, or click to browse"}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      JPEG, PNG, WebP up to 5MB
-                    </p>
-                  </motion.div>
+                  <FaUpload className="mx-auto text-2xl text-amber-400/50 mb-2" />
+                  <p className="text-sm text-blue-100/80 mb-1">
+                    {dragActive
+                      ? "Drop your photo here!"
+                      : "Click or drag to upload"}
+                  </p>
+                  <p className="text-xs text-blue-100/50">
+                    JPEG, PNG, WebP up to 5MB
+                  </p>
                 </div>
 
                 <input
@@ -341,7 +342,7 @@ export default function Signup() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm flex items-center gap-2 bg-red-50 p-2 rounded-lg"
+                  className="text-red-400 text-sm flex items-center gap-2"
                 >
                   <FaTimes className="text-xs" />
                   {errors.avatar}
@@ -349,23 +350,20 @@ export default function Signup() {
               )}
             </div>
 
-            {/* Form fields remain the same as in the previous response */}
             {/* Full Name */}
             <div className="space-y-2">
-              <label className="block font-semibold text-gray-700">
+              <label className="block font-semibold text-amber-300">
                 Full Name *
               </label>
               <div className="relative">
-                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-400/50" />
                 <input
                   name="name"
                   type="text"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#01abfd] focus:border-transparent transition-all duration-300 ${
-                    errors.name
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-gray-400"
+                  className={`w-full pl-10 pr-4 py-3 backdrop-blur-md bg-white/10 border rounded-xl text-blue-100 placeholder-blue-100/40 focus:border-amber-400/50 focus:bg-white/15 transition-all ${
+                    errors.name ? "border-red-500/50" : "border-white/20"
                   }`}
                   placeholder="Enter your full name"
                 />
@@ -374,7 +372,7 @@ export default function Signup() {
                 <motion.div
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm flex items-center gap-1"
+                  className="text-red-400 text-sm flex items-center gap-1"
                 >
                   <FaTimes className="text-xs" />
                   {errors.name}
@@ -384,11 +382,11 @@ export default function Signup() {
 
             {/* Username */}
             <div className="space-y-2">
-              <label className="block font-semibold text-gray-700">
+              <label className="block font-semibold text-amber-300">
                 Username *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 font-mono">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-400/50 font-mono">
                   @
                 </span>
                 <input
@@ -396,10 +394,8 @@ export default function Signup() {
                   type="text"
                   value={formData.username}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#01abfd] focus:border-transparent transition-all duration-300 ${
-                    errors.username
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-gray-400"
+                  className={`w-full pl-10 pr-4 py-3 backdrop-blur-md bg-white/10 border rounded-xl text-blue-100 placeholder-blue-100/40 focus:border-amber-400/50 focus:bg-white/15 transition-all ${
+                    errors.username ? "border-red-500/50" : "border-white/20"
                   }`}
                   placeholder="Choose a username"
                 />
@@ -408,7 +404,7 @@ export default function Signup() {
                 <motion.div
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm flex items-center gap-1"
+                  className="text-red-400 text-sm flex items-center gap-1"
                 >
                   <FaTimes className="text-xs" />
                   {errors.username}
@@ -418,20 +414,18 @@ export default function Signup() {
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="block font-semibold text-gray-700">
+              <label className="block font-semibold text-amber-300">
                 Email Address *
               </label>
               <div className="relative">
-                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-400/50" />
                 <input
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#01abfd] focus:border-transparent transition-all duration-300 ${
-                    errors.email
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-gray-400"
+                  className={`w-full pl-10 pr-4 py-3 backdrop-blur-md bg-white/10 border rounded-xl text-blue-100 placeholder-blue-100/40 focus:border-amber-400/50 focus:bg-white/15 transition-all ${
+                    errors.email ? "border-red-500/50" : "border-white/20"
                   }`}
                   placeholder="Enter your email"
                 />
@@ -440,7 +434,7 @@ export default function Signup() {
                 <motion.div
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm flex items-center gap-1"
+                  className="text-red-400 text-sm flex items-center gap-1"
                 >
                   <FaTimes className="text-xs" />
                   {errors.email}
@@ -450,52 +444,50 @@ export default function Signup() {
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="block font-semibold text-gray-700">
+              <label className="block font-semibold text-amber-300">
                 Password *
               </label>
               <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-400/50" />
                 <input
                   name="password"
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#01abfd] focus:border-transparent transition-all duration-300 ${
-                    errors.password
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-gray-400"
+                  className={`w-full pl-10 pr-12 py-3 backdrop-blur-md bg-white/10 border rounded-xl text-blue-100 placeholder-blue-100/40 focus:border-amber-400/50 focus:bg-white/15 transition-all ${
+                    errors.password ? "border-red-500/50" : "border-white/20"
                   }`}
                   placeholder="Create a password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-amber-400/50 hover:text-amber-400"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
 
-              {/* Password Strength Indicator */}
+              {/* Password Strength */}
               {formData.password && (
                 <div className="space-y-2">
                   <div className="flex gap-1">
                     {[1, 2, 3, 4].map((level) => (
                       <div
                         key={level}
-                        className={`h-2 flex-1 rounded-full transition-all duration-300 ${
+                        className={`h-2 flex-1 rounded-full transition-all ${
                           passwordStrength(formData.password) >= level
                             ? getPasswordStrengthColor(
                                 passwordStrength(formData.password)
                               )
-                            : "bg-gray-200"
+                            : "bg-white/10"
                         }`}
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-blue-100/60">
                     Password strength:{" "}
-                    <span className="font-medium">
+                    <span className="font-medium text-amber-300">
                       {getPasswordStrengthText(
                         passwordStrength(formData.password)
                       )}
@@ -508,7 +500,7 @@ export default function Signup() {
                 <motion.div
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm flex items-center gap-1"
+                  className="text-red-400 text-sm flex items-center gap-1"
                 >
                   <FaTimes className="text-xs" />
                   {errors.password}
@@ -518,38 +510,37 @@ export default function Signup() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <label className="block font-semibold text-gray-700">
+              <label className="block font-semibold text-amber-300">
                 Confirm Password *
               </label>
               <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-amber-400/50" />
                 <input
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-[#01abfd] focus:border-transparent transition-all duration-300 ${
+                  className={`w-full pl-10 pr-12 py-3 backdrop-blur-md bg-white/10 border rounded-xl text-blue-100 placeholder-blue-100/40 focus:border-amber-400/50 focus:bg-white/15 transition-all ${
                     errors.confirmPassword
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-gray-400"
+                      ? "border-red-500/50"
+                      : "border-white/20"
                   }`}
                   placeholder="Confirm your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-amber-400/50 hover:text-amber-400"
                 >
                   {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
 
-                {/* Password Match Indicator */}
                 {formData.confirmPassword && (
                   <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
                     {formData.password === formData.confirmPassword ? (
-                      <FaCheck className="text-green-500 text-sm" />
+                      <FaCheck className="text-green-400 text-sm" />
                     ) : (
-                      <FaTimes className="text-red-500 text-sm" />
+                      <FaTimes className="text-red-400 text-sm" />
                     )}
                   </div>
                 )}
@@ -558,7 +549,7 @@ export default function Signup() {
                 <motion.div
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm flex items-center gap-1"
+                  className="text-red-400 text-sm flex items-center gap-1"
                 >
                   <FaTimes className="text-xs" />
                   {errors.confirmPassword}
@@ -570,40 +561,50 @@ export default function Signup() {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#01abfd] to-[#2e8b57] text-white py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+              className="group relative w-full px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
-              {/* Button shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 group-hover:animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-              <span className="relative z-10">
+              <span className="relative z-10 text-indigo-900 font-bold text-lg flex items-center justify-center">
                 {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-indigo-900/30 border-t-indigo-900 rounded-full animate-spin" />
                     Creating Account...
                   </div>
                 ) : (
-                  "Create Account"
+                  "Join Krishnova"
                 )}
               </span>
             </motion.button>
 
             {/* Sign In Link */}
             <motion.p
-              className="text-center text-gray-600"
+              className="text-center text-blue-100/80"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              Already have an account?{" "}
+              Already a devotee?{" "}
               <Link
                 to="/login"
-                className="text-[#01abfd] hover:text-[#2e8b57] font-semibold transition-colors duration-300 hover:underline"
+                className="text-amber-300 hover:text-amber-200 font-semibold transition-colors hover:underline"
               >
                 Sign In
               </Link>
             </motion.p>
+
+            {/* Sacred Quote */}
+            <div className="text-center pt-4 border-t border-white/10">
+              <p className="text-amber-200/60 text-sm italic">
+                "सर्वधर्मान्परित्यज्य मामेकं शरणं व्रज"
+              </p>
+              <p className="text-blue-100/50 text-xs mt-1">
+                Surrender unto Me - Bhagavad Gita 18.66
+              </p>
+            </div>
           </form>
         </div>
       </motion.div>

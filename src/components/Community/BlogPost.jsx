@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom"; // Added useParams import
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TextPlugin } from "gsap/TextPlugin";
 import { useApi } from "../../Context/baseUrl";
 import { useAuth } from "../../Context/AuthContext";
 import Navigation from "../Navigation/Navigation";
@@ -31,26 +34,30 @@ import {
   FaAward,
   FaThumbsUp,
   FaRegThumbsUp,
-  FaSun, // Replace FaSparkles
+  FaSun,
 } from "react-icons/fa";
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 const API = import.meta.env.VITE_API_URL;
 
-// Floating Particles Component
+// Floating Particles Component - Krishna Themed
 const FloatingParticles = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(15)].map((_, i) => (
+      {[...Array(20)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-30"
+          className="absolute w-1 h-1 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full opacity-40"
           animate={{
-            x: [0, Math.random() * 50 - 25],
-            y: [0, Math.random() * 50 - 25],
+            x: [0, Math.random() * 100 - 50],
+            y: [0, Math.random() * 100 - 50],
             scale: [1, Math.random() * 0.5 + 0.5, 1],
+            opacity: [0.4, 0.8, 0.4],
           }}
           transition={{
-            duration: Math.random() * 8 + 8,
+            duration: Math.random() * 10 + 10,
             repeat: Infinity,
             repeatType: "reverse",
           }}
@@ -60,11 +67,33 @@ const FloatingParticles = () => {
           }}
         />
       ))}
+      {/* Krishna Elements */}
+      {["🦚", "🪈", "🪔", "📿"].map((emoji, i) => (
+        <motion.div
+          key={`emoji-${i}`}
+          className="absolute text-2xl opacity-20"
+          animate={{
+            y: [0, -30, 0],
+            rotate: [0, 360],
+          }}
+          transition={{
+            duration: 15 + i * 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          style={{
+            left: `${20 + i * 20}%`,
+            top: `${10 + i * 15}%`,
+          }}
+        >
+          {emoji}
+        </motion.div>
+      ))}
     </div>
   );
 };
 
-// Enhanced Avatar Component
+// Enhanced Avatar Component - Krishna Themed
 const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
   const getAvatarUrl = () => {
     if (!user?.avatar) return "/user-avatar.png";
@@ -78,7 +107,7 @@ const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
         whileHover={{ scale: 1.1, rotate: artistic ? 5 : 0 }}
         className={`${
           artistic
-            ? "p-1 bg-gradient-to-tr from-pink-400 via-purple-500 to-blue-500 rounded-full"
+            ? "p-1 bg-gradient-to-tr from-amber-400 via-yellow-500 to-orange-500 rounded-full"
             : ""
         }`}
       >
@@ -87,7 +116,7 @@ const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
           alt={user?.name || "User"}
           className={`${size} rounded-full object-cover border-4 ${
             artistic
-              ? "border-white shadow-2xl ring-4 ring-purple-200/50"
+              ? "border-white shadow-2xl ring-4 ring-amber-200/50"
               : "border-white/50 shadow-lg"
           }`}
           onError={(e) => {
@@ -99,16 +128,16 @@ const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-2 -right-2 w-8 h-8 text-yellow-400"
+          className="absolute -top-2 -right-2 w-8 h-8 text-amber-400"
         >
-          <FaSun />
+          ✦
         </motion.div>
       )}
     </div>
   );
 };
 
-// User Badge Component
+// User Badge Component - Krishna Themed
 const UserBadge = ({ user, size = "md" }) => {
   const sizeClasses = {
     sm: "px-2 py-1 text-xs",
@@ -131,7 +160,7 @@ const UserBadge = ({ user, size = "md" }) => {
         className={`flex items-center space-x-2 bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 text-white font-bold rounded-full shadow-lg ${sizeClasses[size]}`}
       >
         <FaCrown size={size === "sm" ? 10 : size === "md" ? 12 : 14} />
-        <span>ADMIN</span>
+        <span>DIVINE ADMIN</span>
       </motion.div>
     );
   }
@@ -139,7 +168,7 @@ const UserBadge = ({ user, size = "md" }) => {
   return (
     <motion.div
       whileHover={{ scale: 1.1 }}
-      className={`flex items-center space-x-2 bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 text-white font-bold rounded-full shadow-lg ${sizeClasses[size]}`}
+      className={`flex items-center space-x-2 bg-gradient-to-r from-purple-500 via-blue-600 to-cyan-500 text-white font-bold rounded-full shadow-lg ${sizeClasses[size]}`}
     >
       <FaPray size={size === "sm" ? 10 : size === "md" ? 12 : 14} />
       <span>DEVOTEE</span>
@@ -147,7 +176,7 @@ const UserBadge = ({ user, size = "md" }) => {
   );
 };
 
-// Comment Component
+// Comment Component - Krishna Themed
 const CommentItem = ({
   comment,
   baseUrl,
@@ -166,6 +195,23 @@ const CommentItem = ({
     user && comment.likes?.includes(user._id)
   );
   const [likesCount, setLikesCount] = useState(comment.likes?.length || 0);
+  const commentRef = useRef(null);
+
+  useEffect(() => {
+    if (commentRef.current) {
+      gsap.fromTo(
+        commentRef.current,
+        { opacity: 0, y: 20, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          ease: "power3.out",
+        }
+      );
+    }
+  }, []);
 
   const formatTimeAgo = (date) => {
     const now = new Date();
@@ -190,6 +236,19 @@ const CommentItem = ({
     if (result) {
       setIsLiked(result.liked);
       setLikesCount(result.likes);
+
+      // GSAP heart animation
+      gsap.fromTo(
+        ".like-heart",
+        { scale: 1 },
+        {
+          scale: 1.5,
+          duration: 0.3,
+          ease: "back.out(2)",
+          yoyo: true,
+          repeat: 1,
+        }
+      );
     }
   };
 
@@ -200,15 +259,16 @@ const CommentItem = ({
   };
 
   const isOwner = user && comment.author._id === user._id;
-  const canReply = level < 2; // Limit reply depth
+  const canReply = level < 2;
 
   return (
     <motion.div
+      ref={commentRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className={`${level > 0 ? "ml-8 mt-4" : "mb-6"}`}
     >
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30 p-4">
+      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 p-4">
         {/* Comment Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-3">
@@ -220,12 +280,12 @@ const CommentItem = ({
             />
             <div>
               <div className="flex items-center space-x-2">
-                <h5 className="font-semibold text-gray-900 text-sm">
+                <h5 className="font-semibold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-sm">
                   {comment.author?.name}
                 </h5>
                 <UserBadge user={comment.author} size="sm" />
               </div>
-              <span className="text-gray-500 text-xs">
+              <span className="text-blue-100/60 text-xs">
                 {formatTimeAgo(comment.createdAt)}
               </span>
             </div>
@@ -235,13 +295,13 @@ const CommentItem = ({
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setIsEditing(true)}
-                className="text-gray-400 hover:text-blue-500 transition-colors duration-200"
+                className="text-amber-200/50 hover:text-amber-300 transition-colors duration-200"
               >
                 <FaEdit size={12} />
               </button>
               <button
                 onClick={() => onDelete(comment._id)}
-                className="text-gray-400 hover:text-red-500 transition-colors duration-200"
+                className="text-amber-200/50 hover:text-red-400 transition-colors duration-200"
               >
                 <FaTrash size={12} />
               </button>
@@ -256,29 +316,31 @@ const CommentItem = ({
               <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                className="w-full p-3 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none"
                 rows="3"
               />
               <div className="flex items-center space-x-2">
-                <button
+                <motion.button
                   onClick={handleEdit}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200"
+                  className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-lg font-medium hover:from-amber-500 hover:to-orange-600 transition-all duration-200"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   Save
-                </button>
+                </motion.button>
                 <button
                   onClick={() => {
                     setIsEditing(false);
                     setEditContent(comment.content);
                   }}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors duration-200"
+                  className="px-4 py-2 bg-white/10 text-amber-200 rounded-lg font-medium hover:bg-white/20 transition-all duration-200"
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <p className="text-gray-700 text-sm leading-relaxed">
+            <p className="text-blue-100/80 text-sm leading-relaxed">
               {comment.content}
             </p>
           )}
@@ -291,8 +353,10 @@ const CommentItem = ({
               whileTap={{ scale: 0.9 }}
               onClick={handleLike}
               disabled={!user}
-              className={`flex items-center space-x-1 text-sm transition-colors duration-200 ${
-                isLiked ? "text-red-500" : "text-gray-500 hover:text-red-500"
+              className={`like-heart flex items-center space-x-1 text-sm transition-colors duration-200 ${
+                isLiked
+                  ? "text-amber-400"
+                  : "text-amber-200/50 hover:text-amber-300"
               } disabled:opacity-50`}
             >
               {isLiked ? <FaThumbsUp size={14} /> : <FaRegThumbsUp size={14} />}
@@ -302,7 +366,7 @@ const CommentItem = ({
             {canReply && user && (
               <button
                 onClick={() => setShowReplyForm(!showReplyForm)}
-                className="flex items-center space-x-1 text-sm text-gray-500 hover:text-blue-500 transition-colors duration-200"
+                className="flex items-center space-x-1 text-sm text-cyan-300/50 hover:text-cyan-300 transition-colors duration-200"
               >
                 <FaReply size={12} />
                 <span>Reply</span>
@@ -316,7 +380,7 @@ const CommentItem = ({
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            className="mt-4 pt-4 border-t border-gray-200"
+            className="mt-4 pt-4 border-t border-amber-400/20"
           >
             <div className="flex space-x-3">
               <Avatar
@@ -329,25 +393,27 @@ const CommentItem = ({
                 <textarea
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
-                  placeholder="Write a reply..."
-                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                  placeholder="Share your divine thoughts..."
+                  className="w-full p-3 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none"
                   rows="2"
                 />
                 <div className="flex items-center justify-end space-x-2 mt-2">
                   <button
                     onClick={() => setShowReplyForm(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+                    className="px-4 py-2 text-amber-200/60 hover:text-amber-200 font-medium"
                   >
                     Cancel
                   </button>
-                  <button
+                  <motion.button
                     onClick={handleReply}
                     disabled={!replyContent.trim()}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center space-x-2"
+                    className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-lg font-medium hover:from-amber-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <FaPaperPlane size={12} />
                     <span>Reply</span>
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </div>
@@ -377,10 +443,21 @@ const CommentItem = ({
   );
 };
 
-// Comment Form Component
+// Comment Form Component - Krishna Themed
 const CommentForm = ({ user, baseUrl, onSubmit }) => {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    if (formRef.current && user) {
+      gsap.fromTo(
+        formRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+      );
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -394,15 +471,15 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
 
   if (!user) {
     return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30 p-6 text-center">
-        <p className="text-gray-600 mb-4">
-          Please log in to join the discussion
+      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 p-6 text-center">
+        <p className="text-blue-100/80 mb-4">
+          Please log in to join the divine discussion
         </p>
         <Link
           to="/login"
-          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200"
+          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-semibold hover:from-amber-500 hover:to-orange-600 transition-all duration-200 shadow-xl"
         >
-          <span>Sign In</span>
+          <span>Sign In to Comment</span>
         </Link>
       </div>
     );
@@ -410,10 +487,11 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
 
   return (
     <motion.form
+      ref={formRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit}
-      className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30 p-6"
+      className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 p-6"
     >
       <div className="flex space-x-4">
         <Avatar
@@ -426,18 +504,20 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Share your thoughts on this spiritual wisdom..."
-            className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+            placeholder="Share your divine wisdom..."
+            className="w-full p-4 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none"
             rows="4"
           />
           <div className="flex items-center justify-between mt-4">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-amber-200/60">
               {content.length}/500 characters
             </span>
-            <button
+            <motion.button
               type="submit"
               disabled={!content.trim() || isSubmitting}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full font-semibold hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2"
+              className="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-semibold hover:from-amber-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2 shadow-xl"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               {isSubmitting ? (
                 <motion.div
@@ -449,7 +529,7 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
                 <FaPaperPlane size={14} />
               )}
               <span>{isSubmitting ? "Posting..." : "Post Comment"}</span>
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
@@ -457,8 +537,32 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
   );
 };
 
-// Related Posts Component
+// Related Posts Component - Krishna Themed
 const RelatedPost = ({ post, baseUrl, index }) => {
+  const postRef = useRef(null);
+
+  useEffect(() => {
+    if (postRef.current) {
+      gsap.fromTo(
+        postRef.current,
+        { opacity: 0, x: 50, scale: 0.9 },
+        {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          duration: 0.6,
+          delay: index * 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: postRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }
+  }, [index]);
+
   const formatTimeAgo = (date) => {
     const now = new Date();
     const postDate = new Date(date);
@@ -472,14 +576,12 @@ const RelatedPost = ({ post, baseUrl, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.1 }}
+      ref={postRef}
       whileHover={{ scale: 1.02, y: -5 }}
       className="group"
     >
       <Link to={`/blog/${post._id}`}>
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30 overflow-hidden hover:shadow-xl transition-all duration-300">
+        <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden">
           {post.image && (
             <div className="relative overflow-hidden h-32">
               <img
@@ -503,27 +605,29 @@ const RelatedPost = ({ post, baseUrl, index }) => {
                 baseUrl={baseUrl}
                 artistic={false}
               />
-              <span className="text-xs text-gray-600">{post.author?.name}</span>
-              <span className="text-xs text-gray-400">•</span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-amber-200/60">
+                {post.author?.name}
+              </span>
+              <span className="text-xs text-blue-100/40">•</span>
+              <span className="text-xs text-blue-100/40">
                 {formatTimeAgo(post.createdAt)}
               </span>
             </div>
 
-            <h4 className="font-bold text-gray-900 text-sm mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-200">
+            <h4 className="font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-sm mb-2 line-clamp-2 group-hover:text-amber-300 transition-colors duration-200">
               {post.title}
             </h4>
 
-            <p className="text-gray-600 text-xs line-clamp-2">
+            <p className="text-blue-100/60 text-xs line-clamp-2">
               {post.content.substring(0, 80)}...
             </p>
 
             <div className="flex items-center justify-between mt-3">
-              <div className="flex items-center space-x-1 text-red-500">
+              <div className="flex items-center space-x-1 text-amber-400">
                 <FaHeart size={10} />
                 <span className="text-xs">{post.likes?.length || 0}</span>
               </div>
-              <span className="text-xs text-blue-600 font-medium">
+              <span className="text-xs text-cyan-300 font-medium">
                 Read more →
               </span>
             </div>
@@ -535,7 +639,7 @@ const RelatedPost = ({ post, baseUrl, index }) => {
 };
 
 const BlogPost = () => {
-  const { id } = useParams(); // Now properly imported
+  const { id } = useParams();
   const navigate = useNavigate();
   const baseUrl = useApi();
   const { user } = useAuth();
@@ -547,6 +651,188 @@ const BlogPost = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
+
+  // Refs for GSAP
+  const mainRef = useRef(null);
+  const heroRef = useRef(null);
+  const contentRef = useRef(null);
+  const statsRef = useRef(null);
+
+  // SEO Implementation
+  useEffect(() => {
+    if (post) {
+      document.title = `${post.title} | Krishnova Community Blog`;
+
+      const metaDescription = document.querySelector(
+        'meta[name="description"]'
+      );
+      const description = `${post.content.substring(
+        0,
+        150
+      )}... Read more spiritual wisdom from the Krishnova community.`;
+
+      if (metaDescription) {
+        metaDescription.content = description;
+      } else {
+        const meta = document.createElement("meta");
+        meta.name = "description";
+        meta.content = description;
+        document.head.appendChild(meta);
+      }
+
+      // Open Graph tags
+      const ogTags = [
+        { property: "og:title", content: `${post.title} | Krishnova` },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: window.location.href },
+        {
+          property: "og:image",
+          content: post.image?.startsWith("http")
+            ? post.image
+            : baseUrl + post.image,
+        },
+        { property: "article:author", content: post.author?.name },
+        { property: "article:published_time", content: post.createdAt },
+      ];
+
+      ogTags.forEach((tag) => {
+        let element = document.querySelector(
+          `meta[property="${tag.property}"]`
+        );
+        if (!element) {
+          element = document.createElement("meta");
+          element.setAttribute("property", tag.property);
+          document.head.appendChild(element);
+        }
+        element.content = tag.content;
+      });
+
+      // Structured data
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: description,
+        image: post.image?.startsWith("http")
+          ? post.image
+          : baseUrl + post.image,
+        datePublished: post.createdAt,
+        dateModified: post.updatedAt || post.createdAt,
+        author: {
+          "@type": "Person",
+          name: post.author?.name,
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Krishnova",
+          logo: {
+            "@type": "ImageObject",
+            url: `${window.location.origin}/logo.png`,
+          },
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": window.location.href,
+        },
+      };
+
+      let script = document.querySelector('script[type="application/ld+json"]');
+      if (!script) {
+        script = document.createElement("script");
+        script.type = "application/ld+json";
+        document.head.appendChild(script);
+      }
+      script.text = JSON.stringify(structuredData);
+    }
+
+    return () => {
+      document.title = "Krishnova - Authentic Krishna Spiritual Products";
+    };
+  }, [post, baseUrl]);
+
+  // GSAP Animations
+  useEffect(() => {
+    if (!loading && post && mainRef.current) {
+      // Clear existing ScrollTriggers
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      const ctx = gsap.context(() => {
+        // Hero parallax
+        gsap.to(".hero-bg-pattern", {
+          yPercent: -30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+
+        // Title animation
+        gsap.fromTo(
+          ".post-title",
+          { opacity: 0, y: 50, scale: 0.9 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1,
+            ease: "power3.out",
+          }
+        );
+
+        // Content fade in
+        gsap.fromTo(
+          ".post-content",
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: 0.3,
+            ease: "power3.out",
+          }
+        );
+
+        // Stats counter animation
+        if (statsRef.current) {
+          gsap.fromTo(
+            ".stat-item",
+            { scale: 0, rotation: -180 },
+            {
+              scale: 1,
+              rotation: 0,
+              duration: 0.6,
+              stagger: 0.1,
+              ease: "back.out(1.7)",
+            }
+          );
+        }
+
+        // Floating elements
+        gsap.to(".floating-element", {
+          y: -20,
+          duration: 2,
+          ease: "power1.inOut",
+          repeat: -1,
+          yoyo: true,
+          stagger: 0.2,
+        });
+      }, mainRef);
+
+      return () => {
+        ctx.revert();
+        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      };
+    }
+  }, [loading, post]);
+
+  // Smooth scroll to top
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     fetchPost();
@@ -616,6 +902,19 @@ const BlogPost = () => {
 
       setIsLiked(!isLiked);
       setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+
+      // GSAP like animation
+      gsap.fromTo(
+        ".like-button",
+        { scale: 1 },
+        {
+          scale: 1.2,
+          duration: 0.3,
+          ease: "back.out(2)",
+          yoyo: true,
+          repeat: 1,
+        }
+      );
     } catch (error) {
       console.error("Error liking post:", error);
     }
@@ -632,7 +931,27 @@ const BlogPost = () => {
         .catch(() => {});
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert("Post link copied to clipboard!");
+
+      // Show toast notification
+      gsap.fromTo(
+        ".share-toast",
+        { opacity: 0, y: 50, scale: 0.8 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+          onComplete: () => {
+            gsap.to(".share-toast", {
+              opacity: 0,
+              y: -50,
+              delay: 2,
+              duration: 0.5,
+            });
+          },
+        }
+      );
     }
   };
 
@@ -731,13 +1050,13 @@ const BlogPost = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50/60 via-purple-50/40 to-pink-50/60">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
         <Navigation />
         <div className="flex items-center justify-center min-h-screen">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full"
+            className="w-16 h-16 border-4 border-amber-400 border-t-transparent rounded-full"
           />
         </div>
       </div>
@@ -746,16 +1065,16 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50/60 via-purple-50/40 to-pink-50/60">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
         <Navigation />
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="text-2xl font-bold text-amber-200 mb-4">
               Post not found
             </h2>
             <Link
               to="/communityblog"
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-cyan-300 hover:text-cyan-400 font-medium"
             >
               ← Back to Community
             </Link>
@@ -766,11 +1085,35 @@ const BlogPost = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50/60 via-purple-50/40 to-pink-50/60">
+    <div
+      ref={mainRef}
+      className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900"
+    >
       <Navigation />
 
       {/* Floating Particles */}
       <FloatingParticles />
+
+      {/* Background Patterns */}
+      <div className="hero-bg-pattern fixed inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+            backgroundSize: "30px 30px",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `
+            linear-gradient(to right, #fbbf24 1px, transparent 1px),
+            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)`,
+            backgroundSize: "50px 50px",
+          }}
+        />
+      </div>
 
       {/* Dynamic Background Elements */}
       <motion.div
@@ -780,7 +1123,7 @@ const BlogPost = () => {
           opacity: [0.1, 0.3, 0.1],
         }}
         transition={{ duration: 20, repeat: Infinity }}
-        className="fixed top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-3xl -z-10"
+        className="fixed top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-full blur-3xl -z-10"
       />
 
       <div className="container max-w-4xl mx-auto px-6 pt-24 pb-16 relative z-10">
@@ -792,44 +1135,37 @@ const BlogPost = () => {
         >
           <Link
             to="/communityblog"
-            className="inline-flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition-colors duration-200 group"
+            className="inline-flex items-center space-x-2 text-amber-200 hover:text-amber-300 transition-colors duration-200 group"
           >
             <motion.div whileHover={{ x: -5 }} transition={{ duration: 0.2 }}>
               <FaArrowLeft />
             </motion.div>
-            <span className="font-medium">Back to Community</span>
+            <span className="font-medium">Back to Divine Community</span>
           </Link>
         </motion.div>
 
         {/* Main Post Card */}
         <motion.article
+          ref={heroRef}
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="relative mb-12"
         >
           {/* Artistic Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-white/70 to-white/50 backdrop-blur-xl rounded-3xl"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-pink-500/10 rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/5 to-white/5 backdrop-blur-xl rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-yellow-500/10 rounded-3xl"></div>
 
           {/* Floating Decorative Elements */}
-          <motion.div
-            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-4 -right-4 w-8 h-8 text-pink-400 opacity-60"
-          >
-            <FaGem />
+          <motion.div className="floating-element absolute -top-4 -right-4 w-8 h-8 text-amber-400 opacity-60">
+            🦚
           </motion.div>
 
-          <motion.div
-            animate={{ rotate: -360, y: [0, -10, 0] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-4 -left-4 w-6 h-6 text-blue-400 opacity-40"
-          >
-            <FaFeatherAlt />
+          <motion.div className="floating-element absolute -bottom-4 -left-4 w-6 h-6 text-cyan-400 opacity-40">
+            🪈
           </motion.div>
 
-          <div className="relative border border-white/40 rounded-3xl shadow-2xl backdrop-blur-sm overflow-hidden">
+          <div className="relative border border-white/20 rounded-3xl shadow-2xl backdrop-blur-sm overflow-hidden hover:border-amber-400/50 transition-all duration-300">
             {/* Post Header */}
             <div className="p-8 pb-6">
               <div className="flex items-center justify-between mb-6">
@@ -842,12 +1178,12 @@ const BlogPost = () => {
                   />
                   <div>
                     <div className="flex items-center space-x-3 mb-2">
-                      <h4 className="font-bold text-gray-900 text-lg">
-                        {post.author?.name || "Anonymous Devotee"}
+                      <h4 className="font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-lg">
+                        {post.author?.name || "Divine Devotee"}
                       </h4>
                       <UserBadge user={post.author} size="md" />
                     </div>
-                    <div className="flex items-center space-x-3 text-gray-500 text-sm">
+                    <div className="flex items-center space-x-3 text-blue-100/60 text-sm">
                       <FaCalendarAlt size={12} />
                       <span>{formatTimeAgo(post.createdAt)}</span>
                       <FaDotCircle size={4} />
@@ -865,54 +1201,63 @@ const BlogPost = () => {
                       rotate: [0, 5, -5, 0],
                     }}
                     transition={{ duration: 3, repeat: Infinity }}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 text-white text-sm font-bold rounded-full shadow-lg"
+                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-500 text-white text-sm font-bold rounded-full shadow-lg"
                   >
                     <FaSun size={12} />
-                    <span>TRENDING</span>
+                    <span>DIVINE TRENDING</span>
                   </motion.div>
                 )}
               </div>
 
-              {/* Post Title */}
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
+              {/* Sacred Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight"
+                transition={{ delay: 0.3 }}
+                className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-6"
               >
+                <span className="text-amber-300 animate-pulse text-lg">✦</span>
+                <span className="text-amber-100 font-medium tracking-wide text-sm">
+                  कृष्णं वन्दे जगद्गुरुम्
+                </span>
+                <span className="text-amber-300 animate-pulse text-lg">✦</span>
+              </motion.div>
+
+              {/* Post Title */}
+              <motion.h1 className="post-title text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6 leading-tight">
                 {post.title}
               </motion.h1>
 
               {/* Engagement Stats */}
-              <div className="flex items-center space-x-6 mb-6">
-                <div className="flex items-center space-x-2">
+              <div ref={statsRef} className="flex items-center space-x-6 mb-6">
+                <div className="stat-item flex items-center space-x-2">
                   <div className="flex -space-x-1">
                     {[...Array(3)].map((_, i) => (
                       <div
                         key={i}
                         className={`w-6 h-6 rounded-full border-2 border-white shadow-lg ${
                           i === 0
-                            ? "bg-gradient-to-r from-red-400 to-pink-500"
+                            ? "bg-gradient-to-r from-amber-400 to-orange-500"
                             : i === 1
-                            ? "bg-gradient-to-r from-blue-400 to-purple-500"
-                            : "bg-gradient-to-r from-green-400 to-teal-500"
+                            ? "bg-gradient-to-r from-purple-400 to-blue-500"
+                            : "bg-gradient-to-r from-cyan-400 to-teal-500"
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="text-sm font-semibold text-gray-700">
-                    {likesCount} likes
+                  <span className="text-sm font-semibold text-amber-200">
+                    {likesCount} divine likes
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-1 text-gray-500">
+                <div className="stat-item flex items-center space-x-1 text-cyan-300">
                   <FaEye size={14} />
                   <span className="text-sm">
                     {Math.floor(Math.random() * 200) + 50} views
                   </span>
                 </div>
 
-                <div className="flex items-center space-x-1 text-gray-500">
+                <div className="stat-item flex items-center space-x-1 text-purple-300">
                   <FaComment size={14} />
                   <span className="text-sm">{comments.length} comments</span>
                 </div>
@@ -941,15 +1286,10 @@ const BlogPost = () => {
             )}
 
             {/* Post Content */}
-            <div className="px-8 pb-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="relative"
-              >
-                <FaQuoteLeft className="absolute -top-4 -left-4 text-blue-200/50 text-3xl" />
-                <div className="text-gray-700 text-lg leading-relaxed pl-8 pr-4">
+            <div ref={contentRef} className="px-8 pb-8">
+              <motion.div className="post-content relative">
+                <FaQuoteLeft className="absolute -top-4 -left-4 text-amber-200/30 text-3xl" />
+                <div className="text-blue-100/80 text-lg leading-relaxed pl-8 pr-4">
                   <p className="whitespace-pre-wrap font-light">
                     {post.content}
                   </p>
@@ -961,16 +1301,16 @@ const BlogPost = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200/50"
+                className="flex items-center justify-between mt-8 pt-6 border-t border-amber-400/20"
               >
                 <div className="flex items-center space-x-4">
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={handleLike}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                    className={`like-button flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
                       isLiked
-                        ? "text-red-500 bg-red-50 hover:bg-red-100"
-                        : "text-gray-600 hover:text-red-500 hover:bg-red-50"
+                        ? "text-amber-400 bg-amber-400/20 hover:bg-amber-400/30"
+                        : "text-amber-200/60 hover:text-amber-300 hover:bg-amber-400/10"
                     }`}
                   >
                     <motion.div
@@ -986,14 +1326,14 @@ const BlogPost = () => {
                     <span className="font-semibold">{likesCount}</span>
                   </motion.button>
 
-                  <button className="flex items-center space-x-2 px-4 py-2 rounded-full text-gray-600 hover:text-blue-500 hover:bg-blue-50 transition-all duration-300">
+                  <button className="flex items-center space-x-2 px-4 py-2 rounded-full text-cyan-300/60 hover:text-cyan-300 hover:bg-cyan-400/10 transition-all duration-300">
                     <FaComment size={18} />
                     <span className="font-semibold">{comments.length}</span>
                   </button>
 
                   <button
                     onClick={handleShare}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-full text-gray-600 hover:text-green-500 hover:bg-green-50 transition-all duration-300"
+                    className="flex items-center space-x-2 px-4 py-2 rounded-full text-purple-300/60 hover:text-purple-300 hover:bg-purple-400/10 transition-all duration-300"
                   >
                     <FaShareAlt size={16} />
                     <span className="font-semibold">Share</span>
@@ -1004,8 +1344,8 @@ const BlogPost = () => {
                   onClick={() => setIsBookmarked(!isBookmarked)}
                   className={`p-3 rounded-full transition-all duration-300 ${
                     isBookmarked
-                      ? "text-yellow-500 bg-yellow-50 hover:bg-yellow-100"
-                      : "text-gray-600 hover:text-yellow-500 hover:bg-yellow-50"
+                      ? "text-yellow-400 bg-yellow-400/20 hover:bg-yellow-400/30"
+                      : "text-yellow-300/60 hover:text-yellow-300 hover:bg-yellow-400/10"
                   }`}
                 >
                   {isBookmarked ? (
@@ -1019,6 +1359,11 @@ const BlogPost = () => {
           </div>
         </motion.article>
 
+        {/* Share Toast Notification */}
+        <motion.div className="share-toast fixed bottom-8 right-8 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 pointer-events-none">
+          Link copied to clipboard! 🎉
+        </motion.div>
+
         {/* Comments Section */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -1030,12 +1375,12 @@ const BlogPost = () => {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center"
+              className="w-8 h-8 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center"
             >
               <FaComment className="text-white text-sm" />
             </motion.div>
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Community Discussion ({comments.length})
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+              Divine Discussion ({comments.length})
             </h3>
           </div>
 
@@ -1055,17 +1400,17 @@ const BlogPost = () => {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"
+                  className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full mx-auto"
                 />
               </div>
             ) : comments.length === 0 ? (
-              <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30">
-                <FaComment className="text-gray-400 text-4xl mx-auto mb-4" />
-                <h4 className="text-xl font-bold text-gray-700 mb-2">
+              <div className="text-center py-12 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-lg border border-white/20">
+                <FaComment className="text-amber-200/40 text-4xl mx-auto mb-4" />
+                <h4 className="text-xl font-bold text-amber-200 mb-2">
                   No comments yet
                 </h4>
-                <p className="text-gray-500">
-                  Be the first to share your thoughts on this wisdom!
+                <p className="text-blue-100/60">
+                  Be the first to share your divine thoughts!
                 </p>
               </div>
             ) : (
@@ -1099,12 +1444,12 @@ const BlogPost = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center"
+                className="w-8 h-8 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full flex items-center justify-center"
               >
                 <FaInfinity className="text-white text-sm" />
               </motion.div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Continue Your Journey
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-300 via-cyan-300 to-purple-300 bg-clip-text text-transparent">
+                Continue Your Spiritual Journey
               </h3>
             </div>
 
@@ -1130,10 +1475,10 @@ const BlogPost = () => {
         >
           <Link
             to="/communityblog"
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group"
+            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group"
           >
             <FaUserFriends className="mr-3 text-xl" />
-            <span>Explore More Wisdom</span>
+            <span>Explore More Divine Wisdom</span>
             <motion.div
               animate={{ x: [0, 5, 0] }}
               transition={{ duration: 2, repeat: Infinity }}

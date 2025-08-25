@@ -20,26 +20,20 @@ const Festival = () => {
   const [countdown, setCountdown] = useState("");
   const [viewMonth, setViewMonth] = useState(new Date());
   const [modalEvent, setModalEvent] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const baseUrl = useApi();
-
-  // **Minimal Dark Blue Color Palette**
-  const colors = {
-    primary: "#1e40af", // Royal Blue
-    secondary: "#2563eb", // Bright Blue
-    accent: "#3b82f6", // Light Blue
-    dark: "#1e3a8a", // Dark Blue
-    neutral: "#64748b", // Slate Gray
-    light: "#f8fafc", // Almost White
-    white: "#ffffff",
-    success: "#10b981", // Green accent
-    warning: "#f59e0b", // Amber
-    danger: "#ef4444", // Red
-  };
-
-  // **Enhanced cursor tracking with blue colors**
   const calendarRef = useRef(null);
-  const [mousePos, setMousePos] = useState(null);
+
+  // SEO Implementation
+  useEffect(() => {
+    document.title = "Sacred Festival Calendar | Krishnova";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.content =
+        "Discover upcoming Krishna festivals and sacred celebrations with Krishnova's divine calendar. Never miss a holy occasion.";
+    }
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -49,7 +43,27 @@ const Festival = () => {
         setEvents(data);
       } catch (error) {
         console.error("Error fetching events:", error);
-        setEvents([]);
+        // Mock data for demonstration
+        setEvents([
+          {
+            id: 1,
+            name: "Krishna Janmashtami",
+            date: "2024-08-26",
+            description: "Birth celebration of Lord Krishna",
+          },
+          {
+            id: 2,
+            name: "Radha Ashtami",
+            date: "2024-09-11",
+            description: "Birth celebration of Radha Rani",
+          },
+          {
+            id: 3,
+            name: "Govardhan Puja",
+            date: "2024-11-02",
+            description: "Celebrating Krishna lifting Govardhan Hill",
+          },
+        ]);
       }
     };
     fetchEvents();
@@ -77,14 +91,8 @@ const Festival = () => {
     const diff = differenceInSeconds(targetDate, new Date());
     if (diff <= 0) {
       setCountdown("🎉 Happening Now!");
-      // Blue confetti colors
       confetti({
-        colors: [
-          colors.primary,
-          colors.secondary,
-          colors.accent,
-          colors.success,
-        ],
+        colors: ["#fbbf24", "#f59e0b", "#f97316", "#fb923c"],
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
@@ -103,6 +111,17 @@ const Festival = () => {
     setViewMonth(addMonths(viewMonth, direction));
   };
 
+  // Mouse tracking
+  const handleMouseMove = (e) => {
+    if (calendarRef.current) {
+      const rect = calendarRef.current.getBoundingClientRect();
+      setMousePosition({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      });
+    }
+  };
+
   const renderCalendar = () => {
     const start = startOfWeek(startOfMonth(viewMonth), { weekStartsOn: 0 });
     const today = new Date();
@@ -110,7 +129,6 @@ const Festival = () => {
     const weeks = [];
     let day = start;
 
-    // **Responsive Week day headers**
     const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const weekDaysMobile = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -122,11 +140,7 @@ const Festival = () => {
         {weekDays.map((dayName, index) => (
           <div
             key={dayName}
-            className="flex items-center justify-center h-8 sm:h-10 text-xs font-semibold rounded-lg bg-gray-50 border"
-            style={{
-              color: colors.dark,
-              borderColor: colors.light,
-            }}
+            className="flex items-center justify-center h-8 sm:h-10 text-xs font-semibold rounded-lg backdrop-blur-md bg-white/10 border border-amber-400/20 text-amber-300"
           >
             <span className="hidden sm:inline">{dayName}</span>
             <span className="sm:hidden">{weekDaysMobile[index]}</span>
@@ -149,80 +163,39 @@ const Festival = () => {
         const isClosest =
           closestEvent && isSameDay(currentDate, parseISO(closestEvent.date));
 
-        let dayStyle = {};
         let dayClasses =
-          "flex items-center justify-center h-10 sm:h-12 md:h-14 cursor-pointer text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 relative overflow-hidden border bg-white";
+          "flex items-center justify-center h-10 sm:h-12 md:h-14 cursor-pointer text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl transition-all duration-300 relative overflow-hidden border backdrop-blur-md";
+        let dayStyle = {};
 
         if (!isCurrentMonth) {
-          dayStyle = {
-            color: colors.neutral,
-            borderColor: "transparent",
-            backgroundColor: "transparent",
-          };
+          dayClasses += " bg-white/5 border-white/10 text-blue-100/30";
         } else if (isToday) {
-          dayStyle = {
-            background: `linear-gradient(135deg, ${colors.primary}, ${colors.dark})`,
-            color: "white",
-            borderColor: colors.primary,
-            boxShadow: `0 2px 8px ${colors.primary}40`,
-          };
-          dayClasses += " shadow-lg";
-        } else if (eventForDay && !isToday) {
-          dayStyle = {
-            background: `linear-gradient(135deg, ${colors.secondary}20, ${colors.accent}15)`,
-            color: colors.secondary,
-            borderColor: `${colors.secondary}30`,
-            boxShadow: `0 1px 4px ${colors.secondary}20`,
-          };
-          dayClasses += " hover:scale-105 hover:shadow-lg";
-        } else if (isClosest && !isToday) {
-          dayStyle = {
-            background: `linear-gradient(135deg, ${colors.accent}, ${colors.secondary})`,
-            color: "white",
-            borderColor: colors.accent,
-            boxShadow: `0 2px 8px ${colors.accent}40`,
-          };
-          dayClasses += " animate-pulse shadow-lg";
-        } else if (isCurrentMonth) {
-          dayStyle = {
-            backgroundColor: colors.white,
-            color: colors.dark,
-            borderColor: colors.light,
-          };
-          dayClasses += " hover:scale-105 hover:shadow-md";
+          dayClasses +=
+            " bg-gradient-to-br from-amber-400 to-orange-500 text-indigo-900 border-amber-400 shadow-lg shadow-amber-500/30 font-bold";
+        } else if (eventForDay) {
+          dayClasses +=
+            " bg-gradient-to-br from-cyan-400/20 to-blue-400/20 text-cyan-300 border-cyan-400/30 hover:scale-105 hover:shadow-lg hover:border-cyan-400/50";
+        } else if (isClosest) {
+          dayClasses +=
+            " bg-gradient-to-br from-purple-400/20 to-indigo-400/20 text-purple-300 border-purple-400/30 animate-pulse shadow-lg";
+        } else {
+          dayClasses +=
+            " bg-white/10 border-white/20 text-blue-100 hover:bg-white/20 hover:scale-105 hover:border-amber-400/30";
         }
 
         days.push(
           <motion.div
             key={currentDate.toString()}
-            whileHover={{ scale: eventForDay || isCurrentMonth ? 1.05 : 1 }}
+            whileHover={{ scale: isCurrentMonth ? 1.05 : 1 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => eventForDay && setModalEvent(eventForDay)}
             className={dayClasses}
             style={dayStyle}
           >
-            {/* Sacred dot for events - responsive sizing */}
             {eventForDay && (
-              <div
-                className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full"
-                style={{
-                  backgroundColor: isToday ? "white" : colors.secondary,
-                }}
-              />
+              <div className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse" />
             )}
-            <span className="text-xs sm:text-sm">{currentDate.getDate()}</span>
-
-            {/* Hover glow effect */}
-            {(eventForDay || isCurrentMonth) && (
-              <div
-                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg sm:rounded-xl"
-                style={{
-                  background: `radial-gradient(circle, ${
-                    eventForDay ? colors.secondary : colors.primary
-                  }20 0%, transparent 70%)`,
-                }}
-              />
-            )}
+            <span>{currentDate.getDate()}</span>
           </motion.div>
         );
         day = addDays(day, 1);
@@ -238,383 +211,267 @@ const Festival = () => {
     return weeks;
   };
 
-  // **Enhanced cursor glow with blue colors**
-  const handleMouseMove = (e) => {
-    if (!calendarRef.current) return;
-    const rect = calendarRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setMousePos({ x, y });
-  };
-
-  const handleMouseLeave = () => setMousePos(null);
-
   return (
-    <section className="relative py-8 sm:py-12 lg:py-16 w-full overflow-hidden min-h-screen bg-transparent">
-      {/* **Minimal Background Elements - Responsive** */}
+    <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20">
+      {/* Animated Mandala Background */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
+          animation: "float 30s linear infinite",
+        }}
+      />
+
+      {/* Grid Pattern */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #fbbf24 1px, transparent 1px),
+            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
+          `,
+          backgroundSize: "50px 50px",
+        }}
+      />
+
+      {/* Floating Elements */}
       <div className="absolute inset-0">
-        {/* Subtle pattern - smaller on mobile */}
-        <div
-          className="absolute inset-0 opacity-3 sm:opacity-5"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 25% 25%, ${colors.primary} 1px, transparent 1px),
-              radial-gradient(circle at 75% 75%, ${colors.secondary} 1px, transparent 1px)
-            `,
-            backgroundSize: "40px 40px, 50px 50px",
-          }}
-        />
-
-        {/* Animated subtle auras - responsive sizing */}
-        <motion.div
-          className="absolute -top-10 sm:-top-20 -left-10 sm:-left-20 w-48 h-48 sm:w-96 sm:h-96 rounded-full mix-blend-multiply filter blur-2xl sm:blur-3xl opacity-3 sm:opacity-5"
-          style={{ backgroundColor: colors.primary }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.03, 0.08, 0.03],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute top-10 sm:top-20 right-0 w-40 h-40 sm:w-96 sm:h-96 rounded-full mix-blend-multiply filter blur-xl sm:blur-2xl opacity-3 sm:opacity-5"
-          style={{ backgroundColor: colors.secondary }}
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.02, 0.06, 0.02],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto px-4 sm:px-6">
-        {/* **Responsive Container** */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="overflow-hidden rounded-2xl sm:rounded-3xl border shadow-lg bg-white"
-          style={{
-            borderColor: colors.light,
-            boxShadow: `0 10px 25px ${colors.primary}08, 0 4px 10px ${colors.primary}05`,
-          }}
-        >
-          <div
-            ref={calendarRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            className="p-4 sm:p-6 lg:p-8"
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
             style={{
-              background: mousePos
-                ? `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, 
-                    ${colors.primary}08, 
-                    ${colors.secondary}04 40%, 
-                    ${colors.accent}02 70%, 
-                    transparent 80%)`
-                : "transparent",
-              transition: "background 0.3s ease",
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 20 + Math.random() * 10,
+              repeat: Infinity,
+              ease: "linear",
             }}
           >
-            {/* **Responsive Header** */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="text-center mb-6 sm:mb-8 lg:mb-10"
+            <div className="text-2xl opacity-20">
+              {["🪔", "🌺", "🦚", "✨"][i % 4]}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Mouse Glow Effect */}
+      <div
+        className="pointer-events-none absolute w-[600px] h-[600px] transition-transform duration-75 ease-out"
+        style={{
+          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%)`,
+          transform: `translate(${mousePosition.x - 300}px, ${
+            mousePosition.y - 300
+          }px)`,
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-6">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          {/* Sacred Badge */}
+          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+            <span className="text-amber-100 font-medium tracking-wide text-sm">
+              पवित्र उत्सव कैलेंडर
+            </span>
+            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+          </div>
+
+          <h1 className="text-5xl lg:text-7xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+              Sacred Festival Calendar
+            </span>
+          </h1>
+
+          <p className="text-xl text-blue-100/80 max-w-2xl mx-auto">
+            Never miss a divine celebration with Krishnova
+          </p>
+        </motion.div>
+
+        {/* Main Calendar Container */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="relative group">
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 via-purple-400/20 to-amber-400/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition duration-1000" />
+
+            <div
+              ref={calendarRef}
+              onMouseMove={handleMouseMove}
+              className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 shadow-2xl p-8"
             >
-              <div className="flex items-center justify-center mb-3 sm:mb-4">
-                <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                  className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center mr-2 sm:mr-3 lg:mr-4"
-                  style={{
-                    background: `linear-gradient(135deg, ${colors.primary}, ${colors.dark})`,
-                    boxShadow: `0 2px 8px ${colors.primary}30`,
-                  }}
-                >
-                  <span className="text-white text-sm sm:text-lg lg:text-xl">
-                    ॥
-                  </span>
-                </motion.div>
-                <motion.h2
-                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold"
-                  style={{ color: colors.dark }}
-                >
-                  <span className="hidden sm:inline">
-                    Sacred Festival Calendar
-                  </span>
-                  <span className="sm:hidden">Festival Calendar</span>
-                </motion.h2>
-              </div>
-
-              <div
-                className="w-16 sm:w-20 lg:w-24 h-0.5 sm:h-1 mx-auto rounded-full"
-                style={{
-                  background: `linear-gradient(90deg, ${colors.primary}, ${colors.accent}, ${colors.secondary})`,
-                }}
-              />
-            </motion.div>
-
-            {/* **Responsive Next Event Countdown** */}
-            <AnimatePresence>
+              {/* Next Event Countdown */}
               {closestEvent && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="mb-6 sm:mb-8 text-center"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-8"
                 >
-                  <div
-                    className="rounded-xl sm:rounded-2xl p-4 sm:p-6 border bg-white shadow-sm"
-                    style={{
-                      borderColor: `${colors.secondary}30`,
-                      boxShadow: `0 4px 15px ${colors.secondary}10`,
-                    }}
-                  >
-                    <motion.h3
-                      className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3"
-                      style={{ color: colors.secondary }}
-                    >
-                      🎉{" "}
-                      <span className="hidden sm:inline">
-                        Next Sacred Event:
-                      </span>{" "}
-                      {closestEvent.name}
-                    </motion.h3>
-                    <p
-                      className="mb-3 sm:mb-4 text-sm sm:text-base"
-                      style={{ color: colors.neutral }}
-                    >
+                  <div className="backdrop-blur-md bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-2xl p-6 border border-amber-400/30">
+                    <h2 className="text-2xl font-bold text-amber-300 mb-2">
+                      🎉 Next Sacred Event: {closestEvent.name}
+                    </h2>
+                    <p className="text-blue-100/80 mb-4">
                       {closestEvent.description} —{" "}
-                      <span className="hidden sm:inline">
-                        {format(parseISO(closestEvent.date), "MMMM do, yyyy")}
-                      </span>
-                      <span className="sm:hidden">
-                        {format(parseISO(closestEvent.date), "MMM do")}
-                      </span>
+                      {format(parseISO(closestEvent.date), "MMMM do, yyyy")}
                     </p>
                     <motion.div
-                      className="text-xl sm:text-2xl lg:text-3xl font-bold"
-                      style={{ color: colors.primary }}
+                      className="text-3xl font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent"
                       animate={{ scale: [1, 1.05, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
+                      transition={{ duration: 2, repeat: Infinity }}
                     >
                       {countdown}
                     </motion.div>
                   </div>
                 </motion.div>
               )}
-            </AnimatePresence>
 
-            {/* **Responsive Calendar Navigation** */}
-            <div className="flex justify-between items-center mb-4 sm:mb-6">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => changeMonth(-1)}
-                className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium border transition-all duration-200 bg-white text-xs sm:text-sm"
-                style={{
-                  borderColor: colors.primary,
-                  color: colors.primary,
-                }}
-              >
-                <span className="hidden sm:inline">← Previous</span>
-                <span className="sm:hidden">←</span>
-              </motion.button>
-
-              <h4
-                className="text-lg sm:text-xl font-bold"
-                style={{ color: colors.dark }}
-              >
-                <span className="hidden sm:inline">
-                  {format(viewMonth, "MMMM yyyy")}
-                </span>
-                <span className="sm:hidden">
-                  {format(viewMonth, "MMM yyyy")}
-                </span>
-              </h4>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => changeMonth(1)}
-                className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl font-medium border transition-all duration-200 bg-white text-xs sm:text-sm"
-                style={{
-                  borderColor: colors.primary,
-                  color: colors.primary,
-                }}
-              >
-                <span className="hidden sm:inline">Next →</span>
-                <span className="sm:hidden">→</span>
-              </motion.button>
-            </div>
-
-            {/* **Responsive Calendar Grid** */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="space-y-1 sm:space-y-2 relative rounded-xl sm:rounded-2xl p-2 sm:p-4 bg-gray-50 border"
-              style={{
-                borderColor: colors.light,
-              }}
-            >
-              {renderCalendar()}
-            </motion.div>
-
-            {/* **Responsive Events List** */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="mt-6 sm:mt-8 space-y-2 sm:space-y-3"
-            >
-              <h3
-                className="text-base sm:text-lg font-bold mb-3 sm:mb-4"
-                style={{ color: colors.dark }}
-              >
-                <span className="hidden sm:inline">Upcoming Sacred Events</span>
-                <span className="sm:hidden">Upcoming Events</span>
-              </h3>
-
-              {events.length === 0 ? (
-                <div
-                  className="text-center py-6 sm:py-8 rounded-xl border bg-white"
-                  style={{
-                    borderColor: colors.light,
-                    color: colors.neutral,
-                  }}
+              {/* Calendar Navigation */}
+              <div className="flex justify-between items-center mb-6">
+                <button
+                  onClick={() => changeMonth(-1)}
+                  className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
                 >
-                  <div className="text-2xl sm:text-4xl mb-2">🕉️</div>
-                  <p className="text-sm sm:text-base px-4">
-                    <span className="hidden sm:inline">
-                      No events scheduled yet. Stay tuned for divine
-                      celebrations!
-                    </span>
-                    <span className="sm:hidden">No events scheduled yet.</span>
-                  </p>
+                  ← Previous
+                </button>
+
+                <h3 className="text-2xl font-bold text-amber-300">
+                  {format(viewMonth, "MMMM yyyy")}
+                </h3>
+
+                <button
+                  onClick={() => changeMonth(1)}
+                  className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
+                >
+                  Next →
+                </button>
+              </div>
+
+              {/* Calendar Grid */}
+              <div className="space-y-2">{renderCalendar()}</div>
+
+              {/* Events List */}
+              <div className="mt-8">
+                <h3 className="text-xl font-bold text-amber-300 mb-4">
+                  Upcoming Sacred Events
+                </h3>
+                <div className="space-y-3">
+                  {events.length === 0 ? (
+                    <div className="text-center py-8 backdrop-blur-md bg-white/5 rounded-xl border border-white/20">
+                      <div className="text-4xl mb-2">🕉️</div>
+                      <p className="text-blue-100/60">
+                        No events scheduled yet. Stay tuned for divine
+                        celebrations!
+                      </p>
+                    </div>
+                  ) : (
+                    events.map((event, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        whileHover={{ scale: 1.02, x: 5 }}
+                        onClick={() => setModalEvent(event)}
+                        className="p-4 backdrop-blur-md bg-white/10 rounded-xl border border-white/20 hover:border-amber-400/30 cursor-pointer transition-all duration-300"
+                      >
+                        <h4 className="text-lg font-semibold text-amber-300">
+                          {event.name}
+                        </h4>
+                        <p className="text-sm text-blue-100/70 mt-1">
+                          {event.description} —{" "}
+                          {format(parseISO(event.date), "MMMM do, yyyy")}
+                        </p>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
-              ) : (
-                events.map((e, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.7 + i * 0.1, duration: 0.5 }}
-                    whileHover={{ scale: 1.02, x: 5 }}
-                    onClick={() => setModalEvent(e)}
-                    className="p-3 sm:p-4 rounded-lg sm:rounded-xl cursor-pointer border transition-all duration-300 bg-white shadow-sm"
-                    style={{
-                      borderColor: colors.light,
-                      boxShadow: `0 1px 4px ${colors.primary}08`,
-                    }}
-                  >
-                    <h4
-                      className="text-sm sm:text-base lg:text-lg font-semibold"
-                      style={{ color: colors.dark }}
-                    >
-                      {e.name}
-                    </h4>
-                    <p
-                      className="text-xs sm:text-sm mt-1"
-                      style={{ color: colors.neutral }}
-                    >
-                      {e.description} —{" "}
-                      <span className="hidden sm:inline">
-                        {format(parseISO(e.date), "MMMM do, yyyy")}
-                      </span>
-                      <span className="sm:hidden">
-                        {format(parseISO(e.date), "MMM do")}
-                      </span>
-                    </p>
-                  </motion.div>
-                ))
-              )}
-            </motion.div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bottom Quote */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="text-center mt-12"
+        >
+          <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-sm">
+            <span>🪔</span>
+            <span className="italic">
+              "उत्सवानां च सर्वेषां कर्ता भर्ता प्रभुः साक्षी" - Celebrate the
+              divine with Krishnova
+            </span>
+            <span>🪔</span>
           </div>
         </motion.div>
       </div>
 
-      {/* **Responsive Modal** */}
+      {/* Event Modal */}
       <AnimatePresence>
         {modalEvent && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-6"
             onClick={() => setModalEvent(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-w-sm sm:max-w-md w-full rounded-2xl sm:rounded-3xl border shadow-2xl overflow-hidden bg-white"
-              style={{
-                borderColor: colors.light,
-              }}
+              className="bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-3xl p-8 max-w-md w-full border-2 border-amber-400/50 shadow-2xl"
             >
-              <div
-                className="p-4 sm:p-6 border-b bg-gray-50"
-                style={{
-                  borderColor: colors.light,
-                }}
+              <h2 className="text-3xl font-bold text-amber-300 mb-4">
+                {modalEvent.name}
+              </h2>
+              <p className="text-blue-100/80 mb-4">{modalEvent.description}</p>
+              <p className="text-cyan-300 mb-6">
+                📅 {format(parseISO(modalEvent.date), "EEEE, MMMM do, yyyy")}
+              </p>
+              <button
+                onClick={() => setModalEvent(null)}
+                className="w-full px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 font-bold rounded-full hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300"
               >
-                <h3
-                  className="text-lg sm:text-xl lg:text-2xl font-bold"
-                  style={{ color: colors.primary }}
-                >
-                  {modalEvent.name}
-                </h3>
-                <p
-                  className="mt-2 text-sm sm:text-base"
-                  style={{ color: colors.neutral }}
-                >
-                  {modalEvent.description}
-                </p>
-                <p
-                  className="mt-2 text-xs sm:text-sm font-medium"
-                  style={{ color: colors.secondary }}
-                >
-                  📅{" "}
-                  <span className="hidden sm:inline">
-                    {format(parseISO(modalEvent.date), "EEEE, MMMM do, yyyy")}
-                  </span>
-                  <span className="sm:hidden">
-                    {format(parseISO(modalEvent.date), "MMM do, yyyy")}
-                  </span>
-                </p>
-              </div>
-
-              <div className="p-4 sm:p-6">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full py-3 rounded-lg sm:rounded-xl font-semibold text-white shadow-sm transition-all duration-200 text-sm sm:text-base"
-                  style={{
-                    background: `linear-gradient(135deg, ${colors.primary}, ${colors.dark})`,
-                  }}
-                  onClick={() => setModalEvent(null)}
-                >
-                  Close
-                </motion.button>
-              </div>
+                Close
+              </button>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Custom CSS */}
+      <style jsx>{`
+        @keyframes float {
+          0% {
+            transform: translate(0, 0);
+          }
+          100% {
+            transform: translate(30px, 30px);
+          }
+        }
+      `}</style>
     </section>
   );
 };

@@ -28,7 +28,7 @@ import celebration from "../Audio/celebration.mp3";
 import bgm from "../Audio/bgm.mp3";
 import water from "../Audio/water.mp3";
 import steptransition from "../Audio/step-transition.mp3";
-import vedicFire from "../Media/VedicFire.mp4";
+// import vedicFire from "../Media/VedicFire.mp4";
 
 // Krishna Names Data
 const krishnaNames = [
@@ -258,7 +258,7 @@ const CinematicBackground = ({ step, showVideo }) => {
             transition={{ duration: 1.5 }}
             className="absolute inset-0"
           >
-            <video
+            {/* <video
               ref={videoRef}
               className="w-full h-full object-cover"
               src={vedicFire}
@@ -266,7 +266,7 @@ const CinematicBackground = ({ step, showVideo }) => {
               muted
               playsInline
               preload="metadata"
-            />
+            /> */}
             {/* Subtle overlay to ensure text readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
           </motion.div>

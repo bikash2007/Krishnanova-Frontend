@@ -93,12 +93,24 @@ const FloatingParticles = () => {
   );
 };
 
-// Enhanced Avatar Component - Krishna Themed
+// Enhanced Avatar Component - Krishna Themed - FIXED
 const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
+  const [imageError, setImageError] = useState(false);
+
   const getAvatarUrl = () => {
-    if (!user?.avatar) return "/user-avatar.png";
-    if (user.avatar.startsWith("http")) return user.avatar;
-    return baseUrl + user.avatar;
+    if (!user?.avatar || imageError) {
+      // Generate UI Avatars fallback
+      const name = user?.name || "User";
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        name
+      )}&background=fbbf24&color=1e3a8a&size=128`;
+    }
+
+    if (user.avatar.startsWith("http")) {
+      return user.avatar;
+    }
+
+    return `${baseUrl}${user.avatar.startsWith("/") ? "" : "/"}${user.avatar}`;
   };
 
   return (
@@ -120,7 +132,11 @@ const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
               : "border-white/50 shadow-lg"
           }`}
           onError={(e) => {
-            e.target.src = "/user-avatar.png";
+            setImageError(true);
+            const name = user?.name || "User";
+            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+              name
+            )}&background=fbbf24&color=1e3a8a&size=128`;
           }}
         />
       </motion.div>
@@ -258,7 +274,7 @@ const CommentItem = ({
     setIsEditing(false);
   };
 
-  const isOwner = user && comment.author._id === user._id;
+  const isOwner = user && comment.author?._id === user._id;
   const canReply = level < 2;
 
   return (
@@ -281,7 +297,7 @@ const CommentItem = ({
             <div>
               <div className="flex items-center space-x-2">
                 <h5 className="font-semibold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-sm">
-                  {comment.author?.name}
+                  {comment.author?.name || "Anonymous Devotee"}
                 </h5>
                 <UserBadge user={comment.author} size="sm" />
               </div>
@@ -461,7 +477,7 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!content.trim() || content.length > 500) return;
 
     setIsSubmitting(true);
     await onSubmit(content);
@@ -505,16 +521,21 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share your divine wisdom..."
+            maxLength={500}
             className="w-full p-4 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none"
             rows="4"
           />
           <div className="flex items-center justify-between mt-4">
-            <span className="text-sm text-amber-200/60">
+            <span
+              className={`text-sm ${
+                content.length > 450 ? "text-amber-400" : "text-amber-200/60"
+              }`}
+            >
               {content.length}/500 characters
             </span>
             <motion.button
               type="submit"
-              disabled={!content.trim() || isSubmitting}
+              disabled={!content.trim() || isSubmitting || content.length > 500}
               className="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-semibold hover:from-amber-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2 shadow-xl"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -606,7 +627,7 @@ const RelatedPost = ({ post, baseUrl, index }) => {
                 artistic={false}
               />
               <span className="text-xs text-amber-200/60">
-                {post.author?.name}
+                {post.author?.name || "Anonymous"}
               </span>
               <span className="text-xs text-blue-100/40">•</span>
               <span className="text-xs text-blue-100/40">
@@ -690,9 +711,12 @@ const BlogPost = () => {
           property: "og:image",
           content: post.image?.startsWith("http")
             ? post.image
-            : baseUrl + post.image,
+            : `${baseUrl}${post.image || ""}`,
         },
-        { property: "article:author", content: post.author?.name },
+        {
+          property: "article:author",
+          content: post.author?.name || "Anonymous",
+        },
         { property: "article:published_time", content: post.createdAt },
       ];
 
@@ -716,12 +740,12 @@ const BlogPost = () => {
         description: description,
         image: post.image?.startsWith("http")
           ? post.image
-          : baseUrl + post.image,
+          : `${baseUrl}${post.image || ""}`,
         datePublished: post.createdAt,
         dateModified: post.updatedAt || post.createdAt,
         author: {
           "@type": "Person",
-          name: post.author?.name,
+          name: post.author?.name || "Anonymous",
         },
         publisher: {
           "@type": "Organization",
@@ -864,9 +888,10 @@ const BlogPost = () => {
   const fetchComments = async () => {
     try {
       const res = await axios.get(`${API}/comments/post/${id}`);
-      setComments(res.data);
+      setComments(res.data || []);
     } catch (error) {
       console.error("Error fetching comments:", error);
+      setComments([]);
     } finally {
       setCommentsLoading(false);
     }
@@ -882,6 +907,7 @@ const BlogPost = () => {
       setRelatedPosts(related);
     } catch (error) {
       console.error("Error fetching related posts:", error);
+      setRelatedPosts([]);
     }
   };
 
@@ -1232,7 +1258,7 @@ const BlogPost = () => {
               <div ref={statsRef} className="flex items-center space-x-6 mb-6">
                 <div className="stat-item flex items-center space-x-2">
                   <div className="flex -space-x-1">
-                    {[...Array(3)].map((_, i) => (
+                    {[...Array(Math.min(3, likesCount))].map((_, i) => (
                       <div
                         key={i}
                         className={`w-6 h-6 rounded-full border-2 border-white shadow-lg ${

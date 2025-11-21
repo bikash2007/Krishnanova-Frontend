@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import kpng from "../Media/krishna.png";
+import kpng from "../Media/k.png";
 import laugh from "../Audio/laugh.mp3";
 import { useApi } from "../Context/baseUrl";
 // Import icons (you'll need to install these packages)

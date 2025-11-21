@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Sparkles, Star } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useCart } from "../../Context/CartContext";
 
 const CarouselSlider = () => {
   const [products, setProducts] = useState([]);
@@ -44,6 +45,34 @@ const CarouselSlider = () => {
       golden: "linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)",
       divine: "linear-gradient(135deg, #1e3a8a 0%, #312e81 50%, #1e3a8a 100%)",
     },
+  };
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart(products);
+    setShowSuccess(true);
+
+    // GSAP success animation
+    const notification = document.querySelector(".success-notification");
+    if (notification) {
+      gsap.fromTo(
+        notification,
+        {
+          scale: 0,
+          rotation: -180,
+          opacity: 0,
+        },
+        {
+          scale: 1,
+          rotation: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+        }
+      );
+    }
+
+    setTimeout(() => setShowSuccess(false), 3000);
   };
 
   // Mouse parallax effect
@@ -459,7 +488,7 @@ const CarouselSlider = () => {
                     transition={{ delay: 0.4 }}
                   >
                     <div className="flex items-baseline gap-1">
-                      <span className="text-lg text-amber-300">₹</span>
+                      <span className="text-lg text-amber-300">$</span>
                       <span className="text-3xl lg:text-4xl font-bold text-amber-300">
                         {currentProduct.price}
                       </span>
@@ -468,7 +497,7 @@ const CarouselSlider = () => {
                       currentProduct.originalPrice !== currentProduct.price && (
                         <>
                           <span className="text-xl line-through text-blue-200/40">
-                            ₹{currentProduct.originalPrice}
+                            ${currentProduct.originalPrice}
                           </span>
                           <span className="px-2 py-1 bg-green-500/20 border border-green-400/30 rounded-full text-xs text-green-300 font-semibold">
                             {Math.round(
@@ -508,7 +537,10 @@ const CarouselSlider = () => {
                     </Link>
 
                     <button className="group px-6 py-4 border-2 border-amber-400/50 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transform hover:-translate-y-1 transition-all duration-300">
-                      <span className="flex items-center gap-2">
+                      <span
+                        onClick={() => handleAddToCart(currentProduct)}
+                        className="flex items-center gap-2"
+                      >
                         <Star className="w-4 h-4" />
                         Add to Wishlist
                       </span>
@@ -517,7 +549,7 @@ const CarouselSlider = () => {
 
                   {/* Trust Badges */}
                   <motion.div
-                    className="flex items-center justify-center lg:justify-start gap-6 pt-4"
+                    className="md:flex items-center hidden justify-center lg:justify-start gap-6 pt-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
@@ -726,9 +758,10 @@ const CarouselSlider = () => {
         </div>
 
         {/* Sanskrit Quote */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center">
-          <p className="text-xs text-amber-200/40 font-sanskrit">
-            यदा यदा हि धर्मस्य ग्लानिर्भवति भारत
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center mt-4 pt-10">
+          <p className="text-xs hidden md:block text-amber-200/40 font-sanskrit mt-5">
+            bhaktyā mām abhijānāti yāvān yaśh chāsmi tattvataḥ tato māṁ tattvato
+            jñātvā viśhate tad-anantaram
           </p>
         </div>
       </div>

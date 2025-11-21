@@ -91,16 +91,6 @@ const WisdomPortalPath = () => {
       />
 
       {/* Grid Pattern - matching homepage */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #fbbf24 1px, transparent 1px),
-            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
 
       {/* Static Floating Orbs - No mouse interaction */}
       <div className="absolute inset-0 pointer-events-none">
@@ -151,19 +141,19 @@ const WisdomPortalPath = () => {
           <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
             <span className="text-amber-100 font-medium tracking-wide text-sm">
-              दिव्य ज्ञान पोर्टल
+              connect with krishna
             </span>
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
           </div>
 
           {/* Main Title with gradient */}
-          <h1 className="text-5xl lg:text-7xl font-bold mb-4">
+          <h1 className="text-3xl lg:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
               Divine Wisdom Portal
             </span>
           </h1>
 
-          <p className="text-xl text-blue-100/80 max-w-2xl mx-auto">
+          <p className="text-md md:text-xl text-blue-100/80 max-w-2xl mx-auto">
             Where ancient Krishna wisdom meets modern AI technology
           </p>
         </motion.div>
@@ -180,7 +170,7 @@ const WisdomPortalPath = () => {
             <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 via-purple-400/20 to-amber-400/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition-opacity duration-1000" />
 
             {/* Card Content */}
-            <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-12 border border-white/20 shadow-2xl hover:border-amber-400/30 transition-all duration-300">
+            <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-2 md:p-12 border border-white/20 shadow-2xl hover:border-amber-400/30 transition-all duration-300">
               {/* Animated Icon */}
               <motion.div
                 animate={{
@@ -192,18 +182,18 @@ const WisdomPortalPath = () => {
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="text-6xl text-center mb-8"
+                className="text-3xl md:text-6xl text-center mb-8"
               >
                 🔮
               </motion.div>
 
-              <h2 className="text-4xl font-bold text-center mb-6">
+              <h2 className="text-xl md:text-4xl font-bold text-center mb-3 md:mb-6">
                 <span className="bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
                   Sacred Wisdom Coming Soon
                 </span>
               </h2>
 
-              <p className="text-lg md:text-xl text-blue-100/80 text-center mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-blue-100/80 text-center mb-4 md:mb-8 md:leading-relaxed">
                 <span className="text-amber-300 font-bold">Krishnova's</span>{" "}
                 revolutionary{" "}
                 <span className="font-semibold text-cyan-300">GPT Gita</span>{" "}
@@ -223,7 +213,7 @@ const WisdomPortalPath = () => {
               {/* Sanskrit Quote */}
               <div className="bg-white/5 rounded-2xl p-4 mb-10 border border-amber-400/20">
                 <p className="text-center text-amber-200/80 font-sanskrit text-lg mb-2">
-                  "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन"
+                  "Karmaṇyevādhikāraste mā phaleṣu kadācana"
                 </p>
                 <p className="text-center text-blue-100/60 text-sm">
                   You have the right to perform your duty, but not to the fruits
@@ -237,7 +227,7 @@ const WisdomPortalPath = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                    className="group relative px-4 md:px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -262,7 +252,7 @@ const WisdomPortalPath = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto"
+          className="grid md:grid-cols-3 gap-8 md:max-w-5xl mx-auto"
         >
           {features.map((feature, index) => (
             <motion.div
@@ -273,7 +263,7 @@ const WisdomPortalPath = () => {
               whileHover={{ scale: 1.05, y: -10 }}
               className="group relative"
             >
-              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300 h-full">
+              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-4 md:p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300 h-full">
                 {/* Floating Animation for Icon */}
                 <motion.div
                   animate={{ y: [0, -5, 0] }}
@@ -283,16 +273,16 @@ const WisdomPortalPath = () => {
                     ease: "easeInOut",
                     delay: index * 0.3,
                   }}
-                  className="text-5xl mb-6 text-center"
+                  className="text-3xl md:text-5xl mb-6 text-center"
                 >
                   {feature.icon}
                 </motion.div>
 
-                <h3 className="text-xl font-bold text-amber-300 mb-3 text-center">
+                <h3 className="text-lg md:text-xl font-bold text-amber-300 mb-3 text-center">
                   {feature.title}
                 </h3>
 
-                <p className="text-blue-100/80 text-sm text-center leading-relaxed">
+                <p className="text-blue-100/80 text-xs md:text-sm text-center leading-relaxed">
                   {feature.desc}
                 </p>
 

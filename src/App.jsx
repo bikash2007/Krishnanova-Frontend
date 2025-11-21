@@ -27,10 +27,9 @@ import {
 import { useLocation } from "react-router-dom";
 import WisdomPortalPath from "./components/WisdomPortal/WisdomPortalPath";
 import CarouselSlider from "./components/Products/CarouselSlider";
-import HeroLegacy from "./components/Hero/HeroLegacy";
-import LuckyKrishna from "./components/FloatingKrishna";
-import KrishnovaHomepage from "./components/Hero/KrishnovaHomepage";
+
 import HomeSection from "./components/Hero/HomeSection";
+import EnhancedKrishnaGame from "./components/FloatingKrishna";
 
 const App = () => {
   useScrollAnimation();
@@ -91,13 +90,11 @@ const App = () => {
       {/* <ScrollToHash /> */}
       <MusicPlayer />
       <Navigation />
-      <LuckyKrishna />
+      <EnhancedKrishnaGame />
 
       {/* Add the correct IDs below 👇 */}
       <div id="home">
-        {/* <KrishnovaHomepage /> */}
         <HomeSection />
-        {/* <HeroLegacy /> */}
       </div>
       <div className=" main min-h-screen bg-white relative   overflow-hidden">
         {/* <div id="blurry "></div> */}

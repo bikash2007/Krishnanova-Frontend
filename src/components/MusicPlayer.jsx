@@ -39,9 +39,15 @@ export default function MusicPlayer() {
 
       <button
         onClick={toggleMusic}
-        className="bg-yellow-400 top-20 z-50 fixed text-black px-4 py-2 rounded shadow hover:bg-yellow-500 transition"
+        className="bg-yellow-400/40 top-20 z-50 fixed text-white px-4 py-2 rounded text-sm shadow hover:bg-yellow-500 transition hidden md:flex"
       >
         {isPlaying ? "🔇 Stop Music" : "🔊 Play Music"}
+      </button>
+      <button
+        onClick={toggleMusic}
+        className="bg-yellow-400/40 top-18 left-0 z-40 fixed text-white px-2 py-2 rounded text-sm shadow hover:bg-yellow-500 transition md:hidden"
+      >
+        {isPlaying ? "🔇 " : "🔊 "}
       </button>
     </div>
   );

@@ -135,7 +135,78 @@ body {
   width: 100%;
   /* Will be transformed by ScrollSmoother */
 }
+/* HomeSection.css */
 
+/* Glowing Mandala Animation */
+@keyframes mandala-glow {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(251, 191, 36, 0.3),
+      0 0 40px rgba(251, 191, 36, 0.2),
+      0 0 60px rgba(251, 191, 36, 0.1),
+      inset 0 0 20px rgba(251, 191, 36, 0.05);
+  }
+
+  50% {
+    box-shadow:
+      0 0 30px rgba(251, 191, 36, 0.5),
+      0 0 60px rgba(251, 191, 36, 0.3),
+      0 0 90px rgba(251, 191, 36, 0.2),
+      inset 0 0 30px rgba(251, 191, 36, 0.1);
+  }
+}
+
+.mandala-glow {
+  animation: mandala-glow 3s ease-in-out infinite;
+}
+
+/* Floating Text Animation */
+@keyframes text-float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.text-float {
+  animation: text-float 3s ease-in-out infinite;
+}
+
+/* Animation delays for staggered effect */
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2000ms;
+}
+
+/* Shimmer effect for text */
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Gradient animation */
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
 /* =========================================
    Base Reset
 ========================================= */
@@ -153,7 +224,24 @@ body {
 body {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="8" fill="%2300A896" opacity="0.8"/><circle cx="16" cy="16" r="4" fill="%23FFB700"/><path d="M16 8 Q24 16 16 24 Q8 16 16 8" fill="%23005B8C" opacity="0.6"/></svg>') 16 16, auto;
 }
+@media (max-width: 1023px),
+(orientation: landscape) {
 
+  html,
+  body {
+    overflow: visible !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  #smooth-wrapper,
+  #smooth-content {
+    position: relative !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+}
 body *,
 button,
 a,

@@ -73,18 +73,6 @@ const Meditation = () => {
         }}
       />
 
-      {/* Grid Pattern */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #fbbf24 1px, transparent 1px),
-            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
-
       {/* Floating Sacred Elements */}
       <div className="absolute inset-0">
         {[...Array(12)].map((_, i) => (
@@ -140,13 +128,13 @@ const Meditation = () => {
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-bold mb-4">
+          <h1 className=" text-3xl  md:text-5xl lg:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
               Spiritual Practice Guide
             </span>
           </h1>
 
-          <p className="text-xl text-blue-100/80 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-blue-100/80 max-w-2xl mx-auto">
             Transform your daily routine into a sacred journey with Krishna
           </p>
         </motion.div>
@@ -156,7 +144,7 @@ const Meditation = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-6xl mx-auto"
+          className="md:max-w-6xl mx-auto"
         >
           <div className="relative group">
             {/* Glow Effect */}
@@ -166,7 +154,7 @@ const Meditation = () => {
             <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
               <div className="flex flex-col lg:flex-row">
                 {/* Left Side - Visual Design */}
-                <div className="lg:w-1/3 relative bg-gradient-to-br from-amber-400/20 via-purple-400/20 to-indigo-400/20 p-8 flex flex-col justify-center items-center min-h-[400px]">
+                <div className="lg:w-1/3 relative bg-gradient-to-br from-amber-400/20 via-purple-400/20 to-indigo-400/20  md:p-8 flex flex-col justify-center items-center min-h-[200px] md:min-h-[400px]">
                   {/* Rotating Mandala Background */}
                   <motion.div
                     className="absolute inset-0 opacity-10"
@@ -197,7 +185,7 @@ const Meditation = () => {
                     className="relative z-10"
                   >
                     <motion.div
-                      className="w-32 h-32 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-500/30 backdrop-blur-md border-2 border-amber-400/50 flex items-center justify-center shadow-2xl"
+                      className=" w-20 h-20 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-500/30 backdrop-blur-md border-2 border-amber-400/50 flex items-center justify-center shadow-2xl"
                       animate={{
                         scale: [1, 1.1, 1],
                         boxShadow: [
@@ -208,14 +196,16 @@ const Meditation = () => {
                       }}
                       transition={{ duration: 3, repeat: Infinity }}
                     >
-                      <span className="text-6xl text-amber-300">ॐ</span>
+                      <span className="text-4xl md:text-6xl text-amber-300">
+                        ॐ
+                      </span>
                     </motion.div>
 
                     {/* Orbiting Elements */}
                     {[0, 120, 240].map((angle, i) => (
                       <motion.div
                         key={i}
-                        className="absolute w-4 h-4 bg-gradient-to-br from-amber-300 to-orange-400 rounded-full"
+                        className="absolute w-2 h-2 md:w-4 md:h-4 bg-gradient-to-br from-amber-300 to-orange-400 rounded-full"
                         style={{
                           top: "50%",
                           left: "50%",
@@ -256,13 +246,13 @@ const Meditation = () => {
                 </div>
 
                 {/* Right Side - Content */}
-                <div className="lg:w-2/3 p-8 lg:p-12">
+                <div className="lg:w-2/3 p-4 lg:p-12">
                   {/* Title */}
                   <motion.h2
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ delay: 0.4 }}
-                    className="text-3xl font-bold mb-6 bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent"
+                    className="text-xl md:text-3xl font-bold mb-2 md:mb-6 bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent"
                   >
                     Daily Krishna Meditation
                   </motion.h2>
@@ -272,7 +262,7 @@ const Meditation = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ delay: 0.5 }}
-                    className="text-lg text-blue-100/80 mb-8 leading-relaxed"
+                    className="text-sm md:text-lg text-blue-100/80 mb-8 leading-relaxed"
                   >
                     Transform your{" "}
                     <span className="text-amber-300 font-semibold">
@@ -298,19 +288,19 @@ const Meditation = () => {
                     className="mb-8"
                   >
                     <div className="flex items-center mb-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center mr-4 shadow-lg">
+                      <div className="md:w-10 md:h-10 w-6 h-6 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center mr-4 shadow-lg">
                         <span className="text-indigo-900 font-bold">॥</span>
                       </div>
-                      <h3 className="text-2xl font-semibold text-amber-300">
+                      <h3 className="text-xl md:text-2xl font-semibold text-amber-300">
                         Morning Prayer
                       </h3>
                     </div>
 
-                    <div className="backdrop-blur-md bg-gradient-to-br from-white/5 to-white/10 rounded-2xl p-6 border border-amber-400/20">
-                      <blockquote className="text-xl font-medium text-center text-amber-200 mb-4 italic">
-                        "Hare Krishna, Hare Krishna, Krishna Krishna, Hare Hare
+                    <div className="backdrop-blur-md bg-gradient-to-br from-white/5 to-white/10 rounded-2xl p-3 md:p-6 border border-amber-400/20">
+                      <blockquote className="text-lg md:text-xl font-medium text-center text-amber-200 mb-4 italic">
+                        "Hare Kṛṣṇa, Hare Kṛṣṇa, Kṛṣṇa Kṛṣṇa Hare Hare,
                         <br />
-                        Hare Rama, Hare Rama, Rama Rama, Hare Hare"
+                        Hare Rāma, Hare Rāma, Rāma Rāma, Hare Hare"
                       </blockquote>
                       <p className="text-sm text-center text-blue-100/60">
                         Chant with devotion while holding your sacred keychain
@@ -324,11 +314,11 @@ const Meditation = () => {
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.7 }}
                   >
-                    <h3 className="text-xl font-semibold text-amber-300 mb-6 text-center">
+                    <h3 className="text-lg md:text-xl font-semibold text-amber-300 mb-6 text-center">
                       Benefits of Daily Practice
                     </h3>
 
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="hidden  md:grid-cols-3 gap-4">
                       {benefits.map((benefit, index) => (
                         <motion.div
                           key={index}
@@ -336,10 +326,10 @@ const Meditation = () => {
                           animate={isInView ? { opacity: 1, y: 0 } : {}}
                           transition={{ delay: 0.8 + index * 0.1 }}
                           whileHover={{ scale: 1.05, y: -5 }}
-                          className="backdrop-blur-md bg-gradient-to-br from-white/5 to-white/10 rounded-xl p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 text-center group"
+                          className="backdrop-blur-md bg-gradient-to-br from-white/5 to-white/10 rounded-xl p-2 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 text-center group"
                         >
                           <motion.div
-                            className="text-4xl mb-3"
+                            className="text-2xl md:text-4xl mb-3"
                             animate={{
                               scale: [1, 1.2, 1],
                               rotate: [0, 10, -10, 0],
@@ -416,7 +406,8 @@ const Meditation = () => {
           <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-sm">
             <span>🪔</span>
             <span className="italic">
-              "मन्मना भव मद्भक्तो मद्याजी मां नमस्कुरु" - Bhagavad Gita 18.65
+              "Manmanā bhava madbhakto mad-yājī māṃ namaskuru" - Bhagavad Gita
+              18.65
             </span>
             <span>🪔</span>
           </div>

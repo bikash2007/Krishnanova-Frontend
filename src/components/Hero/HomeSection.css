@@ -1,0 +1,218 @@
+/* src/animations.css */
+
+/* Spin animations */
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin-very-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin-reverse-slow {
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+/* Mandala glow */
+@keyframes mandala-glow {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 20px rgba(251, 191, 36, 0.3),
+            0 0 40px rgba(251, 191, 36, 0.2),
+            0 0 60px rgba(251, 191, 36, 0.1),
+            inset 0 0 20px rgba(251, 191, 36, 0.05);
+    }
+
+    50% {
+        box-shadow:
+            0 0 30px rgba(251, 191, 36, 0.5),
+            0 0 60px rgba(251, 191, 36, 0.3),
+            0 0 90px rgba(251, 191, 36, 0.2),
+            inset 0 0 30px rgba(251, 191, 36, 0.1);
+    }
+}
+
+/* Text float */
+@keyframes text-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Pulse slow */
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+/* Gradient */
+@keyframes gradient {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Scroll */
+@keyframes scroll {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(5px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Pulse */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .5;
+    }
+}
+
+/* Shimmer */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Float slow */
+@keyframes float-slow {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+}
+
+/* Animation Classes */
+.animate-spin-slow {
+    animation: spin-slow 20s linear infinite !important;
+}
+
+.animate-spin-very-slow {
+    animation: spin-very-slow 30s linear infinite !important;
+}
+
+.animate-spin-reverse-slow {
+    animation: spin-reverse-slow 25s linear infinite !important;
+}
+
+.mandala-glow {
+    animation: mandala-glow 3s ease-in-out infinite !important;
+}
+
+.text-float {
+    animation: text-float 3s ease-in-out infinite !important;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite !important;
+}
+
+.animate-gradient {
+    background-size: 200% 200% !important;
+    animation: gradient 3s ease infinite !important;
+}
+
+.animate-scroll {
+    animation: scroll 2s ease-in-out infinite !important;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+.animate-shimmer {
+    background-size: 200% 100% !important;
+    animation: shimmer 3s linear infinite !important;
+}
+
+.animate-float-slow {
+    animation: float-slow 6s ease-in-out infinite !important;
+}
+
+/* Animation delays */
+.animation-delay-100 {
+    animation-delay: 100ms !important;
+}
+
+.animation-delay-200 {
+    animation-delay: 200ms !important;
+}
+
+.animation-delay-300 {
+    animation-delay: 300ms !important;
+}
+
+.animation-delay-500 {
+    animation-delay: 500ms !important;
+}
+
+.animation-delay-1000 {
+    animation-delay: 1s !important;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s !important;
+}

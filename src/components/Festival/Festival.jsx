@@ -224,18 +224,6 @@ const Festival = () => {
         }}
       />
 
-      {/* Grid Pattern */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #fbbf24 1px, transparent 1px),
-            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
-
       {/* Floating Elements */}
       <div className="absolute inset-0">
         {[...Array(8)].map((_, i) => (
@@ -285,18 +273,18 @@ const Festival = () => {
           <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
             <span className="text-amber-100 font-medium tracking-wide text-sm">
-              पवित्र उत्सव कैलेंडर
+              Divine Festival calender
             </span>
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-bold mb-4">
+          <h1 className="text-3xl md::text-7xl font-bold mb-2 md:mb-4">
             <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
               Sacred Festival Calendar
             </span>
           </h1>
 
-          <p className="text-xl text-blue-100/80 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-blue-100/80 max-w-2xl mx-auto">
             Never miss a divine celebration with Krishnova
           </p>
         </motion.div>
@@ -315,7 +303,7 @@ const Festival = () => {
             <div
               ref={calendarRef}
               onMouseMove={handleMouseMove}
-              className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 shadow-2xl p-8"
+              className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl border border-white/20 shadow-2xl p-4 md:p-8"
             >
               {/* Next Event Countdown */}
               {closestEvent && (
@@ -347,9 +335,15 @@ const Festival = () => {
               <div className="flex justify-between items-center mb-6">
                 <button
                   onClick={() => changeMonth(-1)}
-                  className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
+                  className="px-4 hidden md:inline-block py-2 rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
                 >
                   ← Previous
+                </button>
+                <button
+                  onClick={() => changeMonth(-1)}
+                  className="px-4 md:hidden py-2 rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
+                >
+                  ←
                 </button>
 
                 <h3 className="text-2xl font-bold text-amber-300">
@@ -358,9 +352,15 @@ const Festival = () => {
 
                 <button
                   onClick={() => changeMonth(1)}
-                  className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
+                  className="px-4 py-2 hidden md:inline-block rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
                 >
                   Next →
+                </button>
+                <button
+                  onClick={() => changeMonth(1)}
+                  className="px-4 md:hidden py-2 rounded-full bg-gradient-to-r from-amber-400/20 to-orange-500/20 border border-amber-400/30 text-amber-200 font-semibold hover:from-amber-400/30 hover:to-orange-500/30 transition-all duration-300"
+                >
+                  →
                 </button>
               </div>
 
@@ -418,7 +418,7 @@ const Festival = () => {
           <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-sm">
             <span>🪔</span>
             <span className="italic">
-              "उत्सवानां च सर्वेषां कर्ता भर्ता प्रभुः साक्षी" - Celebrate the
+              "Utsavānāṃ ca sarveṣāṃ kartā bhartā prabhuḥ sākṣī" - Celebrate the
               divine with Krishnova
             </span>
             <span>🪔</span>

@@ -121,11 +121,11 @@ const Mission = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20"
+      className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-10"
       onMouseMove={handleMouseMove}
     >
       {/* Animated Mandala Background - matching homepage */}
-      <div
+      {/* <div
         className="absolute inset-0 opacity-20"
         style={{
           backgroundImage:
@@ -133,10 +133,10 @@ const Mission = () => {
           backgroundSize: "30px 30px",
           animation: "float 30s linear infinite",
         }}
-      />
+      /> */}
 
       {/* Grid Pattern - matching homepage */}
-      <div
+      {/* <div
         className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: `
@@ -145,7 +145,7 @@ const Mission = () => {
           `,
           backgroundSize: "50px 50px",
         }}
-      />
+      /> */}
 
       {/* Floating Sacred Elements */}
       <div className="absolute inset-0">
@@ -168,7 +168,7 @@ const Mission = () => {
               ease: "linear",
             }}
           >
-            <div className="w-2 h-2 bg-amber-400/20 rounded-full blur-sm" />
+            {/* <div className="w-2 h-2 bg-amber-400/20 rounded-full blur-sm" /> */}
           </motion.div>
         ))}
       </div>
@@ -203,16 +203,16 @@ const Mission = () => {
           </div>
 
           {/* Main Title with gradient */}
-          <h1 className="text-5xl lg:text-7xl font-bold mb-6">
+          <h1 className="text-4xl lg:text-7xl font-bold mb-6">
             <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
               Our Sacred Mission
             </span>
           </h1>
 
           {/* Sanskrit Subtitle */}
-          <p className="text-lg text-amber-200/80 font-sanskrit mb-2">
+          {/* <p className="text-lg text-amber-200/80 font-sanskrit mb-2">
             सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः
-          </p>
+          </p> */}
           <p className="text-sm text-blue-100/60">
             May all beings be happy, may all be free from illness
           </p>
@@ -238,8 +238,8 @@ const Mission = () => {
               <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 to-orange-500/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-70 transition duration-1000" />
 
               {/* Card Content */}
-              <article className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-12 md:p-16 border border-white/20 shadow-2xl hover:border-amber-400/30 transition-all duration-300">
-                <p className="text-2xl md:text-3xl leading-relaxed text-center text-blue-100">
+              <article className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-8 md:p-16 border border-white/20 shadow-2xl hover:border-amber-400/30 transition-all duration-300">
+                <p className="text-lg md:text-3xl leading-relaxed text-center text-blue-100">
                   <span className="font-bold text-amber-300">Krishnova</span>{" "}
                   bridges{" "}
                   <span className="font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
@@ -279,14 +279,14 @@ const Mission = () => {
               whileHover={{ scale: 1.05, y: -10 }}
               className="group relative"
             >
-              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 h-full">
+              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-3 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 h-full">
                 {/* Icon */}
-                <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                <div className="text-xl md:text-5xl mb-2 md:mb-4 transform group-hover:scale-110 transition-transform duration-300">
                   {pillar.icon}
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold text-amber-300 mb-3">
+                <h3 className="text-lg md:text-xl font-bold text-amber-300 md:mb-3">
                   {pillar.title}
                 </h3>
 
@@ -313,8 +313,8 @@ const Mission = () => {
             {/* Background Glow */}
             <div className="absolute inset-0 bg-gradient-to-r from-amber-400/10 via-purple-400/10 to-amber-400/10 rounded-3xl blur-2xl" />
 
-            <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-12 border border-white/20 shadow-2xl">
-              <h2 className="text-3xl font-bold text-center mb-12">
+            <div className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-4 md:p-12 border border-white/20 shadow-2xl">
+              <h2 className=" text-2xl md:text-3xl font-bold text-center mb-6 md:mb-12">
                 <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
                   Our Guiding Principles
                 </span>
@@ -373,7 +373,7 @@ const Mission = () => {
           </p>
 
           {/* Trust Indicators */}
-          <div className="flex items-center justify-center gap-8 mt-8">
+          <div className="flex items-center justify-center gap-8 mt-2">
             <div className="flex items-center gap-2">
               <span className="text-amber-300">⭐</span>
               <span className="text-sm text-blue-100/60">4.9/5 Rating</span>
@@ -396,12 +396,13 @@ const Mission = () => {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 1, delay: 1 }}
-          className="text-center mt-20"
+          className="text-center mt-10"
         >
           <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-sm">
             <span>🪔</span>
             <span className="italic font-sanskrit">
-              "यदा यदा हि धर्मस्य ग्लानिर्भवति भारत" - Bhagavad Gita 4.7
+              sarva-karmāṇy api sadā kurvāṇo mad-vyapāśhrayaḥ mat-prasādād
+              avāpnoti śhāśhvataṁ padam avyayam
             </span>
             <span>🪔</span>
           </div>

@@ -61,112 +61,88 @@ const UserBadge = ({ user, size = "sm" }) => {
   );
 };
 
-// Event Card with Krishnova theme
-const EventCard = ({ event, baseUrl, index }) => {
-  const formatDate = (date) =>
-    new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+// Countdown Timer Component
+const CountdownTimer = ({ targetDate, onComplete }) => {
+  const [timeLeft, setTimeLeft] = useState({});
+  const [isComplete, setIsComplete] = useState(false);
 
-  const typeConfig = {
-    meditation: { icon: "🧘", gradient: "from-purple-400 to-indigo-500" },
-    prayer: { icon: "🙏", gradient: "from-amber-400 to-orange-500" },
-    discourse: { icon: "📖", gradient: "from-cyan-400 to-blue-500" },
-    festival: { icon: "🎉", gradient: "from-yellow-400 to-amber-500" },
-    community_service: { icon: "🤝", gradient: "from-green-400 to-cyan-500" },
-    other: { icon: "📅", gradient: "from-purple-400 to-pink-500" },
-  };
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const difference = new Date(targetDate) - new Date();
 
-  const config = typeConfig[event.eventType] || typeConfig.other;
+      if (difference <= 0) {
+        setIsComplete(true);
+        if (onComplete) onComplete();
+        return {};
+      }
+
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    };
+
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    setTimeLeft(calculateTimeLeft());
+
+    return () => clearInterval(timer);
+  }, [targetDate, onComplete]);
+
+  if (isComplete) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, y: -5 }}
-      className="group"
-    >
-      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-2xl shadow-lg`}
-              >
-                {config.icon}
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="font-semibold text-amber-300">
-                    {event.organizer?.name}
-                  </h4>
-                  <UserBadge user={event.organizer} size="sm" />
-                </div>
-                <p className="text-xs text-blue-100/60">Event Organizer</p>
-              </div>
-            </div>
-            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900">
-              LIVE
-            </span>
-          </div>
-
-          {/* Title */}
-          <h3 className="font-bold text-lg mb-3 text-blue-100">
-            {event.title}
-          </h3>
-
-          {/* Event Details */}
-          <div className="space-y-2 mb-4">
-            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
-              <span className="text-amber-300">📅</span>
-              <span>{formatDate(event.dateTime)}</span>
-            </div>
-            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
-              <span className="text-cyan-300">📍</span>
-              <span>{event.location?.city}</span>
-            </div>
-            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
-              <span className="text-purple-300">👥</span>
-              <span>{event.participants?.length || 0} devotees joined</span>
-            </div>
-          </div>
-
-          {/* Event Image */}
-          {event.image && (
-            <div className="relative overflow-hidden rounded-xl mb-4 border border-white/10">
-              <img
-                src={
-                  event.image.startsWith("http")
-                    ? event.image
-                    : baseUrl + event.image
-                }
-                alt="Event"
-                className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/50 to-transparent" />
-            </div>
-          )}
-
-          {/* CTA Button */}
-          <Link to="/communityblog">
-            <button className="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-xl font-bold shadow-lg hover:shadow-amber-500/30 transition-all duration-300 flex items-center justify-center gap-2">
-              <span>🎫</span>
-              <span>Join Sacred Event</span>
-              <span>→</span>
-            </button>
-          </Link>
+    <div className="flex items-center gap-2 text-xs">
+      {timeLeft.days > 0 && (
+        <div className="flex items-center gap-1">
+          <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+            {timeLeft.days}d
+          </span>
         </div>
+      )}
+      <div className="flex items-center gap-1">
+        <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+          {String(timeLeft.hours || 0).padStart(2, "0")}h
+        </span>
+        <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+          {String(timeLeft.minutes || 0).padStart(2, "0")}m
+        </span>
+        <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+          {String(timeLeft.seconds || 0).padStart(2, "0")}s
+        </span>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
-// Social Post Card with Krishnova theme
+// Stats Card Component
+const StatsCard = ({ icon, value, label, gradient, delay }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ delay }}
+    whileHover={{ scale: 1.05, y: -5 }}
+  >
+    <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-4 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 text-center">
+      <div
+        className={`w-10 h-10 md:w-14 md:h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-xl md:text-2xl shadow-lg`}
+      >
+        {icon}
+      </div>
+      <div className="text-xl md:text-2xl font-bold text-amber-300 mb-1">
+        {value}
+      </div>
+      <div className="text-sm text-blue-100/60">{label}</div>
+    </div>
+  </motion.div>
+);
+
+// Social Post Card Component
 const SocialPostCard = ({ post, baseUrl, index }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showFullText, setShowFullText] = useState(false);
@@ -303,30 +279,188 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
   );
 };
 
-// Stats Card with Krishnova theme
-const StatsCard = ({ icon, value, label, gradient, delay }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay }}
-    whileHover={{ scale: 1.05, y: -5 }}
-  >
-    <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 text-center">
-      <div
-        className={`w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-2xl shadow-lg`}
-      >
-        {icon}
-      </div>
-      <div className="text-2xl font-bold text-amber-300 mb-1">{value}</div>
-      <div className="text-sm text-blue-100/60">{label}</div>
-    </div>
-  </motion.div>
-);
+// Event Card with Krishnova theme
+const EventCard = ({ event, baseUrl, index }) => {
+  const [eventStatus, setEventStatus] = useState("upcoming");
+  const [showTimer, setShowTimer] = useState(true);
 
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  const typeConfig = {
+    meditation: { icon: "🧘", gradient: "from-purple-400 to-indigo-500" },
+    prayer: { icon: "🙏", gradient: "from-amber-400 to-orange-500" },
+    discourse: { icon: "📖", gradient: "from-cyan-400 to-blue-500" },
+    festival: { icon: "🎉", gradient: "from-yellow-400 to-amber-500" },
+    community_service: { icon: "🤝", gradient: "from-green-400 to-cyan-500" },
+    other: { icon: "📅", gradient: "from-purple-400 to-pink-500" },
+  };
+
+  const config = typeConfig[event.eventType] || typeConfig.other;
+
+  useEffect(() => {
+    const checkEventStatus = () => {
+      const now = new Date();
+      const eventDate = new Date(event.dateTime);
+      const eventEndDate = new Date(event.endDateTime || eventDate);
+      eventEndDate.setHours(23, 59, 59, 999);
+
+      if (now >= eventDate && now <= eventEndDate) {
+        setEventStatus("ongoing");
+        setShowTimer(false);
+      } else if (now > eventEndDate) {
+        setEventStatus("ended");
+        setShowTimer(false);
+      } else {
+        setEventStatus("upcoming");
+        const hoursUntilEvent = (eventDate - now) / (1000 * 60 * 60);
+        setShowTimer(hoursUntilEvent <= 48);
+      }
+    };
+
+    checkEventStatus();
+    const interval = setInterval(checkEventStatus, 60000);
+
+    return () => clearInterval(interval);
+  }, [event.dateTime, event.endDateTime]);
+
+  const getStatusBadge = () => {
+    switch (eventStatus) {
+      case "ongoing":
+        return (
+          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900 animate-pulse">
+            🔴 ONGOING
+          </span>
+        );
+      case "upcoming":
+        return (
+          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-indigo-900">
+            UPCOMING
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+      whileHover={{ scale: 1.02, y: -5 }}
+      className="group"
+    >
+      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden">
+        <div className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${config.gradient} flex items-center justify-center text-2xl shadow-lg`}
+              >
+                {config.icon}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-semibold text-amber-300">
+                    {event.organizer?.name}
+                  </h4>
+                  <UserBadge user={event.organizer} size="sm" />
+                </div>
+                <p className="text-xs text-blue-100/60">Event Organizer</p>
+              </div>
+            </div>
+            {getStatusBadge()}
+          </div>
+
+          <h3 className="font-bold text-lg mb-3 text-blue-100">
+            {event.title}
+          </h3>
+
+          {showTimer && eventStatus === "upcoming" && (
+            <div className="mb-3 p-2 bg-gradient-to-r from-amber-400/10 to-orange-400/10 rounded-lg border border-amber-400/30">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-amber-300 font-semibold">
+                  ⏰ Registration closes in:
+                </span>
+                <CountdownTimer
+                  targetDate={event.dateTime}
+                  onComplete={() => setEventStatus("ongoing")}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
+              <span className="text-amber-300">📅</span>
+              <span>{formatDate(event.dateTime)}</span>
+            </div>
+            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
+              <span className="text-cyan-300">📍</span>
+              <span>{event.location?.city}</span>
+            </div>
+            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
+              <span className="text-purple-300">👥</span>
+              <span>{event.participants?.length || 0} devotees joined</span>
+            </div>
+          </div>
+
+          {event.image && (
+            <div className="relative overflow-hidden rounded-xl mb-4 border border-white/10">
+              <img
+                src={
+                  event.image.startsWith("http")
+                    ? event.image
+                    : baseUrl + event.image
+                }
+                alt="Event"
+                className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/50 to-transparent" />
+            </div>
+          )}
+
+          <Link to="/communityblog">
+            <button
+              className={`w-full py-3 rounded-xl font-bold shadow-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                eventStatus === "ongoing"
+                  ? "bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900 hover:shadow-green-500/30 animate-pulse"
+                  : "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 hover:shadow-amber-500/30"
+              }`}
+              disabled={eventStatus === "ended"}
+            >
+              {eventStatus === "ongoing" ? (
+                <>
+                  <span>🔴</span>
+                  <span>Join Live Event</span>
+                  <span>→</span>
+                </>
+              ) : (
+                <>
+                  <span>🎫</span>
+                  <span>Register for Event</span>
+                  <span>→</span>
+                </>
+              )}
+            </button>
+          </Link>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// Main Community Component
 const Community = () => {
   const [topPosts, setTopPosts] = useState([]);
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     members: 0,
@@ -336,7 +470,6 @@ const Community = () => {
   });
   const baseUrl = useApi();
 
-  // SEO Implementation
   useEffect(() => {
     document.title = "Sacred Community Hub | Krishnova";
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -345,6 +478,40 @@ const Community = () => {
         "Join Krishnova's divine community. Connect with devotees, share spiritual stories, and participate in sacred events worldwide.";
     }
   }, []);
+
+  useEffect(() => {
+    const filterEvents = () => {
+      const now = new Date();
+      const filtered = events.filter((event) => {
+        const eventDate = new Date(event.dateTime);
+        const eventEndDate = new Date(event.endDateTime || eventDate);
+        eventEndDate.setHours(23, 59, 59, 999);
+        return eventEndDate >= now;
+      });
+
+      filtered.sort((a, b) => {
+        const now = new Date();
+        const aDate = new Date(a.dateTime);
+        const bDate = new Date(b.dateTime);
+        const aIsOngoing =
+          aDate <= now && new Date(a.endDateTime || aDate) >= now;
+        const bIsOngoing =
+          bDate <= now && new Date(b.endDateTime || bDate) >= now;
+
+        if (aIsOngoing && !bIsOngoing) return -1;
+        if (!aIsOngoing && bIsOngoing) return 1;
+        return aDate - bDate;
+      });
+
+      setFilteredEvents(filtered.slice(0, 3));
+    };
+
+    if (events.length > 0) {
+      filterEvents();
+      const interval = setInterval(filterEvents, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [events]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -357,7 +524,7 @@ const Community = () => {
         ]);
 
         setTopPosts(postsRes.data.slice(0, 4));
-        setEvents(eventsRes.data.slice(0, 3));
+        setEvents(eventsRes.data);
         setStats({
           members: Math.floor(Math.random() * 5000) + 5000,
           posts: postsRes.data.length,
@@ -375,7 +542,6 @@ const Community = () => {
 
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20">
-      {/* Animated Mandala Background */}
       <div
         className="absolute inset-0 opacity-20"
         style={{
@@ -385,7 +551,6 @@ const Community = () => {
         }}
       />
 
-      {/* Grid Pattern */}
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -397,7 +562,6 @@ const Community = () => {
         }}
       />
 
-      {/* Floating Elements */}
       <div className="absolute inset-0">
         {[...Array(10)].map((_, i) => (
           <motion.div
@@ -423,33 +587,30 @@ const Community = () => {
       </div>
 
       <div className="relative z-10 container mx-auto px-6">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          {/* Sacred Badge */}
           <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
             <span className="text-amber-100 font-medium tracking-wide text-sm">
-              कृष्णोवा समुदाय
+              Krishnova community
             </span>
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-bold mb-4">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
               Divine Community Hub
             </span>
           </h1>
 
-          <p className="text-xl text-blue-100/80 max-w-3xl mx-auto">
+          <p className="text-md md:text-xl text-blue-100/80 max-w-3xl mx-auto">
             Connect with like-minded souls on the path of Krishna consciousness
           </p>
         </motion.div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
           <StatsCard
             icon="👥"
@@ -481,25 +642,24 @@ const Community = () => {
           />
         </div>
 
-        {/* Events Section */}
-        {events.length > 0 && (
+        {filteredEvents.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-16"
           >
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center md:justify-between flex-wrap justify-center mb-8">
               <h2 className="text-3xl font-bold text-amber-300">
                 Upcoming Sacred Events
               </h2>
               <Link to="/communityblog">
-                <button className="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-full font-bold hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300">
+                <button className="px-3 flex min-w-44 md:px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-full font-bold hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300">
                   View All Events →
                 </button>
               </Link>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.map((event, i) => (
+              {filteredEvents.map((event, i) => (
                 <EventCard
                   key={event._id}
                   event={event}
@@ -511,12 +671,11 @@ const Community = () => {
           </motion.div>
         )}
 
-        {/* Posts Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center md:justify-between flex-wrap justify-center mb-8 gap-2">
             <h2 className="text-3xl font-bold text-amber-300">
               Community Stories
             </h2>
@@ -547,7 +706,6 @@ const Community = () => {
                 ))}
           </div>
 
-          {/* CTA */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

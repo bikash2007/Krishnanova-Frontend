@@ -19,6 +19,17 @@ module.exports = {
         "deep-burgundy": "#8B0000",
       },
       animation: {
+        // Add these new animations
+        "spin-slow": "spin 20s linear infinite",
+        "spin-very-slow": "spin 30s linear infinite",
+        "spin-reverse-slow": "spin 25s linear infinite reverse",
+        "pulse-slow": "pulse 4s ease-in-out infinite",
+        shimmer: "shimmer 3s linear infinite",
+        gradient: "gradient 3s ease infinite",
+        "float-slow": "floatSlow 6s ease-in-out infinite",
+        scroll: "scroll 2s ease-in-out infinite",
+
+        // Your existing animations
         "gentle-float": "gentleFloat 3s ease-in-out infinite",
         "gentle-float-delayed": "gentleFloat 2.5s ease-in-out infinite 0.5s",
         "pendulum-swing": "pendulumSwing 4s ease-in-out infinite",
@@ -43,6 +54,26 @@ module.exports = {
         "symbol-materialize": "symbolMaterialize 3s ease-in-out",
       },
       keyframes: {
+        // Add these new keyframes
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        gradient: {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+        floatSlow: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-20px)" },
+        },
+        scroll: {
+          "0%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(5px)" },
+          "100%": { transform: "translateY(0)" },
+        },
+
+        // Your existing keyframes
         gentleFloat: {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-20px)" },
@@ -155,10 +186,10 @@ module.exports = {
         400: "400% 400%",
       },
       spacing: {
-        15: "3.75rem", // 60px
-        18: "4.5rem", // 72px
-        25: "6.25rem", // 100px
-        50: "12.5rem", // 200px
+        15: "3.75rem",
+        18: "4.5rem",
+        25: "6.25rem",
+        50: "12.5rem",
       },
       backdropBlur: {
         xs: "2px",

@@ -163,11 +163,14 @@ const HomeSection = () => {
               </span>
             </NavLink>
 
-            <button className="group px-8 py-4 border-2 border-amber-400/50 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transform hover:-translate-y-1 transition-all duration-300">
+            <NavLink
+              to="/readvagwatgita"
+              className="group px-8 py-4 border-2 border-amber-400/50 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transform hover:-translate-y-1 transition-all duration-300"
+            >
               <span className="flex items-center gap-2">
                 📖 Read Bhagavad Gita
               </span>
-            </button>
+            </NavLink>
           </div>
 
           {/* Stats */}

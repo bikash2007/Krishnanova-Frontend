@@ -19,6 +19,7 @@ import EventManagement from "./components/Dashboard/EventManagement.jsx";
 import UserManagement from "./components/Dashboard/UserManagement.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import WishdomPortal from "./components/WisdomPortal/WishdomPortal.jsx";
+import GitaModule from "./components/WisdomPortal/components/Gita/GitaModule.jsx";
 import CommunityBlog from "./components/Community/CommunityBlog.jsx";
 import BlogManagment from "./components/Dashboard/BlogManagment.jsx";
 import Cart from "./pages/Cart.jsx";
@@ -28,6 +29,7 @@ import CheckoutPage from "./components/CheckOut.jsx";
 import OrderManagement from "./components/Dashboard/OrderManagment.jsx";
 import BlogPost from "./components/Community/BlogPost.jsx";
 import KrishnaKeychainCustomize from "./pages/KrishnaKeychainCustomize.jsx";
+import GitaManager from "./components/Admin/GitaManager/GitaManager.jsx";
 
 const router = createBrowserRouter(
   [
@@ -75,6 +77,10 @@ const router = createBrowserRouter(
           path: "orders", // Full path: /admin/users
           element: <OrderManagement />,
         },
+        {
+          path: "gita", // Full path: /admin/gita
+          element: <GitaManager />,
+        },
 
         // Add more admin-specific routes here as needed
       ],
@@ -97,6 +103,10 @@ const router = createBrowserRouter(
     {
       path: "/wishdomportal",
       element: <WishdomPortal />,
+    },
+    {
+      path: "/readvagwatgita",
+      element: <GitaModule />,
     },
     {
       path: "/communityblog",

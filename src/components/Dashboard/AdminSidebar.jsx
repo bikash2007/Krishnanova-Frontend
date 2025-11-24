@@ -11,6 +11,7 @@ export default function AdminSidebar() {
     { name: "Users", path: "/admin/users", icon: "👥" },
     { name: "Blogs", path: "/admin/blogs", icon: "📔" },
     { name: "Orders", path: "/admin/orders", icon: "📝" },
+    { name: "Gita Manager", path: "/admin/gita", icon: "📖" },
   ];
 
   return (

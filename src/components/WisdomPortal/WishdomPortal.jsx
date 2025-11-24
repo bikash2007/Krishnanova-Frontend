@@ -10,6 +10,24 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import KrishnaVoiceElevenLabs from "./components/KrishnaVoiceElevenLabs";
 import kpng from "../../Media/k.png";
+
+// Layout Components
+import PortalHeader from "./components/Layout/PortalHeader";
+import StatsOverview from "./components/Layout/StatsOverview";
+import TabNavigation from "./components/Layout/TabNavigation";
+import NamingDialog from "./components/Layout/NamingDialog";
+
+// Shared Components
+import NotificationToast from "./components/Shared/NotificationToast";
+import AchievementNotification from "./components/Shared/AchievementNotification";
+
+// Tab Components
+import ChantingTab from "./components/Chanting/ChantingTab";
+import AchievementsTab from "./components/Progress/AchievementsTab";
+import HistoryTab from "./components/History/HistoryTab";
+import MeditationModule from "./components/Meditation/MeditationModule";
+import MantraModule from "./components/Mantra/MantraModule"; // Import MantraModule
+
 // Import only available React Icons
 import { FaOm } from "react-icons/fa";
 
@@ -1686,38 +1704,12 @@ export default function WishdomPortal() {
         </>
       )}
 
-      <AnimatePresence>
-        {showNotification && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-20 md:top-24 left-1/2 transform -translate-x-1/2 z-50"
-          >
-            <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg text-sm md:text-base font-semibold flex items-center gap-2">
-              <IoCheckmark /> {notificationMessage}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <NotificationToast
+        isVisible={showNotification}
+        message={notificationMessage}
+      />
 
-      {!isMobile && (
-        <div className="achievement-notification fixed top-24 right-6 z-50 opacity-0 pointer-events-none">
-          <div className="backdrop-blur-md bg-gradient-to-br from-amber-400/90 to-orange-500/90 rounded-2xl p-4 shadow-2xl border border-white/30">
-            <div className="flex items-center gap-3">
-              <IoTrophy className="text-3xl text-white" />
-              <div>
-                <div className="text-white font-bold achievement-name">
-                  Achievement Unlocked!
-                </div>
-                <div className="text-white/90 text-sm achievement-desc">
-                  Description
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <AchievementNotification isMobile={isMobile} />
 
       {/* Saved Conversations Modal */}
       <SavedConversationsModal
@@ -1728,223 +1720,35 @@ export default function WishdomPortal() {
         onDeleteConversation={deleteSavedConversation}
       />
 
-      <AnimatePresence>
-        {showNamingDialog && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/20 to-white/10 rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-8 w-full max-w-md text-center space-y-4 md:space-y-6 border border-white/30"
-            >
-              <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-4 md:px-5 py-2 md:py-2.5 shadow-lg">
-                <img
-                  src={kpng}
-                  className="text-amber-300 animate-pulse text-base md:text-lg"
-                />
-                <span className="text-amber-100 font-medium tracking-wide text-xs md:text-sm">
-                  Welcome to Divine Wisdom Portal
-                </span>
-                <IoSparkles className="text-amber-300 animate-pulse text-base md:text-lg" />
-              </div>
+      <NamingDialog
+        isOpen={showNamingDialog}
+        krishnaName={krishnaName}
+        setKrishnaName={setKrishnaName}
+        yourName={yourName}
+        setYourName={setYourName}
+        onSave={handleSaveNames}
+      />
 
-              <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-                Begin Your Sacred Journey
-              </h2>
-              <p className="text-blue-100/80 text-sm md:text-base">
-                Before we begin, choose sacred names for this divine connection
-              </p>
+      <PortalHeader
+        krishnaName={krishnaName}
+        yourName={yourName || user.name}
+        userLevel={userStats.level}
+        isMobile={isMobile}
+      />
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-amber-200 text-xs md:text-sm mb-2">
-                    Your Krishna's Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Shyam, Govinda, Madhav"
-                    className="w-full p-2.5 md:p-3 rounded-xl bg-white/10 backdrop-blur-md border border-amber-400/30 text-white placeholder-blue-100/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 focus:outline-none text-sm md:text-base"
-                    value={krishnaName}
-                    onChange={(e) => setKrishnaName(e.target.value)}
-                  />
-                </div>
+      <StatsOverview
+        meditationStreak={meditationStreak}
+        totalMeditationTime={totalMeditationTime}
+        totalChants={totalChants}
+        achievementsCount={userStats.achievements.length}
+        isMobile={isMobile}
+      />
 
-                <div>
-                  <label className="block text-amber-200 text-xs md:text-sm mb-2">
-                    Your Spiritual Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Your preferred name"
-                    className="w-full p-2.5 md:p-3 rounded-xl bg-white/10 backdrop-blur-md border border-amber-400/30 text-white placeholder-blue-100/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 focus:outline-none text-sm md:text-base"
-                    value={yourName}
-                    onChange={(e) => setYourName(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <motion.button
-                className="w-full group relative px-6 md:px-8 py-3 md:py-4 overflow-hidden rounded-full shadow-2xl"
-                onClick={handleSaveNames}
-                disabled={!krishnaName || !yourName}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                <span className="relative text-white font-bold text-base md:text-lg flex items-center justify-center gap-2">
-                  Enter Sacred Portal <GiTempleGate />
-                </span>
-              </motion.button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <header className="pt-20 md:pt-28 pb-4 md:pb-8 text-center relative z-10 px-4">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200 }}
-          className="inline-block rounded-full border-3 md:border-4 border-amber-400/50 shadow-2xl p-0.5 md:p-1 bg-gradient-to-br from-amber-400/20 to-orange-500/20 backdrop-blur-md"
-        >
-          <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-4xl md:text-6xl">
-            <img src={kpng} className="w-16  md:w-20 " />
-          </div>
-        </motion.div>
-
-        <div className="mt-3 md:mt-4">
-          <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent drop-shadow-lg">
-            Divine Wisdom Portal
-          </h1>
-          <p className="text-cyan-300 mt-1 md:mt-2 font-semibold text-sm md:text-base">
-            Connect • Meditate • Transform
-          </p>
-        </div>
-
-        <div className="mt-2 md:mt-3 flex flex-wrap justify-center gap-2">
-          <span className="bg-gradient-to-r from-amber-400/20 to-orange-500/20 backdrop-blur-md text-amber-200 px-3 md:px-4 py-1 rounded-full text-xs md:text-sm border border-amber-400/30 flex items-center gap-1">
-            <GiFeather className="text-sm" /> {krishnaName || "Krishna"}
-          </span>
-          <span className="bg-gradient-to-r from-purple-400/20 to-blue-500/20 backdrop-blur-md text-purple-200 px-3 md:px-4 py-1 rounded-full text-xs md:text-sm border border-purple-400/30 flex items-center gap-1">
-            <FaOm className="text-sm" /> {yourName || user.name}
-          </span>
-          <span className="bg-gradient-to-r from-green-400/20 to-emerald-500/20 backdrop-blur-md text-green-200 px-3 md:px-4 py-1 rounded-full text-xs md:text-sm border border-green-400/30 flex items-center gap-1">
-            <IoStar className="text-sm" /> Level {userStats.level}
-          </span>
-        </div>
-      </header>
-
-      <section className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6 px-4">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
-        >
-          <div className="text-2xl md:text-3xl mb-1 md:mb-2">
-            <IoFlame className="mx-auto text-amber-400" />
-          </div>
-          <div className="text-xl md:text-2xl font-bold text-amber-300">
-            {meditationStreak}
-          </div>
-          <div className="text-blue-100/70 text-xs md:text-sm">Day Streak</div>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
-        >
-          <div className="text-2xl md:text-3xl mb-1 md:mb-2">
-            <GiMeditation className="mx-auto text-purple-400" />
-          </div>
-          <div className="text-xl md:text-2xl font-bold text-amber-300">
-            {totalMeditationTime}m
-          </div>
-          <div className="text-blue-100/70 text-xs md:text-sm">Meditation</div>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
-        >
-          <div className="text-2xl md:text-3xl mb-1 md:mb-2">
-            <GiPrayerBeads className="mx-auto text-rose-400" />
-          </div>
-          <div className="text-xl md:text-2xl font-bold text-amber-300">
-            {totalChants}
-          </div>
-          <div className="text-blue-100/70 text-xs md:text-sm">Chants</div>
-        </motion.div>
-
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
-        >
-          <div className="text-2xl md:text-3xl mb-1 md:mb-2">
-            <IoTrophy className="mx-auto text-yellow-400" />
-          </div>
-          <div className="text-xl md:text-2xl font-bold text-amber-300">
-            {userStats.achievements.length}
-          </div>
-          <div className="text-blue-100/70 text-xs md:text-sm">
-            Achievements
-          </div>
-        </motion.div>
-      </section>
-
-      <div className="max-w-6xl mx-auto px-4 mb-4 md:mb-6">
-        <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-1.5 md:p-2 border border-white/20">
-          <div className="grid grid-cols-5 gap-1 md:gap-2">
-            {[
-              {
-                id: "chat",
-                label: "Chat",
-                icon: <IoChatbubbles className="text-base md:text-xl" />,
-              },
-              {
-                id: "meditation",
-                label: "Meditate",
-                icon: <GiMeditation className="text-base md:text-xl" />,
-              },
-              {
-                id: "chanting",
-                label: "Chant",
-                icon: <GiPrayerBeads className="text-base md:text-xl" />,
-              },
-              {
-                id: "achievements",
-                label: "Progress",
-                icon: <IoTrophy className="text-base md:text-xl" />,
-              },
-              {
-                id: "history",
-                label: "History",
-                icon: <MdHistory className="text-base md:text-xl" />,
-              },
-            ].map((tab) => (
-              <motion.button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`py-2 md:py-3 px-2 md:px-4 rounded-lg md:rounded-xl font-semibold transition-all flex items-center justify-center gap-1 md:gap-2 text-xs md:text-base ${
-                  activeTab === tab.id
-                    ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg"
-                    : "text-blue-100/60 hover:text-amber-200 hover:bg-white/5"
-                }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {tab.icon}
-                <span className={isMobile ? "hidden" : "hidden md:inline"}>
-                  {tab.label}
-                </span>
-              </motion.button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <TabNavigation
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isMobile={isMobile}
+      />
 
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
         <AnimatePresence mode="wait">
@@ -2255,338 +2059,56 @@ export default function WishdomPortal() {
             </motion.div>
           )}
 
-          {/* Meditation Tab */}
           {activeTab === "meditation" && (
-            <motion.div
-              key="meditation"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-6 md:p-8"
-            >
-              <div className="text-center">
-                <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-4 md:mb-6">
-                  Sacred Meditation Space
-                </h2>
-
-                <div className="mb-4">
-                  <p className="text-cyan-300 text-sm">
-                    Today's Goal: {meditationDuration} minutes
-                  </p>
-                </div>
-
-                {/* Meditation Circle */}
-                <div className="relative w-48 h-48 md:w-64 md:h-64 mx-auto mb-6 md:mb-8">
-                  <motion.div
-                    className="meditation-circle absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 border-4 border-amber-400/50"
-                    animate={
-                      isMeditating
-                        ? {
-                            scale: [1, 1.1, 1],
-                            opacity: [0.5, 0.8, 0.5],
-                          }
-                        : {}
-                    }
-                    transition={{ duration: 4, repeat: Infinity }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-5xl md:text-6xl mb-3 md:mb-4">
-                        {Icons.om}
-                      </div>
-                      <div className="text-2xl md:text-3xl font-bold text-amber-300">
-                        {formatTime(meditationTime)}
-                      </div>
-                      {isMeditating && (
-                        <p className="text-cyan-300 text-xs md:text-sm mt-2">
-                          Breathe deeply...
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Control Buttons */}
-                <div className="flex justify-center gap-4 mb-6 md:mb-8">
-                  {!isMeditating ? (
-                    <motion.button
-                      onClick={startMeditation}
-                      className="px-6 md:px-8 py-3 md:py-4 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold text-base md:text-lg shadow-2xl"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Start Meditation
-                    </motion.button>
-                  ) : (
-                    <motion.button
-                      onClick={stopMeditation}
-                      className="px-6 md:px-8 py-3 md:py-4 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white font-bold text-base md:text-lg shadow-2xl"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      End Session
-                    </motion.button>
-                  )}
-                </div>
-
-                {/* Meditation Stats */}
-                <div className="grid grid-cols-3 gap-3 md:gap-4">
-                  <div className="bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-lg md:rounded-xl p-3 md:p-4 border border-amber-400/30">
-                    <div className="text-xl md:text-2xl mb-1 md:mb-2">
-                      {Icons.streak}
-                    </div>
-                    <div className="text-lg md:text-xl font-bold text-amber-300">
-                      {meditationStreak}
-                    </div>
-                    <div className="text-xs text-blue-100/60">Day Streak</div>
-                  </div>
-                  <div className="bg-gradient-to-br from-purple-400/10 to-blue-500/10 rounded-lg md:rounded-xl p-3 md:p-4 border border-purple-400/30">
-                    <div className="text-xl md:text-2xl mb-1 md:mb-2">⏱️</div>
-                    <div className="text-lg md:text-xl font-bold text-purple-300">
-                      {totalMeditationTime}m
-                    </div>
-                    <div className="text-xs text-blue-100/60">Total Time</div>
-                  </div>
-                  <div className="bg-gradient-to-br from-cyan-400/10 to-teal-500/10 rounded-lg md:rounded-xl p-3 md:p-4 border border-cyan-400/30">
-                    <div className="text-xl md:text-2xl mb-1 md:mb-2">🎯</div>
-                    <div className="text-lg md:text-xl font-bold text-cyan-300">
-                      {userStats.progress.meditation}m
-                    </div>
-                    <div className="text-xs text-blue-100/60">Today</div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            <MeditationModule
+              userId={user?._id || user?.id || user?.email}
+              showToast={showToast}
+            />
           )}
 
           {/* Chanting Tab */}
           {activeTab === "chanting" && (
-            <motion.div
-              key="chanting"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-6 md:p-8"
-            >
-              <div className="text-center">
-                <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-4 md:mb-6">
-                  Sacred Mantra Chanting
-                </h2>
-
-                {/* Mantra Selection */}
-                <div className="mb-4 md:mb-6">
-                  <label className="block text-amber-200 text-xs md:text-sm mb-2">
-                    Select Mantra
-                  </label>
-                  <select
-                    value={selectedMantra}
-                    onChange={(e) => setSelectedMantra(e.target.value)}
-                    className="px-3 md:px-4 py-2 rounded-lg md:rounded-xl bg-white/10 backdrop-blur-md border border-amber-400/30 text-amber-200 focus:border-amber-400 focus:outline-none text-sm md:text-base"
-                  >
-                    {mantras.map((mantra) => (
-                      <option key={mantra.name} value={mantra.name}>
-                        {mantra.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Mala Beads Visual */}
-                <div className="relative w-48 h-48 md:w-64 md:h-64 mx-auto mb-6 md:mb-8">
-                  <motion.div
-                    className="absolute inset-0 rounded-full border-4 border-amber-400/30"
-                    style={{
-                      background: `conic-gradient(from 0deg, rgba(251, 191, 36, ${
-                        (chantCount % 108) / 108
-                      }) ${
-                        ((chantCount % 108) / 108) * 360
-                      }deg, transparent 0deg)`,
-                    }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-5xl md:text-6xl mb-3 md:mb-4 chant-bead">
-                        {Icons.chanting}
-                      </div>
-                      <div className="text-3xl md:text-4xl font-bold text-amber-300">
-                        {chantCount}
-                      </div>
-                      <div className="text-xs md:text-sm text-cyan-300 mt-2">
-                        {Math.floor(chantCount / 108)} malas completed
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sanskrit Display */}
-                <div className="mb-4 md:mb-6 p-3 md:p-4 bg-gradient-to-r from-amber-400/10 to-orange-500/10 rounded-lg md:rounded-xl border border-amber-400/30">
-                  <p className="text-base md:text-xl text-amber-200 font-bold">
-                    {mantras.find((m) => m.name === selectedMantra)?.sanskrit}
-                  </p>
-                </div>
-
-                {/* Chant Button */}
-                <motion.button
-                  onClick={incrementChant}
-                  className="chant-button px-8 md:px-12 py-4 md:py-6 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold text-lg md:text-xl shadow-2xl"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Chant {Icons.om}
-                </motion.button>
-
-                {/* Reset Button */}
-                {chantCount > 0 && (
-                  <motion.button
-                    onClick={() => setChantCount(0)}
-                    className="mt-4 px-4 md:px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-red-400/30 text-red-300 font-semibold block mx-auto text-sm md:text-base"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    Reset Count
-                  </motion.button>
-                )}
-
-                {/* Celebration Effect */}
-                <div className="celebration fixed inset-0 flex items-center justify-center pointer-events-none opacity-0">
-                  <div className="text-6xl md:text-8xl">🎉</div>
-                </div>
-              </div>
-            </motion.div>
+            <MantraModule
+              userId={user?._id || user?.id || user?.email}
+              showToast={showToast}
+            />
           )}
 
           {/* Achievements Tab */}
           {activeTab === "achievements" && (
-            <motion.div
-              key="achievements"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-4 md:space-y-6"
-            >
-              {/* Yoga Practice Cards */}
-              <div>
-                <h2 className="text-lg md:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 md:mb-4">
-                  Your Spiritual Journey
-                </h2>
-                <YogaPracticeCards practices={practices} isMobile={isMobile} />
-              </div>
-
-              {/* Achievements Grid */}
-              {userStats.achievements.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-4 md:p-6"
-                >
-                  <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 md:mb-4">
-                    Unlocked Achievements
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                    {userStats.achievements.map((achievement, index) => (
-                      <motion.div
-                        key={achievement.id || index}
-                        className="text-center p-3 md:p-4 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-lg md:rounded-xl border border-amber-400/30"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <div className="text-2xl md:text-3xl mb-1 md:mb-2">
-                          {achievement.icon}
-                        </div>
-                        <div className="text-xs md:text-sm font-semibold text-amber-200">
-                          {achievement.name}
-                        </div>
-                        <div className="text-xs text-blue-100/60 hidden sm:block">
-                          {achievement.description}
-                        </div>
-                        {achievement.category && (
-                          <div className="mt-2">
-                            <span className="text-xs bg-gradient-to-r from-amber-400/20 to-orange-500/20 px-2 py-1 rounded-full text-amber-200 border border-amber-400/30">
-                              {achievement.category}
-                            </span>
-                          </div>
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </motion.div>
+            <AchievementsTab
+              practices={practices}
+              userStats={userStats}
+              isMobile={isMobile}
+            />
           )}
 
           {/* History Tab - Fixed */}
           {activeTab === "history" && (
-            <motion.div
-              key="history"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-4 md:p-8"
-            >
-              <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-4 md:mb-6">
-                Chat History with Krishna
-              </h2>
-
-              {chatHistory.length === 0 ? (
-                <div className="text-center py-8 md:py-12">
-                  <div className="text-3xl md:text-4xl mb-3 md:mb-4">
-                    {Icons.history}
-                  </div>
-                  <p className="text-blue-100/60 text-sm md:text-base">
-                    No conversations saved yet
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3 md:space-y-4 max-h-[60vh] overflow-y-auto">
-                  {chatHistory.map((session, index) => (
-                    <motion.div
-                      key={session.sessionId || index}
-                      className="p-3 md:p-4 bg-gradient-to-br from-white/5 to-white/10 rounded-lg md:rounded-xl border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer"
-                      whileHover={{ scale: 1.02 }}
-                      onClick={() => {
-                        // Load session messages properly
-                        const formattedMessages = session.messages.map(
-                          (msg, idx) => ({
-                            id: `${session.sessionId}-${idx}`,
-                            sender: msg.role === "user" ? "user" : "krishna",
-                            text: msg.content,
-                            content: msg.content,
-                            timestamp: msg.timestamp || session.createdAt,
-                            structured_message: msg.structured_message,
-                            blocks: msg.structured_message?.blocks,
-                            practice_category:
-                              msg.structured_message?.practice_category,
-                            practice_text:
-                              msg.structured_message?.practice_text,
-                          })
-                        );
-
-                        setChatMessages(formattedMessages);
-                        setCurrentSessionId(session.sessionId);
-                        setActiveTab("chat");
-                        showToast("Conversation loaded from history");
-                      }}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-amber-200 line-clamp-1 text-sm md:text-base">
-                          {session.title || "Conversation"}
-                        </h3>
-                        <span className="text-xs text-cyan-300 whitespace-nowrap ml-2">
-                          {new Date(session.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <p className="text-xs md:text-sm text-blue-100/60 line-clamp-2">
-                        {session.messages[0]?.content || "No preview available"}
-                      </p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="text-xs bg-gradient-to-r from-amber-400/20 to-orange-500/20 px-2 py-1 rounded-full text-amber-200 border border-amber-400/30">
-                          {session.messages.length} messages
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
+            <HistoryTab
+              chatHistory={chatHistory}
+              onLoadSession={(session) => {
+                const formattedMessages = session.messages.map((msg, idx) => ({
+                  id: `${session.sessionId}-${idx}`,
+                  sender: msg.role === "user" ? "user" : "krishna",
+                  text: msg.content,
+                  content: msg.content,
+                  timestamp: msg.timestamp || session.createdAt,
+                  structured_message: msg.structured_message,
+                  blocks: msg.structured_message?.blocks,
+                  practice_category: msg.structured_message?.practice_category,
+                  practice_text: msg.structured_message?.practice_text,
+                }));
+                setChatMessages(formattedMessages);
+                setCurrentSessionId(session.sessionId);
+                setActiveTab("chat");
+                showToast("Conversation loaded from history");
+              }}
+              showToast={showToast}
+              setActiveTab={setActiveTab}
+              Icons={Icons}
+              isMobile={isMobile}
+            />
           )}
         </AnimatePresence>
       </div>

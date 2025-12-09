@@ -94,12 +94,14 @@ export default function Navigation() {
       >
         {/* Mouse Glow Effect */}
         <div
-          className="pointer-events-none absolute w-[400px] h-[400px] transition-transform duration-75 ease-out opacity-30"
+          className="pointer-events-none absolute w-[400px] h-[400px] opacity-30"
           style={{
             background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.2) 0%, transparent 50%)`,
-            transform: `translate(${mousePosition.x - 200}px, ${
+            transform: `translate3d(${mousePosition.x - 200}px, ${
               mousePosition.y - 200
-            }px)`,
+            }px, 0)`,
+            transition: "transform 150ms ease-out",
+            willChange: "transform",
           }}
         />
 

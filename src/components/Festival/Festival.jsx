@@ -224,28 +224,29 @@ const Festival = () => {
         }}
       />
 
-      {/* Floating Elements */}
+
+      {/* Floating Elements - optimized for performance */}
       <div className="absolute inset-0">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${(i * 20) + 10}%`,
+              top: `${(i * 18) + 5}%`,
             }}
             animate={{
               y: [0, -30, 0],
               rotate: [0, 360],
             }}
             transition={{
-              duration: 20 + Math.random() * 10,
+              duration: 20 + i * 5,
               repeat: Infinity,
               ease: "linear",
             }}
           >
             <div className="text-2xl opacity-20">
-              {["🪔", "🌺", "🦚", "✨"][i % 4]}
+              {["🪔", "🌺", "🦚", "✨", "🕉️"][i]}
             </div>
           </motion.div>
         ))}
@@ -253,12 +254,14 @@ const Festival = () => {
 
       {/* Mouse Glow Effect */}
       <div
-        className="pointer-events-none absolute w-[600px] h-[600px] transition-transform duration-75 ease-out"
+        className="pointer-events-none absolute w-[600px] h-[600px]"
         style={{
-          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%)`,
-          transform: `translate(${mousePosition.x - 300}px, ${
+          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.12) 0%, transparent 50%)`,
+          transform: `translate3d(${mousePosition.x - 300}px, ${
             mousePosition.y - 300
-          }px)`,
+          }px, 0)`,
+          transition: "transform 150ms ease-out",
+          willChange: "transform",
         }}
       />
 

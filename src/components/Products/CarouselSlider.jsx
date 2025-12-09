@@ -48,8 +48,8 @@ const CarouselSlider = () => {
   };
   const { addToCart } = useCart();
 
-  const handleAddToCart = () => {
-    addToCart(products);
+  const handleAddToCart = (product) => {
+    addToCart(product);
     setShowSuccess(true);
 
     // GSAP success animation
@@ -75,19 +75,30 @@ const CarouselSlider = () => {
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  // Mouse parallax effect
+  // Throttle ref for mouse events
+  const throttleRef = useRef(false);
+
+  // Mouse parallax effect - throttled for performance
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        setMousePosition({
-          x: (e.clientX - rect.left - rect.width / 2) / 50,
-          y: (e.clientY - rect.top - rect.height / 2) / 50,
-        });
-      }
+      if (throttleRef.current) return;
+      throttleRef.current = true;
+      
+      requestAnimationFrame(() => {
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect();
+          setMousePosition({
+            x: (e.clientX - rect.left - rect.width / 2) / 50,
+            y: (e.clientY - rect.top - rect.height / 2) / 50,
+          });
+        }
+        setTimeout(() => {
+          throttleRef.current = false;
+        }, 50);
+      });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 

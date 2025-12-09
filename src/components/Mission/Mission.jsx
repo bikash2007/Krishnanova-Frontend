@@ -53,15 +53,26 @@ const Mission = () => {
     };
   }, []);
 
-  // Mouse tracking for interactive effects
+  // Throttle ref for mouse events
+  const throttleRef = useRef(false);
+
+  // Mouse tracking for interactive effects - throttled
   const handleMouseMove = useCallback((e) => {
-    const rect = sectionRef.current?.getBoundingClientRect();
-    if (rect) {
-      setMousePosition({
-        x: (e.clientX - rect.left) / rect.width,
-        y: (e.clientY - rect.top) / rect.height,
-      });
-    }
+    if (throttleRef.current) return;
+    throttleRef.current = true;
+    
+    requestAnimationFrame(() => {
+      const rect = sectionRef.current?.getBoundingClientRect();
+      if (rect) {
+        setMousePosition({
+          x: (e.clientX - rect.left) / rect.width,
+          y: (e.clientY - rect.top) / rect.height,
+        });
+      }
+      setTimeout(() => {
+        throttleRef.current = false;
+      }, 50);
+    });
   }, []);
 
   const missionPillars = [
@@ -147,23 +158,23 @@ const Mission = () => {
         }}
       /> */}
 
-      {/* Floating Sacred Elements */}
+      {/* Floating Sacred Elements - reduced for performance */}
       <div className="absolute inset-0">
-        {[...Array(15)].map((_, i) => (
+        {[...Array(6)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${(i * 16) + 8}%`,
+              top: `${(i * 16) + 5}%`,
             }}
             animate={{
               y: [0, -30, 0],
-              x: [0, Math.random() * 20 - 10, 0],
+              x: [0, i % 2 === 0 ? 10 : -10, 0],
               rotate: [0, 360],
             }}
             transition={{
-              duration: 15 + Math.random() * 10,
+              duration: 15 + i * 3,
               repeat: Infinity,
               ease: "linear",
             }}

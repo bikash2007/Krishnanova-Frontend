@@ -88,7 +88,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, index }) => {
             {item.title}
           </h3>
           <p className="text-sm text-gray-500 mb-3">
-            Price: ${item.price.toFixed(2)} each
+            Price: ${(item.price || 0).toFixed(2)} each
           </p>
 
           {/* Quantity Controls */}
@@ -107,7 +107,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, index }) => {
             {/* Item Total */}
             <div className="text-right">
               <p className="text-2xl font-bold text-green-600">
-                ${(item.price * item.quantity).toFixed(2)}
+                ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}
               </p>
             </div>
           </div>
@@ -194,8 +194,8 @@ export default function Cart() {
   const navigate = useNavigate();
   const [isClearing, setIsClearing] = useState(false);
 
-  const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
+  const total = cart.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
+  const totalItems = cart.reduce((sum, i) => sum + (i.quantity || 1), 0);
 
   const handleClearCart = () => {
     setIsClearing(true);

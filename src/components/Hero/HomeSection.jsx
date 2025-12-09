@@ -1,50 +1,54 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import kPng from "../../Media/k.png";
 import { NavLink } from "react-router-dom";
 
 const HomeSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const mandalaRef = useRef(null);
+  const throttleRef = useRef(false);
 
   useEffect(() => {
     setIsVisible(true);
 
+    // Throttled mouse handler - only updates every 50ms for performance
     const handleMouseMove = (e) => {
-      // For parallax effect
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 30,
-        y: (e.clientY / window.innerHeight - 0.5) * 30,
-      });
+      if (throttleRef.current) return;
+      throttleRef.current = true;
+      
+      requestAnimationFrame(() => {
+        // For parallax effect
+        setMousePosition({
+          x: (e.clientX / window.innerWidth - 0.5) * 30,
+          y: (e.clientY / window.innerHeight - 0.5) * 30,
+        });
 
-      // For cursor tracking
-      setCursorPosition({
-        x: e.clientX,
-        y: e.clientY,
-      });
+        // Add glow effect to mandala on mouse proximity
+        if (mandalaRef.current) {
+          const rect = mandalaRef.current.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const distance = Math.sqrt(
+            Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2)
+          );
 
-      // Add glow effect to mandala on mouse proximity
-      if (mandalaRef.current) {
-        const rect = mandalaRef.current.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distance = Math.sqrt(
-          Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2)
-        );
-
-        if (distance < 300) {
-          const intensity = 1 - distance / 300;
-          mandalaRef.current.style.filter = `brightness(${
-            1 + intensity * 0.5
-          }) contrast(${1 + intensity * 0.2})`;
-        } else {
-          mandalaRef.current.style.filter = "brightness(1) contrast(1)";
+          if (distance < 300) {
+            const intensity = 1 - distance / 300;
+            mandalaRef.current.style.filter = `brightness(${
+              1 + intensity * 0.5
+            }) contrast(${1 + intensity * 0.2})`;
+          } else {
+            mandalaRef.current.style.filter = "brightness(1) contrast(1)";
+          }
         }
-      }
+        
+        setTimeout(() => {
+          throttleRef.current = false;
+        }, 50);
+      });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 

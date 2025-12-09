@@ -129,7 +129,7 @@ const Footer = () => {
   return (
     <footer
       ref={footerRef}
-      className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-6 md:py-20"
+      className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-4 md:py-16"
     >
       {/* Animated Mandala Background - simplified for mobile */}
       <div
@@ -145,12 +145,14 @@ const Footer = () => {
       {/* Mouse Glow Effect - desktop only */}
       {!isMobile && (
         <div
-          className="pointer-events-none absolute w-[600px] h-[600px] transition-transform duration-75 ease-out"
+          className="pointer-events-none absolute w-[600px] h-[600px]"
           style={{
-            background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%)`,
-            transform: `translate(${mousePosition.x - 300}px, ${
+            background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.12) 0%, transparent 50%)`,
+            transform: `translate3d(${mousePosition.x - 300}px, ${
               mousePosition.y - 300
-            }px)`,
+            }px, 0)`,
+            transition: "transform 150ms ease-out",
+            willChange: "transform",
           }}
         />
       )}

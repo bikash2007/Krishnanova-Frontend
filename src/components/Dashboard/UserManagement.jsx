@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
 // REMOVE THIS LINE: import AdminSidebar from "../components/AdminSidebar/AdminSidebar"; // AdminLayout now provides the sidebar
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "https://krishnanova-backend.onrender.com/api";
 
 export default function UserManagement() {
   const { user, loading: authLoading, isAdmin } = useAuth();

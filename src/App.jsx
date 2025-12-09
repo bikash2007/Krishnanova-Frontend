@@ -96,7 +96,7 @@ const App = () => {
       <div id="home">
         <HomeSection />
       </div>
-      <div className=" main min-h-screen bg-white relative   overflow-hidden">
+      <div className="main min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 relative overflow-hidden">
         {/* <div id="blurry "></div> */}
         <div id="products">
           {/* <Products /> */}

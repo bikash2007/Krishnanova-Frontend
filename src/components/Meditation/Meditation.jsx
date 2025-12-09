@@ -60,7 +60,7 @@ const Meditation = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20"
+      className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-12"
     >
       {/* Animated Mandala Background */}
       <div
@@ -102,12 +102,14 @@ const Meditation = () => {
 
       {/* Mouse Glow Effect */}
       <div
-        className="pointer-events-none absolute w-[600px] h-[600px] transition-transform duration-75 ease-out"
+        className="pointer-events-none absolute w-[600px] h-[600px]"
         style={{
-          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.15) 0%, transparent 50%)`,
-          transform: `translate(${mousePosition.x - 300}px, ${
+          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.12) 0%, transparent 50%)`,
+          transform: `translate3d(${mousePosition.x - 300}px, ${
             mousePosition.y - 300
-          }px)`,
+          }px, 0)`,
+          transition: "transform 150ms ease-out",
+          willChange: "transform",
         }}
       />
 

@@ -1,0 +1,354 @@
+/* =========================================
+   PREMIUM KRISHNA ENHANCEMENTS
+   Imported after index.css for premium features
+========================================= */
+
+/* =========================================
+   iOS SAFARI FIXES
+========================================= */
+@supports (-webkit-touch-callout: none) {
+    html {
+        height: -webkit-fill-available;
+    }
+
+    body {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+    }
+
+    .scroll-container,
+    .main,
+    [class*="overflow-y-auto"] {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Safe area insets for notched iPhones */
+.safe-area-top {
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-area-left {
+    padding-left: env(safe-area-inset-left, 0px);
+}
+
+.safe-area-right {
+    padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Prevent white flash on iOS overscroll */
+html,
+body {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%);
+}
+
+/* =========================================
+   PREMIUM GLASS EFFECTS
+========================================= */
+.premium-glass {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.05) 50%,
+            rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.premium-glass:hover {
+    border-color: rgba(251, 191, 36, 0.3);
+    box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.15),
+        0 0 30px rgba(251, 191, 36, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Serene ambient background glow */
+.ambient-glow {
+    position: relative;
+}
+
+.ambient-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 80% 50% at 20% 30%, rgba(251, 191, 36, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0, 168, 150, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Soft golden glow */
+.golden-glow {
+    box-shadow:
+        0 0 20px rgba(251, 191, 36, 0.15),
+        0 0 40px rgba(251, 191, 36, 0.08),
+        0 0 60px rgba(251, 191, 36, 0.04);
+}
+
+.golden-glow-hover:hover {
+    box-shadow:
+        0 0 30px rgba(251, 191, 36, 0.25),
+        0 0 60px rgba(251, 191, 36, 0.12),
+        0 0 90px rgba(251, 191, 36, 0.06);
+}
+
+/* Premium gradient text */
+.gradient-text-premium {
+    background: linear-gradient(135deg,
+            #fde68a 0%,
+            #fbbf24 25%,
+            #f59e0b 50%,
+            #fbbf24 75%,
+            #fde68a 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-flow 4s ease-in-out infinite;
+}
+
+@keyframes gradient-flow {
+
+    0%,
+    100% {
+        background-position: 0% center;
+    }
+
+    50% {
+        background-position: 100% center;
+    }
+}
+
+/* =========================================
+   LOADING STATE FIX (WHITE SCREEN)
+========================================= */
+#products,
+#mission,
+#krishna-names,
+#wisdom,
+#community,
+#festival,
+#meditation,
+#contact {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%);
+    min-height: 100vh;
+}
+
+/* Loading skeleton shimmer */
+.loading-skeleton {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: 12px;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* =========================================
+   MOBILE PERFORMANCE OPTIMIZATIONS
+========================================= */
+@media (max-width: 768px) {
+
+    /* Reduce heavy animations on mobile */
+    .animate-slow-spin,
+    .animate-spin-very-slow,
+    .animate-spin-reverse-slow {
+        animation-duration: 60s !important;
+    }
+
+    /* Disable cursor effects on touch devices */
+    .cursor-tracker,
+    .cursor-glow {
+        display: none !important;
+    }
+
+    /* Reduce parallax complexity */
+    .parallax-bg {
+        transform: none !important;
+    }
+
+    /* Optimize backdrop blur for mobile performance */
+    .backdrop-blur-xl {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    /* Reduce shadow complexity on mobile */
+    .shadow-2xl {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Reduce floating elements on small screens */
+    .animate-float-slow,
+    .animate-float-slower {
+        animation-duration: 12s !important;
+    }
+}
+
+/* =========================================
+   PEACEFUL DIVINE ANIMATIONS
+========================================= */
+/* Gentle breathing effect for divine elements */
+@keyframes divine-breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.02);
+        opacity: 1;
+    }
+}
+
+.animate-divine-breathe {
+    animation: divine-breathe 4s ease-in-out infinite;
+}
+
+/* Soft glow pulse for sacred elements */
+@keyframes soft-glow {
+
+    0%,
+    100% {
+        filter: brightness(1) drop-shadow(0 0 8px rgba(251, 191, 36, 0.2));
+    }
+
+    50% {
+        filter: brightness(1.05) drop-shadow(0 0 16px rgba(251, 191, 36, 0.3));
+    }
+}
+
+.animate-soft-glow {
+    animation: soft-glow 3s ease-in-out infinite;
+}
+
+/* Serene spin for mandalas */
+@keyframes serene-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-serene-spin {
+    animation: serene-spin 60s linear infinite;
+}
+
+/* =========================================
+   ENHANCED TYPOGRAPHY
+========================================= */
+/* Sacred Sanskrit styling */
+.font-sanskrit {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    letter-spacing: 0.05em;
+}
+
+/* Premium text rendering */
+.premium-text,
+h1,
+h2,
+h3 {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* =========================================
+   DIVINE LOADING SPINNER
+========================================= */
+.divine-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%);
+}
+
+.divine-loader-content {
+    text-align: center;
+}
+
+.divine-spinner {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    position: relative;
+}
+
+.divine-spinner::before,
+.divine-spinner::after {
+    content: '';
+    position: absolute;
+    border: 3px solid transparent;
+    border-radius: 50%;
+}
+
+.divine-spinner::before {
+    inset: 0;
+    border-top-color: rgba(251, 191, 36, 0.8);
+    animation: divine-spin 1.5s ease-in-out infinite;
+}
+
+.divine-spinner::after {
+    inset: 8px;
+    border-bottom-color: rgba(139, 92, 246, 0.6);
+    animation: divine-spin 2s ease-in-out infinite reverse;
+}
+
+@keyframes divine-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.divine-text {
+    color: rgba(251, 191, 36, 0.8);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    animation: divine-fade 2s ease-in-out infinite;
+}
+
+@keyframes divine-fade {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}

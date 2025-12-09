@@ -99,7 +99,7 @@ const KrishnaVoiceElevenLabs = ({
             provider: actualProvider,
             quality: voiceSettings?.quality || "high",
             voiceStyle: voiceSettings?.voiceStyle || "divine",
-            rate: voiceSettings?.rate || 0.85,
+            rate: voiceSettings?.rate || 0.75, // Slower default for calm, confident delivery
             volume: voiceSettings?.volume || 1.0,
             // ElevenLabs specific settings
             stability: getStabilityForStyle(voiceSettings?.voiceStyle),
@@ -118,7 +118,7 @@ const KrishnaVoiceElevenLabs = ({
 
           audioRef.current.src = response.data.audio;
           audioRef.current.volume = voiceSettings?.volume || 1.0;
-          audioRef.current.playbackRate = voiceSettings?.rate || 0.85;
+          audioRef.current.playbackRate = voiceSettings?.rate || 0.75; // Slower for calm delivery
 
           audioRef.current.onplay = () => {
             setIsPlaying(true);
@@ -232,33 +232,64 @@ const KrishnaVoiceElevenLabs = ({
 
     const utterance = new SpeechSynthesisUtterance(krishnaText);
 
-    // Wait for voices to load if needed
+    // Enhanced voice selection for Krishna-like quality
     const setVoice = () => {
       const voices = window.speechSynthesis.getVoices();
       let selectedVoice = null;
 
       if (voiceSettings?.voiceStyle === "gentle") {
+        // For gentle style, prefer softer female voices
         selectedVoice =
           voices.find(
             (v) =>
               v.lang.includes("en-IN") &&
               v.name.toLowerCase().includes("female")
-          ) || voices.find((v) => v.lang.includes("en-IN"));
+          ) || 
+          voices.find((v) => v.lang.includes("en-IN")) ||
+          voices.find((v) => 
+            v.name.toLowerCase().includes("microsoft") && 
+            v.name.toLowerCase().includes("zira")
+          );
       } else {
+        // For divine/wise style, prefer deep, authoritative male voices
+        // Priority order: Indian English Male > Hindi > British Male > Microsoft high-quality voices
         selectedVoice =
+          // Try Indian English male voices first
           voices.find(
             (v) =>
-              v.lang.includes("en-IN") && v.name.toLowerCase().includes("male")
+              v.lang.includes("en-IN") && 
+              v.name.toLowerCase().includes("male")
           ) ||
-          voices.find((v) => v.lang.includes("hi-IN")) ||
+          // Try Microsoft Indian voices
           voices.find(
             (v) =>
-              v.lang.includes("en-GB") && v.name.toLowerCase().includes("male")
+              v.name.toLowerCase().includes("microsoft") &&
+              v.lang.includes("en-IN")
+          ) ||
+          // Try Hindi voices
+          voices.find((v) => v.lang.includes("hi-IN")) ||
+          // Try British male voices (deeper than US)
+          voices.find(
+            (v) =>
+              v.lang.includes("en-GB") && 
+              v.name.toLowerCase().includes("male")
+          ) ||
+          // Try Microsoft David (deep male voice)
+          voices.find((v) => 
+            v.name.toLowerCase().includes("microsoft") && 
+            v.name.toLowerCase().includes("david")
+          ) ||
+          // Try Google voices (if available)
+          voices.find(
+            (v) =>
+              v.name.toLowerCase().includes("google") &&
+              v.lang.includes("en")
           );
       }
 
       if (selectedVoice) {
         utterance.voice = selectedVoice;
+        console.log("Selected voice:", selectedVoice.name); // For debugging
       }
     };
 
@@ -270,20 +301,21 @@ const KrishnaVoiceElevenLabs = ({
       window.speechSynthesis.onvoiceschanged = setVoice;
     }
 
-    // Apply voice style parameters
+    // Enhanced voice parameters for natural, calm, confident Krishna voice
     switch (voiceSettings?.voiceStyle) {
       case "gentle":
-        utterance.rate = voiceSettings?.rate || 0.9;
-        utterance.pitch = 1.0;
+        utterance.rate = voiceSettings?.rate || 0.8; // Slower for gentle wisdom
+        utterance.pitch = 0.95; // Slightly lower for warmth
         break;
       case "wise":
-        utterance.rate = voiceSettings?.rate || 0.8;
-        utterance.pitch = 0.85;
+        utterance.rate = voiceSettings?.rate || 0.75; // Even slower for contemplative wisdom
+        utterance.pitch = 0.8; // Lower pitch for authority
         break;
       case "divine":
       default:
-        utterance.rate = voiceSettings?.rate || 0.85;
-        utterance.pitch = 0.9;
+        // Default Krishna voice - calm, confident, authoritative
+        utterance.rate = voiceSettings?.rate || 0.75; // Slower for clarity and calmness
+        utterance.pitch = 0.85; // Lower pitch for deeper, more authoritative voice
         break;
     }
 

@@ -10,24 +10,32 @@ const useScrollAnimation = () => {
     };
 
     observerRef.current = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("revealed");
+      // Use requestAnimationFrame for smooth visual updates
+      requestAnimationFrame(() => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
 
-          // Add sacred symbols animation
-          if (entry.target.classList.contains("name-card")) {
-            createSacredSymbol(entry.target);
+            // Add sacred symbols animation (debounced)
+            if (entry.target.classList.contains("name-card")) {
+              createSacredSymbol(entry.target);
+            }
+
+            // Unobserve after revealing for better performance
+            observerRef.current?.unobserve(entry.target);
           }
-        }
+        });
       });
     }, observerOptions);
 
-    // Observe all scroll reveal elements
-    const elements = document.querySelectorAll(
-      ".scroll-reveal, .scroll-slide-left, .scroll-slide-right"
-    );
-    elements.forEach((el) => {
-      observerRef.current.observe(el);
+    // Defer observation to prevent blocking initial render
+    requestAnimationFrame(() => {
+      const elements = document.querySelectorAll(
+        ".scroll-reveal, .scroll-slide-left, .scroll-slide-right",
+      );
+      elements.forEach((el) => {
+        observerRef.current?.observe(el);
+      });
     });
 
     return () => {
@@ -42,9 +50,14 @@ const useScrollAnimation = () => {
     const symbol = document.createElement("div");
     symbol.className = "sacred-symbol";
     symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-    symbol.style.left = Math.random() * 100 + "%";
-    symbol.style.top = Math.random() * 100 + "%";
-    symbol.style.color = "#FFD700";
+    symbol.style.cssText = `
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      color: #FFD700;
+      position: absolute;
+      pointer-events: none;
+      will-change: opacity, transform;
+    `;
 
     element.style.position = "relative";
     element.appendChild(symbol);

@@ -213,7 +213,7 @@ const WisdomPortalPath = () => {
 
               {/* Sanskrit Quote */}
               <div className="bg-white/5 rounded-2xl p-4 mb-10 border border-amber-400/20">
-                <p className="text-center text-amber-200/80 font-sanskrit text-lg mb-2">
+                <p className="text-center text-amber-200/80 text-lg mb-2">
                   "Karmaṇyevādhikāraste mā phaleṣu kadācana"
                 </p>
                 <p className="text-center text-blue-100/60 text-sm">

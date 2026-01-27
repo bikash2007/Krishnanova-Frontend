@@ -356,7 +356,7 @@ const CommentItem = ({
               </div>
             </div>
           ) : (
-            <p className="text-blue-100/80 text-sm leading-relaxed">
+            <p className={`text-sm leading-relaxed ${comment.isDeleted ? "italic text-white/40" : "text-blue-100/80"}`}>
               {comment.content}
             </p>
           )}
@@ -866,8 +866,9 @@ const BlogPost = () => {
 
   const fetchPost = async () => {
     try {
-      const res = await axios.get(`${API}/blog`);
-      const foundPost = res.data.find((p) => p._id === id);
+      // Use the new single post route
+      const res = await axios.get(`${API}/blog/${id}`);
+      const foundPost = res.data;
 
       if (!foundPost) {
         navigate("/communityblog");
@@ -899,8 +900,11 @@ const BlogPost = () => {
 
   const fetchRelatedPosts = async () => {
     try {
-      const res = await axios.get(`${API}/blog`);
-      const related = res.data
+      // We still use the main list for related posts, but handle the new structure
+      const res = await axios.get(`${API}/blog?limit=4`);
+      const postsArray = res.data.posts || [];
+      
+      const related = postsArray
         .filter((p) => p._id !== id)
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);

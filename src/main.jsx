@@ -32,19 +32,33 @@ import BlogPost from "./components/Community/BlogPost.jsx";
 import KrishnaKeychainCustomize from "./pages/KrishnaKeychainCustomize.jsx";
 import GitaManager from "./components/Admin/GitaManager/GitaManager.jsx";
 
+import Layout from "./components/Layout/Layout.jsx";
+
 const router = createBrowserRouter(
   [
     {
       path: "/",
-      element: <App />,
+      element: (
+        <Layout>
+          <App />
+        </Layout>
+      ),
     },
     {
       path: "/productpage",
-      element: <ProductPage />,
+      element: (
+        <Layout>
+          <ProductPage />
+        </Layout>
+      ),
     },
     {
       path: "/product/:id",
-      element: <SingleProduct />,
+      element: (
+        <Layout>
+          <SingleProduct />
+        </Layout>
+      ),
     },
     {
       path: "/admin", // This is the base path for all admin functionalities
@@ -86,45 +100,95 @@ const router = createBrowserRouter(
         // Add more admin-specific routes here as needed
       ],
     },
-    { path: "/cart", element: <Cart /> },
-    { path: "/orders", element: <MyOrders /> },
+    {
+      path: "/cart",
+      element: (
+        <Layout>
+          <Cart />
+        </Layout>
+      ),
+    },
+    {
+      path: "/orders",
+      element: (
+        <Layout>
+          <MyOrders />
+        </Layout>
+      ),
+    },
 
     {
       path: "/login",
-      element: <Login />,
+      element: (
+        <Layout>
+          <Login />
+        </Layout>
+      ),
     },
     {
       path: "/signup",
-      element: <Signup />,
+      element: (
+        <Layout>
+          <Signup />
+        </Layout>
+      ),
     },
     {
       path: "/profile",
-      element: <Profile />,
+      element: (
+        <Layout>
+          <Profile />
+        </Layout>
+      ),
     },
     {
       path: "/wishdomportal",
-      element: <WishdomPortal />,
+      element: (
+        <Layout>
+          <WishdomPortal />
+        </Layout>
+      ),
     },
     {
       path: "/readvagwatgita",
-      element: <GitaModule />,
+      element: (
+        <Layout>
+          <GitaModule />
+        </Layout>
+      ),
     },
     {
       path: "/communityblog",
-      element: <CommunityBlog />,
+      element: (
+        <Layout>
+          <CommunityBlog />
+        </Layout>
+      ),
     },
     {
       path: "/blog/:id",
-      element: <BlogPost />,
+      element: (
+        <Layout>
+          <BlogPost />
+        </Layout>
+      ),
     },
 
     {
       path: "/checkout",
-      element: <CheckoutPage />,
+      element: (
+        <Layout>
+          <CheckoutPage />
+        </Layout>
+      ),
     },
     {
       path: "/customize-krishna",
-      element: <KrishnaKeychainCustomize />,
+      element: (
+        <Layout>
+          <KrishnaKeychainCustomize />
+        </Layout>
+      ),
     },
   ],
   {

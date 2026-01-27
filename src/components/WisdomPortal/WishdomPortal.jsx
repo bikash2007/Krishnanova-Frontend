@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useAuth } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import Navigation from "../Navigation/Navigation";
+
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -708,6 +708,13 @@ export default function WishdomPortal() {
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_URL;
 
+  // Protect Route
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/login");
+    }
+  }, [user, loading, navigate]);
+
   // State Management
   const [showNamingDialog, setShowNamingDialog] = useState(false);
   const [krishnaName, setKrishnaName] = useState("");
@@ -767,13 +774,19 @@ export default function WishdomPortal() {
   // Meditation State
   const [isMeditating, setIsMeditating] = useState(false);
   const [meditationTime, setMeditationTime] = useState(0);
-  const [totalMeditationTime, setTotalMeditationTime] = useState(0);
-  const [meditationStreak, setMeditationStreak] = useState(0);
+  const [totalMeditationTime, setTotalMeditationTime] = useState(
+    user?.wisdomPortal?.stats?.totalMeditationTime || 0
+  );
+  const [meditationStreak, setMeditationStreak] = useState(
+    user?.wisdomPortal?.stats?.meditationStreak || 0
+  );
   const [meditationDuration, setMeditationDuration] = useState(5);
 
   // Chanting State
   const [chantCount, setChantCount] = useState(0);
-  const [totalChants, setTotalChants] = useState(0);
+  const [totalChants, setTotalChants] = useState(
+    user?.wisdomPortal?.stats?.totalChants || 0
+  );
   const [selectedMantra, setSelectedMantra] = useState("Hare Krishna");
 
   // Practice Tracking State
@@ -1680,7 +1693,7 @@ export default function WishdomPortal() {
       ref={containerRef}
       className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 pb-4 md:pb-8"
     >
-      <Navigation />
+      {/* <Navigation /> - Removed to avoid double navbar as Layout already provides it */}
 
       {!isMobile && (
         <div
@@ -1738,7 +1751,7 @@ export default function WishdomPortal() {
 
       <StatsOverview
         meditationStreak={meditationStreak}
-        totalMeditationTime={totalMeditationTime}
+        totalMeditationTime={totalMeditationTime} /* Already in minutes from backend */
         totalChants={totalChants}
         achievementsCount={userStats.achievements.length}
         isMobile={isMobile}

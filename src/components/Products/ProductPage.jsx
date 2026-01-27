@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Navigation from "../Navigation/Navigation";
 import axios from "axios";
 import placeholderImg from "../../Media/placeholder.png";
 
@@ -119,7 +118,7 @@ export default function ProductPage() {
                 start: "top bottom-=100",
                 toggleActions: "play none none reverse",
               },
-            }
+            },
           );
         }
       });
@@ -217,7 +216,7 @@ export default function ProductPage() {
         break;
       case "new":
         list.sort(
-          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
         );
         break;
       default:
@@ -263,12 +262,7 @@ export default function ProductPage() {
   };
 
   return (
-    <div
-      ref={mainRef}
-      className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden"
-    >
-      <Navigation />
-
+    <div ref={mainRef} className="min-h-screen relative">
       {/* Hero Section with Krishna Theme */}
       <section className="hero-section relative pt-20 pb-10 overflow-hidden">
         {/* Background Patterns */}
@@ -338,7 +332,7 @@ export default function ProductPage() {
             </motion.div>
 
             <motion.h1
-              className="font-bold text-5xl lg:text-6xl mb-6 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent"
+              className="font-bold text-3xl lg:text-4xl mb-4 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -347,7 +341,7 @@ export default function ProductPage() {
             </motion.h1>
 
             <motion.p
-              className="text-lg lg:text-xl leading-relaxed mb-8 text-blue-100/80"
+              className="text-base lg:text-lg leading-relaxed mb-6 text-blue-100/80"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
@@ -527,14 +521,14 @@ export default function ProductPage() {
       {/* Products Section with Different View Modes */}
       <section className="relative pb-20 px-6">
         {/* Background Pattern */}
-        <div
+        {/* <div
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage:
               "radial-gradient(circle at 50% 50%, #fbbf24 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
-        />
+        /> */}
 
         <div className="relative z-10 max-w-7xl mx-auto">
           {loading ? (
@@ -563,8 +557,8 @@ export default function ProductPage() {
                 viewMode === "grid"
                   ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                   : viewMode === "cards"
-                  ? "space-y-6"
-                  : "relative min-h-[600px]"
+                    ? "space-y-6"
+                    : "relative min-h-[600px]"
               }
             >
               {viewMode === "mandala" ? (
@@ -639,8 +633,9 @@ export default function ProductPage() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ delay: index * 0.1, duration: 0.6 }}
-                        className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden"
-                        whileHover={{ scale: 1.02 }}
+                        className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden cursor-pointer"
+                        whileHover={{ scale: 1.01 }}
+                        onClick={() => navigate(`/product/${p._id}`)}
                       >
                         <div className="flex flex-col md:flex-row">
                           <div className="md:w-1/3 relative aspect-[4/3] p-6 bg-gradient-to-br from-amber-400/10 to-orange-500/10">
@@ -669,10 +664,10 @@ export default function ProductPage() {
                           <div className="md:w-2/3 p-6">
                             <div className="flex justify-between items-start mb-4">
                               <div>
-                                <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                                <h3 className="text-lg font-bold mb-2 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
                                   {p.title}
                                 </h3>
-                                <p className="text-amber-200/80 text-sm italic mb-2">
+                                <p className="text-amber-200/80 text-xs italic mb-2">
                                   Handcrafted with devotion in Nepal
                                 </p>
                               </div>
@@ -716,11 +711,11 @@ export default function ProductPage() {
                               </span>
                             </div>
                             <div className="flex items-baseline gap-3 mb-6">
-                              <span className="text-3xl font-bold text-amber-300">
+                              <span className="text-xl font-bold text-amber-300">
                                 {formatPrice(p.price)}
                               </span>
                               {p.originalPrice && (
-                                <span className="text-lg line-through text-blue-100/50">
+                                <span className="text-base line-through text-blue-100/50">
                                   {formatPrice(p.originalPrice)}
                                 </span>
                               )}
@@ -735,9 +730,10 @@ export default function ProductPage() {
                               <motion.button
                                 className="group relative px-8 py-3 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() =>
-                                  navigate(`/product/${p._id}?buy=1`)
-                                }
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/product/${p._id}?buy=1`);
+                                }}
                               >
                                 <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
                                 <span className="relative text-white font-semibold flex items-center gap-2">
@@ -747,7 +743,10 @@ export default function ProductPage() {
                               <motion.button
                                 className="px-8 py-3 border-2 border-amber-400/50 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transition-all duration-300"
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() => navigate(`/product/${p._id}`)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/product/${p._id}`);
+                                }}
                               >
                                 View Details
                               </motion.button>
@@ -777,10 +776,10 @@ export default function ProductPage() {
                       onHoverEnd={() => setHovered(null)}
                       className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 group cursor-pointer overflow-hidden"
                       whileHover={{
-                        y: -8,
-                        scale: 1.02,
+                        y: -4,
+                        scale: 1.01,
                       }}
-                      {...pulseGlow}
+                      onClick={() => navigate(`/product/${p._id}`)}
                     >
                       {/* Divine Aura Effect */}
                       <motion.div
@@ -850,10 +849,9 @@ export default function ProductPage() {
                           alt={p.title}
                           className="w-full h-full object-contain"
                           animate={{
-                            scale: hovered === p._id ? 1.1 : 1,
-                            rotate: hovered === p._id ? [0, -2, 2, 0] : 0,
+                            scale: hovered === p._id ? 1.05 : 1,
                           }}
-                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          transition={{ duration: 0.3, ease: "easeOut" }}
                           loading="lazy"
                         />
 
@@ -881,39 +879,31 @@ export default function ProductPage() {
                       </div>
 
                       {/* Product Info */}
-                      <div className="px-6 pb-6">
-                        <h3 className="text-xl font-bold mb-1 line-clamp-1 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                      <div className="px-4 pb-4">
+                        <h3 className="text-base font-bold mb-1 line-clamp-2 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
                           {p.title}
                         </h3>
-                        <p className="text-amber-200/80 text-xs italic mb-2">
+                        <p className="text-amber-200/80 text-xs italic mb-1">
                           Authentic Himalayan Craft
                         </p>
-                        <p className="text-sm line-clamp-2 mb-3 leading-relaxed text-blue-100/80">
+                        <p className="text-xs line-clamp-2 mb-2 leading-relaxed text-blue-100/80">
                           {p.desc}
                         </p>
 
                         {/* Rating with US Market Focus */}
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-1 mb-2">
                           <div className="flex">
                             {[...Array(5)].map((_, i) => (
-                              <motion.span
+                              <span
                                 key={i}
-                                className={`text-base ${
+                                className={`text-xs ${
                                   i < Math.round(p.rating || 0)
                                     ? "text-amber-400"
                                     : "text-amber-400/30"
                                 }`}
-                                animate={{
-                                  scale:
-                                    hovered === p._id &&
-                                    i < Math.round(p.rating || 0)
-                                      ? [1, 1.2, 1]
-                                      : 1,
-                                }}
-                                transition={{ delay: i * 0.05 }}
                               >
                                 ★
-                              </motion.span>
+                              </span>
                             ))}
                           </div>
                           <span className="text-xs text-blue-100/60">
@@ -922,13 +912,13 @@ export default function ProductPage() {
                         </div>
 
                         {/* Price & CTAs */}
-                        <div className="flex flex-col gap-3">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-bold text-amber-300">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-lg font-bold text-amber-300">
                               {formatPrice(p.price)}
                             </span>
                             {p.originalPrice && (
-                              <span className="text-sm line-through text-blue-100/50">
+                              <span className="text-xs line-through text-blue-100/50">
                                 {formatPrice(p.originalPrice)}
                               </span>
                             )}
@@ -936,25 +926,25 @@ export default function ProductPage() {
 
                           <div className="flex gap-2">
                             <motion.button
-                              className="group relative flex-1 px-3 py-2 overflow-hidden rounded-full shadow-lg transform transition-all duration-300"
+                              className="group relative flex-1 px-3 py-1.5 overflow-hidden rounded-lg shadow-lg transform transition-all duration-300"
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
                               onClick={(e) => {
-                                e.preventDefault();
+                                e.stopPropagation();
                                 navigate(`/product/${p._id}?buy=1`);
                               }}
                             >
                               <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                              <span className="relative text-white text-sm font-semibold">
+                              <span className="relative text-white text-xs font-semibold">
                                 Add to Cart
                               </span>
                             </motion.button>
                             <motion.button
-                              className="flex-1 px-3 py-2 rounded-full text-sm font-semibold border-2 border-amber-400/50 text-amber-200 backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transition-all duration-300"
+                              className="flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-amber-400/50 text-amber-200 backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transition-all duration-300"
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
                               onClick={(e) => {
-                                e.preventDefault();
+                                e.stopPropagation();
                                 navigate(`/product/${p._id}`);
                               }}
                             >
@@ -964,7 +954,7 @@ export default function ProductPage() {
 
                           {/* Quick US Market Trust Badge */}
                           {p.price > 99 && (
-                            <div className="text-center text-xs text-cyan-300">
+                            <div className="text-center text-[10px] text-cyan-300">
                               ✓ Free US Shipping
                             </div>
                           )}

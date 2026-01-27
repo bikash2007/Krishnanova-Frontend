@@ -257,8 +257,32 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
   );
 };
 
-// Event Card Component
 const EventCard = ({ event, user, baseUrl, index }) => {
+  const [status, setStatus] = useState("upcoming");
+
+  useEffect(() => {
+    const checkStatus = () => {
+      const now = new Date();
+      const start = new Date(event.dateTime);
+      // Fallback to duration or default 1 hour if endDateTime missing (for old events)
+      const end = event.endDateTime
+        ? new Date(event.endDateTime)
+        : new Date(start.getTime() + (event.duration || 60) * 60000);
+
+      if (now > end) {
+        setStatus("ended");
+      } else if (now >= start) {
+        setStatus("ongoing");
+      } else {
+        setStatus("upcoming");
+      }
+    };
+
+    checkStatus();
+    const timer = setInterval(checkStatus, 60000); // Update every minute
+    return () => clearInterval(timer);
+  }, [event]);
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-US", {
       month: "short",
@@ -267,6 +291,31 @@ const EventCard = ({ event, user, baseUrl, index }) => {
       minute: "2-digit",
     });
   };
+
+  const getButtonConfig = () => {
+    switch (status) {
+      case "ended":
+        return {
+          text: "Event Ended",
+          classes: "bg-gray-600/50 text-gray-400 cursor-not-allowed border border-gray-600",
+          disabled: true,
+        };
+      case "ongoing":
+        return {
+          text: "Join Live Event 🔴",
+          classes: "bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900 animate-pulse hover:shadow-green-500/30",
+          disabled: false,
+        };
+      default:
+        return {
+          text: "Join Event",
+          classes: "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 hover:shadow-amber-500/30",
+          disabled: false,
+        };
+    }
+  };
+
+  const btnConfig = getButtonConfig();
 
   return (
     <motion.div
@@ -290,6 +339,11 @@ const EventCard = ({ event, user, baseUrl, index }) => {
               <p className="text-xs text-blue-100/60">Event Organizer</p>
             </div>
           </div>
+          {status === "ongoing" && (
+             <span className="px-2 py-1 bg-red-500/20 text-red-300 text-xs font-bold rounded-full border border-red-500/30 animate-pulse">
+               LIVE
+             </span>
+          )}
         </div>
 
         <h3 className="text-base sm:text-lg font-bold text-blue-100 mb-2">
@@ -303,6 +357,13 @@ const EventCard = ({ event, user, baseUrl, index }) => {
             <span>{formatDate(event.dateTime)}</span>
           </div>
           <div className="flex items-center space-x-2 text-blue-100/70">
+            <FaClock size={12} />
+            <span>
+              {event.duration ? `${event.duration} mins` : "Duration N/A"} •{" "}
+              {status === "upcoming" ? "Starts soon" : status === "ongoing" ? "Happening now" : "Ended"}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2 text-blue-100/70">
             <FaMapMarkerAlt size={12} />
             <span className="truncate">{event.location?.city || "Online"}</span>
           </div>
@@ -312,8 +373,11 @@ const EventCard = ({ event, user, baseUrl, index }) => {
           </div>
         </div>
 
-        <button className="w-full mt-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-lg font-semibold text-sm">
-          Join Event
+        <button
+          disabled={btnConfig.disabled}
+          className={`w-full mt-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 ${btnConfig.classes}`}
+        >
+          {btnConfig.text}
         </button>
       </div>
     </motion.div>
@@ -333,8 +397,9 @@ export default function CommunityBlog() {
   // Fetch posts
   const fetchPosts = useCallback(async () => {
     try {
-      const res = await axios.get(`${API}/blog`);
-      setPosts(res.data || []);
+      // Handle pagination structure
+      const res = await axios.get(`${API}/blog?page=1&limit=20`); // Initial load
+      setPosts(res.data.posts || []); 
     } catch (error) {
       console.error("Error fetching posts:", error);
       setPosts([]);
@@ -366,6 +431,24 @@ export default function CommunityBlog() {
   const handleLike = async (postId) => {
     if (!user) return navigate("/login");
 
+    const originalPosts = [...posts];
+    
+    // Optimistic Update
+    setPosts(prevPosts => 
+      prevPosts.map(p => {
+        if (p._id === postId) {
+          const isLiked = p.likes.includes(user._id);
+          return {
+            ...p,
+            likes: isLiked 
+              ? p.likes.filter(id => id !== user._id)
+              : [...p.likes, user._id]
+          };
+        }
+        return p;
+      })
+    );
+
     try {
       await axios.post(
         `${API}/blog/${postId}/like`,
@@ -376,9 +459,10 @@ export default function CommunityBlog() {
           },
         }
       );
-      fetchPosts();
+      // No need to fetchPosts() if successful, as we're already updated
     } catch (error) {
       console.error("Error liking post:", error);
+      setPosts(originalPosts); // Revert on failure
     }
   };
 

@@ -9,6 +9,7 @@ import {
   IoHeart,
   IoEye,
   IoEyeOff,
+  IoCheckmark,
 } from "react-icons/io5";
 import confetti from "canvas-confetti";
 

@@ -220,7 +220,7 @@ export default function EventManagement() {
             config
           );
         } else {
-          await axios.post(`${API_URL}/events`, formData, config);
+          await axios.post(`${API_URL}/events/create`, formData, config);
         }
 
         await fetchEvents();

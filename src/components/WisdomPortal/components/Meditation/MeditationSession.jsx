@@ -22,12 +22,25 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
   const timerRef = useRef(null);
   const bellSoundRef = useRef(null);
 
+  const startTimeRef = useRef(null);
+
   useEffect(() => {
     // Start timer
     if (isActive) {
+      if (!startTimeRef.current) {
+        startTimeRef.current = Date.now() - (time * 1000);
+      }
+      
       timerRef.current = setInterval(() => {
-        setTime((prev) => prev + 1);
+        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        setTime(elapsed);
       }, 1000);
+    } else {
+      // Pause
+      if (startTimeRef.current) {
+         // Keep the current time but clear ref so on resume it calculates correctly
+         startTimeRef.current = null;
+      }
     }
 
     return () => {

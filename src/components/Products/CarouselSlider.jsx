@@ -68,7 +68,7 @@ const CarouselSlider = () => {
           opacity: 1,
           duration: 0.6,
           ease: "back.out(1.7)",
-        }
+        },
       );
     }
 
@@ -83,7 +83,7 @@ const CarouselSlider = () => {
     const handleMouseMove = (e) => {
       if (throttleRef.current) return;
       throttleRef.current = true;
-      
+
       requestAnimationFrame(() => {
         if (containerRef.current) {
           const rect = containerRef.current.getBoundingClientRect();
@@ -244,7 +244,7 @@ const CarouselSlider = () => {
         setTimeout(() => setIsTransitioning(false), 500);
       });
     },
-    [currentIndex, isTransitioning, products.length]
+    [currentIndex, isTransitioning, products.length],
   );
 
   const nextSlide = useCallback(() => {
@@ -326,7 +326,7 @@ const CarouselSlider = () => {
         ? imagePath
         : `${baseUrl.replace("/api", "")}${imagePath}`;
     },
-    [baseUrl]
+    [baseUrl],
   );
 
   if (loading) {
@@ -372,7 +372,7 @@ const CarouselSlider = () => {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900"
+      className="relative min-h-screen min-h-[100dvh] overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -515,7 +515,7 @@ const CarouselSlider = () => {
                               ((currentProduct.originalPrice -
                                 currentProduct.price) /
                                 currentProduct.originalPrice) *
-                                100
+                                100,
                             )}
                             % OFF
                           </span>
@@ -525,7 +525,7 @@ const CarouselSlider = () => {
 
                   {/* CTA Buttons */}
                   <motion.div
-                    className="flex flex-wrap gap-4 justify-center lg:justify-start"
+                    className="flex flex-wrap gap-4 justify-center lg:justify-start pb-16 md:pb-0"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5 }}
@@ -647,7 +647,7 @@ const CarouselSlider = () => {
                         if (!isCurrent) {
                           goToSlide(
                             (currentIndex + item.position + products.length) %
-                              products.length
+                              products.length,
                           );
                         }
                       }}
@@ -744,7 +744,7 @@ const CarouselSlider = () => {
         </div>
 
         {/* Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-40">
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-30">
           <div className="flex gap-2">
             {products.map((_, index) => (
               <motion.button
@@ -769,8 +769,8 @@ const CarouselSlider = () => {
         </div>
 
         {/* Sanskrit Quote */}
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center mt-4 pt-10">
-          <p className="text-xs hidden md:block text-amber-200/40 font-sanskrit mt-5">
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center">
+          <p className="text-xs hidden lg:block text-amber-200/40 font-sanskrit">
             bhaktyā mām abhijānāti yāvān yaśh chāsmi tattvataḥ tato māṁ tattvato
             jñātvā viśhate tad-anantaram
           </p>

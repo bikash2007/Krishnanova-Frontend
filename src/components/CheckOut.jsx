@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "../Context/CartContext";
 import { useAuth } from "../Context/AuthContext";
+import { useApi } from "../Context/baseUrl";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -13,6 +14,16 @@ import {
 } from "@stripe/react-stripe-js";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+const InputField = ({ label, ...props }) => (
+  <div className="space-y-1">
+    <label className="text-xs uppercase tracking-wider text-blue-200/60 font-medium ml-1">{label}</label>
+    <input
+      {...props}
+      className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/20 focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 transition-all font-light"
+    />
+  </div>
+);
 
 function CheckoutForm({ onOrderSuccess }) {
   const { cart, clearCart } = useCart();
@@ -40,41 +51,40 @@ function CheckoutForm({ onOrderSuccess }) {
     setLoading(true);
     setError("");
 
-    // 1. Get client secret from backend
-    const { data } = await axios.post(
-      import.meta.env.VITE_API_URL + "/stripe/create-payment-intent",
-      { amount: total, currency: "usd" }
-    );
-    const clientSecret = data.clientSecret;
+    try {
+      // 1. Get client secret from backend
+      const { data } = await axios.post(
+        import.meta.env.VITE_API_URL + "/stripe/create-payment-intent",
+        { amount: total, currency: "usd" }
+      );
+      const clientSecret = data.clientSecret;
 
-    // 2. Stripe: collect card and pay
-    const result = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement),
-        billing_details: {
-          name: shipping.fullName,
-          email: shipping.email,
-          phone: shipping.phone,
-          address: {
-            line1: shipping.address1,
-            line2: shipping.address2,
-            city: shipping.city,
-            state: shipping.state,
-            postal_code: shipping.zip,
-            country: shipping.country === "United States" ? "US" : "NP",
+      // 2. Stripe: collect card and pay
+      const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: shipping.fullName,
+            email: shipping.email,
+            phone: shipping.phone,
+            address: {
+              line1: shipping.address1,
+              line2: shipping.address2,
+              city: shipping.city,
+              state: shipping.state,
+              postal_code: shipping.zip,
+              country: shipping.country === "United States" ? "US" : "NP",
+            },
           },
         },
-      },
-    });
+      });
 
-    if (result.error) {
-      setError(result.error.message);
-      setLoading(false);
-      return;
-    }
-    if (result.paymentIntent.status === "succeeded") {
-      // 3. Place order in your DB as paid
-      try {
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+
+      if (result.paymentIntent.status === "succeeded") {
+        // 3. Place order in your DB as paid
         const items = cart.map((i) => ({
           product: i.productId,
           title: i.title,
@@ -99,117 +109,135 @@ function CheckoutForm({ onOrderSuccess }) {
         );
         clearCart();
         if (onOrderSuccess) onOrderSuccess(res.data._id);
-      } catch (err) {
-        setError(
-          err.response?.data?.message ||
-            "Order placed but failed to save in database."
-        );
       }
+    } catch (err) {
+      setError(err.message || err.response?.data?.message || "Payment failed");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 bg-white p-6 rounded-xl shadow"
-    >
-      <div className="flex gap-4">
-        <input
-          className="w-1/2 p-3 border rounded"
-          placeholder="Full Name"
-          value={shipping.fullName}
-          onChange={(e) =>
-            setShipping((s) => ({ ...s, fullName: e.target.value }))
-          }
-          required
-        />
-        <input
-          className="w-1/2 p-3 border rounded"
-          placeholder="Phone"
-          value={shipping.phone}
-          onChange={(e) =>
-            setShipping((s) => ({ ...s, phone: e.target.value }))
-          }
-          required
-        />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      
+      {/* Contact & Shipping Grid */}
+      <div className="grid md:grid-cols-2 gap-6">
+         <InputField 
+            label="Full Name" 
+            placeholder="Arjuna Das"
+            value={shipping.fullName}
+            onChange={(e) => setShipping((s) => ({ ...s, fullName: e.target.value }))}
+            required
+         />
+         <InputField 
+            label="Phone" 
+            placeholder="+1 (555) 000-0000"
+            value={shipping.phone}
+            onChange={(e) => setShipping((s) => ({ ...s, phone: e.target.value }))}
+            required
+         />
+         <div className="md:col-span-2">
+           <InputField 
+              label="Email Address" 
+              placeholder="devotee@example.com"
+              value={shipping.email}
+              onChange={(e) => setShipping((s) => ({ ...s, email: e.target.value }))}
+              required
+           />
+         </div>
+         <div className="md:col-span-2">
+            <InputField 
+              label="Address" 
+              placeholder="108 Krishna Way"
+              value={shipping.address1}
+              onChange={(e) => setShipping((s) => ({ ...s, address1: e.target.value }))}
+              required
+            />
+         </div>
+         <InputField 
+            label="City" 
+            placeholder="Vrindavan"
+            value={shipping.city}
+            onChange={(e) => setShipping((s) => ({ ...s, city: e.target.value }))}
+            required
+         />
+         <div className="flex gap-4">
+            <div className="w-1/2">
+              <InputField 
+                  label="State" 
+                  placeholder="UP"
+                  value={shipping.state}
+                  onChange={(e) => setShipping((s) => ({ ...s, state: e.target.value }))}
+                  required
+              />
+            </div>
+            <div className="w-1/2">
+               <InputField 
+                  label="Zip" 
+                  placeholder="281121"
+                  value={shipping.zip}
+                  onChange={(e) => setShipping((s) => ({ ...s, zip: e.target.value }))}
+                  required
+               />
+            </div>
+         </div>
+         <div className="md:col-span-2 space-y-1">
+            <label className="text-xs uppercase tracking-wider text-blue-200/60 font-medium ml-1">Country</label>
+            <div className="relative">
+              <select
+                className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white appearance-none focus:outline-none focus:border-amber-400/50"
+                value={shipping.country}
+                onChange={(e) => setShipping((s) => ({ ...s, country: e.target.value }))}
+              >
+                <option className="bg-indigo-900 text-white">United States</option>
+                <option className="bg-indigo-900 text-white">Nepal</option>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/50">▼</div>
+            </div>
+         </div>
       </div>
-      <input
-        className="w-full p-3 border rounded"
-        placeholder="Email"
-        value={shipping.email}
-        onChange={(e) => setShipping((s) => ({ ...s, email: e.target.value }))}
-        required
-      />
-      <input
-        className="w-full p-3 border rounded"
-        placeholder="Address Line 1"
-        value={shipping.address1}
-        onChange={(e) =>
-          setShipping((s) => ({ ...s, address1: e.target.value }))
-        }
-        required
-      />
-      <input
-        className="w-full p-3 border rounded"
-        placeholder="Address Line 2 (optional)"
-        value={shipping.address2}
-        onChange={(e) =>
-          setShipping((s) => ({ ...s, address2: e.target.value }))
-        }
-      />
-      <div className="flex gap-4">
-        <input
-          className="w-1/2 p-3 border rounded"
-          placeholder="City"
-          value={shipping.city}
-          onChange={(e) => setShipping((s) => ({ ...s, city: e.target.value }))}
-          required
-        />
-        <input
-          className="w-1/2 p-3 border rounded"
-          placeholder="ZIP / Postal Code"
-          value={shipping.zip}
-          onChange={(e) => setShipping((s) => ({ ...s, zip: e.target.value }))}
-          required
-        />
-      </div>
-      <div className="flex gap-4">
-        <input
-          className="w-1/2 p-3 border rounded"
-          placeholder="State"
-          value={shipping.state}
-          onChange={(e) =>
-            setShipping((s) => ({ ...s, state: e.target.value }))
-          }
-          required
-        />
-        <select
-          className="w-1/2 p-3 border rounded"
-          value={shipping.country}
-          onChange={(e) =>
-            setShipping((s) => ({ ...s, country: e.target.value }))
-          }
-        >
-          <option>United States</option>
-          <option>Nepal</option>
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1 font-bold">Card Details</label>
-        <div className="p-3 border rounded">
-          <CardElement options={{ style: { base: { fontSize: "18px" } } }} />
+
+      {/* Payment Section */}
+      <div className="mt-8 pt-6 border-t border-white/10">
+        <label className="block mb-4 text-blue-100 font-medium text-lg">Secure Payment</label>
+        <div className="p-4 bg-white rounded-xl border border-white/10">
+          <CardElement options={{ 
+             style: { 
+                base: { 
+                    fontSize: "16px", 
+                    color: "#32325d", 
+                    fontFamily: '"Inter", sans-serif',
+                    '::placeholder': { color: '#aab7c4' }
+                },
+                invalid: { color: '#fa755a' }
+             } 
+          }} />
         </div>
       </div>
-      <div className="font-bold text-xl">Total: ${total.toFixed(2)}</div>
-      <button
-        type="submit"
-        className="bg-[#6842ef] text-white px-6 py-3 rounded-xl font-bold"
-        disabled={loading || !cart.length}
-      >
-        {loading ? "Processing..." : "Pay & Place Order"}
-      </button>
-      {error && <div className="mt-2 text-red-500 font-medium">{error}</div>}
+
+      <div className="flex items-center justify-between pt-4">
+         <div className="text-blue-100">
+            <p className="text-xs uppercase tracking-wider opacity-60">Total to Pay</p>
+            <p className="text-2xl font-bold text-amber-300 font-serif">${total.toFixed(2)}</p>
+         </div>
+         <button
+            type="submit"
+            disabled={loading || !cart.length}
+            className="bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-950 px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-amber-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {loading ? (
+               <>Loading...</>
+            ) : (
+               <>Complete Order <span className="text-xl">→</span></>
+            )}
+          </button>
+      </div>
+
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-200 text-sm flex items-center gap-2">
+           <span>⚠️</span> {error}
+        </div>
+      )}
     </form>
   );
 }
@@ -217,6 +245,9 @@ function CheckoutForm({ onOrderSuccess }) {
 export default function CheckoutPage() {
   const [orderId, setOrderId] = useState(null);
   const navigate = useNavigate();
+  const { cart } = useCart();
+  const baseUrl = useApi();
+  const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
   // Redirect to /orders after successful order
   useEffect(() => {
@@ -227,16 +258,77 @@ export default function CheckoutPage() {
   }, [orderId, navigate]);
 
   return (
-    <div className="max-w-3xl mx-auto pt-28 px-4">
-      <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-      <Elements stripe={stripePromise}>
-        <CheckoutForm onOrderSuccess={setOrderId} />
-      </Elements>
-      {orderId && (
-        <div className="mt-6 bg-green-100 border border-green-300 p-4 rounded-xl text-green-700 font-bold">
-          Order placed & paid! Redirecting to your orders...
-        </div>
-      )}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-blue-950 py-24 px-4 relative">
+       {/* Background Ambience */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, #fbbf24 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto relative z-10">
+         
+         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+            {/* Left: Summary */}
+            <div className="lg:col-span-5 order-2 lg:order-1">
+               <div className="sticky top-28 space-y-6">
+                  <div className="backdrop-blur-xl bg-white/5 rounded-3xl p-6 md:p-8 border border-white/10 shadow-2xl">
+                     <h2 className="text-xl font-serif text-white mb-6">Order Review</h2>
+                     <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2 mb-6">
+                        {cart.map(item => (
+                           <div key={item.productId} className="flex gap-4 items-center">
+                              <div className="w-16 h-16 rounded-lg bg-white/5 border border-white/10 overflow-hidden shrink-0">
+                                 <img src={baseUrl + item.image} alt={item.title} className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                 <h4 className="text-sm font-medium text-white truncate">{item.title}</h4>
+                                 <p className="text-xs text-blue-200/60">Qty: {item.quantity}</p>
+                              </div>
+                              <div className="text-sm font-bold text-amber-200">${(item.price * item.quantity).toFixed(2)}</div>
+                           </div>
+                        ))}
+                     </div>
+                     <div className="border-t border-white/10 pt-4 space-y-2">
+                        <div className="flex justify-between text-sm text-blue-200/80">
+                           <span>Subtotal</span>
+                           <span>${total.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm text-blue-200/80">
+                           <span>Shipping</span>
+                           <span className="text-green-400">Free</span>
+                        </div>
+                        <div className="flex justify-between text-lg font-bold text-white pt-2">
+                           <span>Total</span>
+                           <span className="text-amber-300">${total.toFixed(2)}</span>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <Link to="/cart" className="flex items-center justify-center gap-2 text-blue-300/60 hover:text-white transition-colors text-sm">
+                     <span>←</span> Return to Cart
+                  </Link>
+               </div>
+            </div>
+
+            {/* Right: Checkout Form */}
+            <div className="lg:col-span-7 order-1 lg:order-2">
+               <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl">
+                 <div className="mb-8">
+                    <h1 className="text-3xl font-serif text-white mb-2">Checkout</h1>
+                    <p className="text-blue-200/60">Complete your details to finalize your offering.</p>
+                 </div>
+                 
+                 <Elements stripe={stripePromise}>
+                    <CheckoutForm onOrderSuccess={setOrderId} />
+                 </Elements>
+
+                 {orderId && (
+                    <div className="mt-6 p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-200 text-center font-bold animate-pulse">
+                       Order placed successfully! Redirecting...
+                    </div>
+                 )}
+               </div>
+            </div>
+         </div>
+
+      </div>
     </div>
   );
 }

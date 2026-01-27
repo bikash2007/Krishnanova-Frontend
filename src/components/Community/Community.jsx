@@ -307,8 +307,13 @@ const EventCard = ({ event, baseUrl, index }) => {
     const checkEventStatus = () => {
       const now = new Date();
       const eventDate = new Date(event.dateTime);
-      const eventEndDate = new Date(event.endDateTime || eventDate);
-      eventEndDate.setHours(23, 59, 59, 999);
+      let eventEndDate;
+      if (event.endDateTime) {
+        eventEndDate = new Date(event.endDateTime);
+      } else {
+        eventEndDate = new Date(eventDate);
+        eventEndDate.setHours(23, 59, 59, 999);
+      }
 
       if (now >= eventDate && now <= eventEndDate) {
         setEventStatus("ongoing");
@@ -484,19 +489,30 @@ const Community = () => {
       const now = new Date();
       const filtered = events.filter((event) => {
         const eventDate = new Date(event.dateTime);
-        const eventEndDate = new Date(event.endDateTime || eventDate);
-        eventEndDate.setHours(23, 59, 59, 999);
-        return eventEndDate >= now;
+        if (event.endDateTime) {
+          return new Date(event.endDateTime) >= now;
+        }
+        const fallbackEnd = new Date(eventDate);
+        fallbackEnd.setHours(23, 59, 59, 999);
+        return fallbackEnd >= now;
       });
 
       filtered.sort((a, b) => {
         const now = new Date();
         const aDate = new Date(a.dateTime);
         const bDate = new Date(b.dateTime);
-        const aIsOngoing =
-          aDate <= now && new Date(a.endDateTime || aDate) >= now;
-        const bIsOngoing =
-          bDate <= now && new Date(b.endDateTime || bDate) >= now;
+        const getEndDate = (e) =>
+          e.endDateTime
+            ? new Date(e.endDateTime)
+            : new Date(
+                new Date(e.dateTime).getTime() + (e.duration || 60) * 60000,
+              );
+
+        const aEnd = getEndDate(a);
+        const bEnd = getEndDate(b);
+
+        const aIsOngoing = aDate <= now && aEnd >= now;
+        const bIsOngoing = bDate <= now && bEnd >= now;
 
         if (aIsOngoing && !bIsOngoing) return -1;
         if (!aIsOngoing && bIsOngoing) return 1;
@@ -517,17 +533,17 @@ const Community = () => {
     const fetchData = async () => {
       try {
         const [postsRes, eventsRes] = await Promise.all([
-          axios.get(import.meta.env.VITE_API_URL + "/blog"),
+          axios.get(import.meta.env.VITE_API_URL + "/blog?limit=4"),
           axios
             .get(import.meta.env.VITE_API_URL + "/community-events")
             .catch(() => ({ data: [] })),
         ]);
 
-        setTopPosts(postsRes.data.slice(0, 4));
+        setTopPosts(postsRes.data.posts || []);
         setEvents(eventsRes.data);
         setStats({
           members: Math.floor(Math.random() * 5000) + 5000,
-          posts: postsRes.data.length,
+          posts: postsRes.data.totalPosts || 0,
           cities: 108,
           events: eventsRes.data.length || 24,
         });
@@ -541,7 +557,7 @@ const Community = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-20">
+    <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden flex">
       <div
         className="absolute inset-0 opacity-20"
         style={{
@@ -586,11 +602,11 @@ const Community = () => {
         ))}
       </div>
 
-      <div className="relative z-10 container mx-auto px-6">
+      <div className="relative z-10 scale-90 md:scale-75 container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
             <span className="text-amber-300 animate-pulse text-lg">✦</span>

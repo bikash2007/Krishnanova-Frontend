@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
-import Navigation from "../Navigation/Navigation";
 import axios from "axios";
 import placeholderImg from "../../Media/placeholder.png";
 import { useAuth } from "../../Context/AuthContext";
@@ -99,7 +98,7 @@ export default function SingleProduct() {
 
       // Update meta description
       const metaDescription = document.querySelector(
-        'meta[name="description"]'
+        'meta[name="description"]',
       );
       const description = `Buy authentic ${product.title} - ${
         product.desc || product.fullDescription
@@ -129,7 +128,7 @@ export default function SingleProduct() {
 
       ogTags.forEach((tag) => {
         let element = document.querySelector(
-          `meta[property="${tag.property}"]`
+          `meta[property="${tag.property}"]`,
         );
         if (!element) {
           element = document.createElement("meta");
@@ -251,7 +250,7 @@ export default function SingleProduct() {
                 scrub: 1,
                 invalidateOnRefresh: true,
               },
-            }
+            },
           );
         }
 
@@ -271,7 +270,7 @@ export default function SingleProduct() {
               duration: 1.2,
               ease: "power3.out",
               clearProps: "all",
-            }
+            },
           );
         }
 
@@ -293,7 +292,7 @@ export default function SingleProduct() {
               stagger: 0.1,
               ease: "power3.out",
               clearProps: "all",
-            }
+            },
           );
         }
 
@@ -319,7 +318,7 @@ export default function SingleProduct() {
                     delay: index * 0.1,
                     ease: "power3.out",
                     clearProps: "all",
-                  }
+                  },
                 );
               },
               once: true,
@@ -365,7 +364,7 @@ export default function SingleProduct() {
                       delay: index * 0.15,
                       ease: "back.out(1.7)",
                       clearProps: "all",
-                    }
+                    },
                   );
                 }
               });
@@ -381,7 +380,7 @@ export default function SingleProduct() {
           gsap.fromTo(
             titleElement,
             { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+            { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
           );
         }
       }, mainRef);
@@ -446,7 +445,7 @@ export default function SingleProduct() {
           opacity: 1,
           duration: 0.6,
           ease: "back.out(1.7)",
-        }
+        },
       );
     }
 
@@ -468,7 +467,7 @@ export default function SingleProduct() {
       await axios.post(
         `${baseUrl}/products/${id}/reviews`,
         { rating: reviewRating, comment: reviewComment },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setReviewSuccess(true);
       setReviewRating(0);
@@ -477,7 +476,7 @@ export default function SingleProduct() {
     } catch (err) {
       setReviewError(
         err.response?.data?.message ||
-          "Failed to submit review. You may have already reviewed this product."
+          "Failed to submit review. You may have already reviewed this product.",
       );
     } finally {
       setReviewSubmitting(false);
@@ -510,7 +509,7 @@ export default function SingleProduct() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
           <motion.div
             className="w-24 h-24 mx-auto mb-6"
@@ -535,7 +534,7 @@ export default function SingleProduct() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <motion.div
             initial={{ scale: 0 }}
@@ -569,25 +568,20 @@ export default function SingleProduct() {
   }
 
   return (
-    <div
-      ref={mainRef}
-      className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900"
-    >
-      <Navigation />
-
+    <div ref={mainRef} className="min-h-screen relative">
       {/* Hero Product Section */}
       <section ref={heroRef} className="relative pt-20 pb-16 overflow-hidden">
         {/* Background Patterns */}
         <div className="hero-bg-pattern absolute inset-0 pointer-events-none">
-          <div
+          {/* <div
             className="absolute inset-0 opacity-20"
             style={{
               backgroundImage:
                 "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
               backgroundSize: "30px 30px",
             }}
-          />
-          <div
+          /> */}
+          {/* <div
             className="absolute inset-0 opacity-10"
             style={{
               backgroundImage: `
@@ -595,7 +589,7 @@ export default function SingleProduct() {
               linear-gradient(to bottom, #fbbf24 1px, transparent 1px)`,
               backgroundSize: "50px 50px",
             }}
-          />
+          /> */}
         </div>
 
         {/* Floating Orbs */}
@@ -863,7 +857,7 @@ export default function SingleProduct() {
                               >
                                 {tag}
                               </span>
-                            )
+                            ),
                           )}
                         </div>
                       </div>

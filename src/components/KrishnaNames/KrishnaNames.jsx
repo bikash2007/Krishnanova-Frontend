@@ -140,7 +140,7 @@ const KrishnaNames = () => {
   ];
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-12 sm:py-16 md:py-20">
+    <section className="relative  min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden">
       {/* Animated Mandala Background - simplified on mobile */}
       <div
         className="absolute inset-0 opacity-10 sm:opacity-15 md:opacity-20"
@@ -187,7 +187,7 @@ const KrishnaNames = () => {
         ))}
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 sm:px-6">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 scale-90">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -292,15 +292,15 @@ const KrishnaNames = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={!isMobile ? { scale: 1.02, y: -5 } : {}}
-                  className="group relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-5 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 cursor-pointer overflow-hidden"
+                  className="group relative backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-5 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 cursor-pointer overflow-hidden will-change-transform hover:scale-[1.02] hover:-translate-y-1"
+                  style={{ transform: "translate3d(0, 0, 0)" }}
                   onClick={() => setSelectedName(item)}
                 >
                   {/* Glow effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 will-change-opacity" />
 
                   {/* Icon */}
-                  <div className="text-3xl sm:text-4xl mb-3 sm:mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-3xl sm:text-4xl mb-3 sm:mb-4 transform group-hover:scale-110 transition-transform duration-300 will-change-transform">
                     {item.icon}
                   </div>
 
@@ -321,7 +321,10 @@ const KrishnaNames = () => {
 
                   {/* Mantra on hover - desktop only */}
                   {!isMobile && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-indigo-900/90 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <div
+                      className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-indigo-900/90 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 will-change-transform"
+                      style={{ transform: "translate3d(0, 100%, 0)" }}
+                    >
                       <p className="text-amber-200/80 text-xs font-sanskrit">
                         {item.mantra}
                       </p>
@@ -357,8 +360,8 @@ const KrishnaNames = () => {
                 const radius = isMobile
                   ? 140
                   : window.innerWidth < 768
-                  ? 180
-                  : 250;
+                    ? 180
+                    : 250;
                 const x = Math.cos((angle * Math.PI) / 180) * radius;
                 const y = Math.sin((angle * Math.PI) / 180) * radius;
 
@@ -377,11 +380,11 @@ const KrishnaNames = () => {
                       type: "spring",
                       stiffness: 100,
                     }}
-                    whileHover={!isMobile ? { scale: 1.2, zIndex: 30 } : {}}
-                    className="absolute w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-full shadow-xl p-2 sm:p-3 border border-white/20 hover:border-amber-400/50 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center group"
+                    className="absolute w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-full shadow-xl p-2 sm:p-3 border border-white/20 hover:border-amber-400/50 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center group will-change-transform hover:scale-110 hover:z-30"
+                    style={{ transform: "translate3d(0, 0, 0)" }}
                     onClick={() => setSelectedName(item)}
                   >
-                    <span className="text-xl sm:text-2xl mb-0.5 sm:mb-1 group-hover:scale-110 transition-transform">
+                    <span className="text-xl sm:text-2xl mb-0.5 sm:mb-1 group-hover:scale-110 transition-transform duration-200 will-change-transform">
                       {item.icon}
                     </span>
                     <span className="text-amber-300 font-bold text-[10px] sm:text-xs hidden sm:block">
@@ -411,14 +414,17 @@ const KrishnaNames = () => {
                   transition={{ delay: index * 0.15 }}
                   className="mb-4 sm:mb-5 md:mb-6"
                 >
-                  <div className="group relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-6 md:p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden">
+                  <div
+                    className="group relative backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-6 md:p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden will-change-transform"
+                    style={{ transform: "translate3d(0, 0, 0)" }}
+                  >
                     {/* Background decoration */}
                     <div className="absolute top-0 right-0 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-gradient-to-br from-amber-400/5 to-transparent rounded-full -translate-y-16 sm:-translate-y-24 md:-translate-y-32 translate-x-16 sm:translate-x-24 md:translate-x-32" />
 
                     <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 md:gap-8">
                       {/* Left side - Icon and Sanskrit */}
                       <div className="flex-shrink-0">
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 will-change-transform">
                           <span className="text-4xl sm:text-5xl">
                             {item.icon}
                           </span>

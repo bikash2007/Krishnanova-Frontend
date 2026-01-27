@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://krishnanova-backend.onrender.com/api";
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://krishnanova-backend.onrender.com/api";
 
 const initialProductFormData = {
   title: "",
@@ -93,7 +95,7 @@ export default function ProductManagement() {
       files.map((file) => ({
         url: URL.createObjectURL(file),
         type: file.type,
-      }))
+      })),
     );
   };
 
@@ -108,12 +110,21 @@ export default function ProductManagement() {
 
   const openEditModal = (product) => {
     setEditingProduct(product);
+    // Only extract editable fields, not MongoDB fields like _id, __v, createdAt, images, videos
     setFormData({
-      ...product,
+      title: product.title || "",
+      shortTitle: product.shortTitle || "",
+      desc: product.desc || "",
+      fullDescription: product.fullDescription || "",
+      price: product.price || "",
+      originalPrice: product.originalPrice || "",
+      category: product.category || "Spiritual Accessories",
       features:
         product.features && product.features.length ? product.features : [""],
       benefits:
         product.benefits && product.benefits.length ? product.benefits : [""],
+      inStock: product.inStock !== undefined ? product.inStock : true,
+      fastShipping: product.fastShipping || false,
     });
     setMediaFiles([]);
     setMediaPreview([]);
@@ -141,7 +152,7 @@ export default function ProductManagement() {
     for (const key in formData) {
       if (Array.isArray(formData[key])) {
         const filteredArray = formData[key].filter(
-          (item) => item.trim() !== ""
+          (item) => item.trim() !== "",
         );
         data.append(key, JSON.stringify(filteredArray));
       } else {
@@ -173,7 +184,7 @@ export default function ProductManagement() {
         await axios.put(
           `${API_URL}/products/${editingProduct._id}`,
           data,
-          config
+          config,
         );
       } else {
         await axios.post(`${API_URL}/products`, data, config);
@@ -543,7 +554,7 @@ export default function ProductManagement() {
                           className="h-16 w-16 object-cover rounded"
                           controls
                         />
-                      )
+                      ),
                     )}
                     {/* Show existing uploaded media (edit mode) */}
                     {!mediaPreview.length &&
@@ -612,8 +623,8 @@ export default function ProductManagement() {
                     {loading
                       ? "Saving..."
                       : editingProduct
-                      ? "Update Product"
-                      : "Add Product"}
+                        ? "Update Product"
+                        : "Add Product"}
                   </motion.button>
                 </div>
               </form>

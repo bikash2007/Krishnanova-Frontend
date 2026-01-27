@@ -129,7 +129,7 @@ const Footer = () => {
   return (
     <footer
       ref={footerRef}
-      className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-4 md:py-16"
+      className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden "
     >
       {/* Animated Mandala Background - simplified for mobile */}
       <div
@@ -145,7 +145,7 @@ const Footer = () => {
       {/* Mouse Glow Effect - desktop only */}
       {!isMobile && (
         <div
-          className="pointer-events-none absolute w-[600px] h-[600px]"
+          className="pointer-events-none absolute w-full"
           style={{
             background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.12) 0%, transparent 50%)`,
             transform: `translate3d(${mousePosition.x - 300}px, ${
@@ -157,13 +157,13 @@ const Footer = () => {
         />
       )}
 
-      <div className="relative z-10 container mx-auto px-2 sm:px-6">
+      <div className="relative z-10  px-2 lg:scale-90 sm:px-6">
         {/* Main Footer Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12"
+          className="backdrop-blur-md bg-gradient-to-br w-full from-white/10 to-white/5 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12"
         >
           {/* Header - Simplified for mobile */}
           <div className="text-center mb-6 sm:mb-10 md:mb-12">

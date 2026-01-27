@@ -11,14 +11,13 @@ import {
 } from "react-icons/fa";
 import { useApi } from "../../Context/baseUrl";
 import { useCart } from "../../Context/CartContext";
-import logo from "../../../public/logo.png";
-import Krishnova from "../../../public/krishnova.png";
+import logo from "../../Media/krishnovalogo.png";
 
 // Section nav items
 const sectionNavItems = [
   { id: "home", label: "Home" },
-  { id: "products", label: "Products" },
   { id: "wisdom", label: "Wisdom Portal" },
+  { id: "products", label: "Products" },
   { id: "community", label: "Community" },
   { id: "festival", label: "Festivals" },
   { id: "contact", label: "Contact" },
@@ -113,10 +112,10 @@ export default function Navigation() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {/* <img src={Krishnova} className="h-8" alt="Krishnova" /> */}
-            <span className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent hidden sm:block">
+            <img src={logo} className="h-8" alt="Krishnova" />
+            {/* <span className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent hidden sm:block">
               Krishnova
-            </span>
+            </span> */}
           </motion.button>
 
           {/* Desktop Nav */}
@@ -125,15 +124,19 @@ export default function Navigation() {
               <li key={item.id}>
                 <motion.button
                   onClick={() => scrollToSection(item.id)}
-                  className="relative text-blue-100 font-medium hover:text-amber-300 transition-all duration-300 px-3 py-2 rounded-lg group/nav"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="relative text-blue-100 font-medium hover:text-amber-300 transition-all duration-200 ease-out px-3 py-2 rounded-lg group/nav"
+                  style={{ transform: "translateZ(0)" }}
+                  whileHover={{ scale: 1.1, y: -2 }}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{
+                    delay: index * 0.1,
+                    scale: { type: "tween", duration: 0.15 },
+                    y: { type: "tween", duration: 0.15 },
+                  }}
                 >
                   {item.label}
-                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-orange-500 group-hover/nav:w-full transition-all duration-300" />
+                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-orange-500 group-hover/nav:w-full ease-out transition-all duration-200" />
                 </motion.button>
               </li>
             ))}
@@ -195,7 +198,7 @@ export default function Navigation() {
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          user.name || "U"
+                          user.name || "U",
                         )}&background=fbbf24&color=1e3a8a`;
                       }}
                     />

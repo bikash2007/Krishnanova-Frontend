@@ -15,7 +15,7 @@ const HomeSection = () => {
     const handleMouseMove = (e) => {
       if (throttleRef.current) return;
       throttleRef.current = true;
-      
+
       requestAnimationFrame(() => {
         // For parallax effect
         setMousePosition({
@@ -29,7 +29,7 @@ const HomeSection = () => {
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
           const distance = Math.sqrt(
-            Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2)
+            Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2),
           );
 
           if (distance < 300) {
@@ -41,7 +41,7 @@ const HomeSection = () => {
             mandalaRef.current.style.filter = "brightness(1) contrast(1)";
           }
         }
-        
+
         setTimeout(() => {
           throttleRef.current = false;
         }, 50);
@@ -53,19 +53,19 @@ const HomeSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden">
+    <section className="relative min-h-screen  bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden">
       {/* Animated Mandala Background with Parallax */}
-      <div
+      {/* <div
         className="absolute inset-0 opacity-20"
         style={{
           backgroundImage:
             "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
           backgroundSize: "30px 30px",
         }}
-      />
+      /> */}
 
       {/* Moving Energy Particles */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 hidden md:block">
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
@@ -82,32 +82,20 @@ const HomeSection = () => {
       </div>
 
       {/* Grid Pattern with Parallax */}
-      <div
-        className="absolute inset-0 opacity-10"
-        // style={{
-        //   backgroundImage: `
-        //     linear-gradient(to right, #fbbf24 1px, transparent 1px),
-        //     linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
-        //   `,
-        //   backgroundSize: "50px 50px",
-        //   transform: `translate(${mousePosition.x * 0.3}px, ${
-        //     mousePosition.y * 0.3
-        //   }px)`,
-        // }}
-      />
+      <div className="absolute inset-0 opacity-10" />
 
       {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-6 py-16 flex flex-col lg:flex-row items-center justify-between min-h-screen">
+      <div className="lg:scale-90 relative z-10 container mx-auto px-4 py-4 md:px-6 md:py-0 flex flex-col lg:flex-row items-center justify-between min-h-[100dvh]">
         {/* Left Content */}
         <div
-          className={`lg:w-1/2 space-y-6 transform transition-all duration-1000 ${
+          className={`w-full lg:w-1/2 space-y-6 transform transition-all duration-1000 ${
             isVisible
               ? "translate-x-0 opacity-100"
-              : "-translate-x-20 opacity-0"
+              : "-translate-x-10 md:-translate-x-20 opacity-0"
           }`}
         >
           {/* Sacred Badge */}
-          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg">
+          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full scale-90 md:scale-100 px-4 py-2 md:px-5 md:py-2.5 shadow-lg">
             <span className="text-amber-300 animate-pulse text-lg">✦</span>
             <span className="text-amber-100 font-medium tracking-wide text-sm text-float">
               Śrī Kṛṣṇa
@@ -117,12 +105,12 @@ const HomeSection = () => {
 
           {/* Main Heading */}
           <div className="space-y-2">
-            <h1 className="text-6xl lg:text-8xl font-bold leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold leading-tight">
               <span className="inline-block bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent animate-shimmer">
                 Krishnova
               </span>
             </h1>
-            <p className="text-2xl lg:text-3xl text-blue-100 font-light leading-relaxed">
+            <p className="text-xl md:text-2xl lg:text-3xl text-blue-100 font-light leading-relaxed">
               <span className="inline-block text-float animation-delay-100">
                 Where
               </span>{" "}
@@ -141,7 +129,7 @@ const HomeSection = () => {
 
           {/* Description */}
           <div className="space-y-3 max-w-xl">
-            <p className="text-blue-100/80 text-lg leading-relaxed">
+            <p className="text-blue-100/80 text-base md:text-lg leading-relaxed">
               Experience the divine presence of Lord Krishna through our curated
               collection of sacred artifacts and spiritual treasures.
             </p>
@@ -152,10 +140,10 @@ const HomeSection = () => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-wrap gap-4 pt-4">
+          <div className="flex flex-col md:flex-row flex-wrap gap-4 pt-4">
             <NavLink
               to={"/productpage"}
-              className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+              className="group relative px-6 py-3.5 md:px-8 md:py-4 w-full md:w-auto overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex justify-center items-center"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500 animate-gradient"></div>
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -169,7 +157,7 @@ const HomeSection = () => {
 
             <NavLink
               to="/readvagwatgita"
-              className="group px-8 py-4 border-2 border-amber-400/50 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transform hover:-translate-y-1 transition-all duration-300"
+              className="group px-6 py-3.5 md:px-8 md:py-4 w-full md:w-auto border-2 border-amber-400/50 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transform hover:-translate-y-1 transition-all duration-300 flex justify-center items-center"
             >
               <span className="flex items-center gap-2">
                 📖 Read Bhagavad Gita
@@ -178,41 +166,47 @@ const HomeSection = () => {
           </div>
 
           {/* Stats */}
-          <div className="flex gap-8 pt-8">
-            <div className="group cursor-pointer">
-              <div className="text-3xl font-bold text-amber-300 group-hover:scale-110 transition-transform text-float">
+          <div className="grid grid-cols-3 gap-2 md:flex md:gap-8 pt-6 mb-6 md:mb-2">
+            <div className="group cursor-pointer text-center md:text-left">
+              <div className="text-xl md:text-3xl font-bold text-amber-300 group-hover:scale-110 transition-transform text-float">
                 500+
               </div>
-              <div className="text-sm text-blue-200/60">Blessed Devotees</div>
+              <div className="text-xs md:text-sm text-blue-200/60">
+                Blessed Devotees
+              </div>
             </div>
-            <div className="group cursor-pointer">
-              <div className="text-3xl font-bold text-cyan-300 group-hover:scale-110 transition-transform text-float animation-delay-100">
+            <div className="group cursor-pointer text-center md:text-left">
+              <div className="text-xl md:text-3xl font-bold text-cyan-300 group-hover:scale-110 transition-transform text-float animation-delay-100">
                 108
               </div>
-              <div className="text-sm text-blue-200/60">Sacred Items</div>
+              <div className="text-xs md:text-sm text-blue-200/60">
+                Sacred Items
+              </div>
             </div>
-            <div className="group cursor-pointer">
-              <div className="text-3xl font-bold text-purple-300 group-hover:scale-110 transition-transform text-float animation-delay-200">
+            <div className="group cursor-pointer text-center md:text-left">
+              <div className="text-xl md:text-3xl font-bold text-purple-300 group-hover:scale-110 transition-transform text-float animation-delay-200">
                 4.9★
               </div>
-              <div className="text-sm text-blue-200/60">Divine Rating</div>
+              <div className="text-xs md:text-sm text-blue-200/60">
+                Divine Rating
+              </div>
             </div>
           </div>
         </div>
 
         {/* Right Content - Enhanced Hero Visual */}
         <div
-          className={`lg:w-1/2 relative transform transition-all duration-1000 delay-300 ${
+          className={`w-full lg:w-1/2 mt-12 md:mt-0 relative transform transition-all duration-1000 delay-300 ${
             isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
           }`}
           ref={mandalaRef}
         >
-          <div className="relative">
+          <div className="relative flex justify-center lg:block">
             {/* Multiple Mandala Layers with Different Effects */}
             <div className="absolute inset-0 flex items-center justify-center">
               {/* Outer energy ring */}
               <div
-                className="absolute w-[400px] h-[400px] md:w-[500px] md:h-[500px] rounded-full opacity-30"
+                className="absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full opacity-30"
                 style={{
                   background:
                     "radial-gradient(circle, transparent 30%, rgba(251, 191, 36, 0.1) 50%, transparent 70%)",
@@ -222,7 +216,7 @@ const HomeSection = () => {
 
               {/* Main Mandala Circles - Fixed for mobile symmetry */}
               <div
-                className="absolute w-[320px] h-[320px] md:w-96 md:h-96 rounded-full border-2 border-amber-400/40 animate-spin-very-slow"
+                className="absolute w-[260px] h-[260px] md:w-96 md:h-96 rounded-full border-2 border-amber-400/40 animate-spin-very-slow"
                 style={{
                   boxShadow:
                     "0 0 80px rgba(251, 191, 36, 0.4), inset 0 0 80px rgba(251, 191, 36, 0.2)",
@@ -232,7 +226,7 @@ const HomeSection = () => {
               />
 
               <div
-                className="absolute w-[280px] h-[280px] md:w-80 md:h-80 rounded-full border-2 border-cyan-400/40 animate-spin-reverse-slow"
+                className="absolute w-[220px] h-[220px] md:w-80 md:h-80 rounded-full border-2 border-cyan-400/40 animate-spin-reverse-slow"
                 style={{
                   boxShadow:
                     "0 0 60px rgba(0, 255, 255, 0.3), inset 0 0 60px rgba(0, 255, 255, 0.1)",
@@ -242,7 +236,7 @@ const HomeSection = () => {
               />
 
               <div
-                className="absolute w-[240px] h-[240px] md:w-64 md:h-64 rounded-full border-2 border-purple-400/40 animate-spin-slow"
+                className="absolute w-[180px] h-[180px] md:w-64 md:h-64 rounded-full border-2 border-purple-400/40 animate-spin-slow"
                 style={{
                   boxShadow:
                     "0 0 40px rgba(138, 43, 226, 0.3), inset 0 0 40px rgba(138, 43, 226, 0.1)",
@@ -251,7 +245,7 @@ const HomeSection = () => {
               />
 
               {/* Inner chakra pattern */}
-              <div className="absolute w-[180px] h-[180px] md:w-48 md:h-48 rounded-full">
+              <div className="absolute w-[140px] h-[140px] md:w-48 md:h-48 rounded-full">
                 <div
                   className="absolute inset-0 rounded-full"
                   style={{
@@ -264,7 +258,7 @@ const HomeSection = () => {
             </div>
 
             {/* Main Visual Container */}
-            <div className="relative w-80 h-80 lg:w-96 lg:h-96 mx-auto">
+            <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto">
               {/* Multi-layer Glowing Aura */}
               <div
                 className="absolute inset-0 rounded-full animate-pulse-slow"
@@ -288,11 +282,11 @@ const HomeSection = () => {
                   `,
                 }}
               >
-                <div className="text-7xl mb-2 transform transition-all duration-500 krishna-image-wrapper">
+                <div className="text-5xl md:text-7xl mb-2 transform transition-all duration-500 krishna-image-wrapper">
                   <img
                     src={kPng}
                     alt="Krishna"
-                    className="w-22 text-float krishna-image"
+                    className="w-16 md:w-72 text-float krishna-image"
                     style={{
                       filter: "drop-shadow(0 0 8px rgba(251, 191, 36, 0.3))",
                       transition: "filter 0.3s ease",
@@ -308,7 +302,7 @@ const HomeSection = () => {
                   />
                 </div>
                 <p
-                  className="text-amber-200 text-xl text-float"
+                  className="text-amber-200 text-lg md:text-xl text-float"
                   style={{ textShadow: "0 0 10px rgba(251, 191, 36, 0.8)" }}
                 >
                   कृष्ण
@@ -321,7 +315,7 @@ const HomeSection = () => {
                 >
                   <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
                     <span
-                      className="text-2xl animate-pulse"
+                      className="text-lg md:text-2xl animate-pulse"
                       style={{
                         filter: "drop-shadow(0 0 10px rgba(251, 191, 36, 0.8))",
                       }}
@@ -331,7 +325,7 @@ const HomeSection = () => {
                   </div>
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
                     <span
-                      className="text-2xl animate-pulse animation-delay-100"
+                      className="text-lg md:text-2xl animate-pulse animation-delay-100"
                       style={{
                         filter: "drop-shadow(0 0 10px rgba(251, 191, 36, 0.8))",
                       }}
@@ -341,7 +335,7 @@ const HomeSection = () => {
                   </div>
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
                     <span
-                      className="text-2xl animate-pulse animation-delay-200"
+                      className="text-lg md:text-2xl animate-pulse animation-delay-200"
                       style={{
                         filter: "drop-shadow(0 0 10px rgba(251, 191, 36, 0.8))",
                       }}
@@ -351,7 +345,7 @@ const HomeSection = () => {
                   </div>
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
                     <span
-                      className="text-2xl animate-pulse animation-delay-300"
+                      className="text-lg md:text-2xl animate-pulse animation-delay-300"
                       style={{
                         filter: "drop-shadow(0 0 10px rgba(251, 191, 36, 0.8))",
                       }}
@@ -367,11 +361,11 @@ const HomeSection = () => {
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className="absolute w-3 h-3 bg-amber-400 rounded-full"
+                    className="absolute w-2 h-2 md:w-3 md:h-3 bg-amber-400 rounded-full"
                     style={{
                       top: "50%",
                       left: "50%",
-                      transform: `rotate(${i * 120}deg) translateX(180px)`,
+                      transform: `rotate(${i * 120}deg) translateX(120px) md:translateX(180px)`,
                       boxShadow: "0 0 15px rgba(251, 191, 36, 0.8)",
                       animation: `pulse ${2 + i * 0.5}s ease-in-out infinite`,
                     }}
@@ -382,7 +376,7 @@ const HomeSection = () => {
 
             {/* Floating Cards - Now visible on mobile with responsive positioning */}
             <div
-              className="absolute -top-5 -left-5 md:-top-5 md:-left-5 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl p-3 md:p-4 border border-white/20 animate-float-slow scale-75 md:scale-100 origin-top-left"
+              className="absolute -top-2 -left-2 md:-top-5 md:-left-5 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl p-3 md:p-4 border border-white/20 animate-float-slow scale-75 md:scale-100 origin-top-left"
               style={{
                 boxShadow: "0 10px 40px rgba(251, 191, 36, 0.3)",
               }}
@@ -401,7 +395,7 @@ const HomeSection = () => {
             </div>
 
             <div
-              className="absolute -bottom-5 -right-5 md:-bottom-5 md:-right-5 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl p-3 md:p-4 border border-white/20 animate-float-slow animation-delay-2000 scale-75 md:scale-100 origin-bottom-right"
+              className="absolute -bottom-2 -right-2 md:-bottom-5 md:-right-5 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl p-3 md:p-4 border border-white/20 animate-float-slow animation-delay-2000 scale-75 md:scale-100 origin-bottom-right"
               style={{
                 boxShadow: "0 10px 40px rgba(0, 255, 255, 0.3)",
               }}
@@ -425,8 +419,8 @@ const HomeSection = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className="flex flex-col items-center space-y-2">
+      <div className="absolute bottom-[env(safe-area-inset-bottom,8px)] pb-2 md:bottom-8 left-1/2 transform -translate-x-1/2">
+        <div className="flex flex-col items-center space-y-1 md:space-y-2">
           <p className="text-amber-200/60 text-xs tracking-widest uppercase text-float">
             Scroll to explore
           </p>

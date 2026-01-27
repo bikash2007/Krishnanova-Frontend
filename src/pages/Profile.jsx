@@ -68,7 +68,7 @@ export default function Profile() {
             y: 0,
             duration: 0.8,
             ease: "power3.out",
-          }
+          },
         );
 
         // Avatar animation
@@ -82,7 +82,7 @@ export default function Profile() {
               duration: 1,
               delay: 0.3,
               ease: "back.out(1.7)",
-            }
+            },
           );
 
           // Continuous floating animation
@@ -105,7 +105,7 @@ export default function Profile() {
             duration: 0.6,
             delay: 0.5,
             ease: "power3.out",
-          }
+          },
         );
 
         // Cards stagger animation
@@ -120,7 +120,7 @@ export default function Profile() {
             stagger: 0.1,
             delay: 0.7,
             ease: "power3.out",
-          }
+          },
         );
 
         // Floating elements
@@ -191,7 +191,7 @@ export default function Profile() {
           rotation: 0,
           duration: 0.5,
           ease: "back.out(1.7)",
-        }
+        },
       );
 
       setTimeout(() => setMessage(""), 3000);
@@ -244,7 +244,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-x-hidden">
       <Navigation />
 
       {/* Background Patterns */}
@@ -267,9 +267,9 @@ export default function Profile() {
         }}
       />
 
-      {/* Floating Krishna Elements */}
+      {/* Floating Krishna Elements - Hidden on mobile */}
       <motion.div
-        className="floating-element fixed top-20 left-10 text-6xl opacity-20 pointer-events-none"
+        className="floating-element fixed top-20 left-10 text-4xl md:text-6xl opacity-20 pointer-events-none hidden sm:block"
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       >
@@ -277,36 +277,36 @@ export default function Profile() {
       </motion.div>
 
       <motion.div
-        className="floating-element fixed bottom-20 right-10 text-6xl opacity-20 pointer-events-none"
+        className="floating-element fixed bottom-20 right-10 text-4xl md:text-6xl opacity-20 pointer-events-none hidden sm:block"
         animate={{ rotate: -360, y: [0, -30, 0] }}
         transition={{ duration: 15, repeat: Infinity }}
       >
         🪈
       </motion.div>
 
-      {/* Floating Orbs */}
+      {/* Floating Orbs - Smaller on mobile */}
       <motion.div
-        className="fixed top-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl pointer-events-none"
+        className="fixed top-1/4 left-1/4 w-32 sm:w-64 h-32 sm:h-64 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl pointer-events-none hidden sm:block"
         animate={{ x: [0, 50, 0], y: [0, -30, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <div className="py-24 px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
+      <div className="pt-16 sm:pt-20 pb-4 sm:pb-6 px-3 sm:px-4 lg:px-8 xl:px-12 relative z-10 min-h-screen">
+        <div className="w-full">
           <motion.div
             ref={containerRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden"
+            className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300"
           >
             {/* Header */}
             <div
               ref={headerRef}
-              className="bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 p-8 text-center relative"
+              className="bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 p-3 sm:p-4 lg:p-5 text-center relative rounded-t-3xl"
             >
               {/* Pattern overlay */}
               <div
-                className="absolute inset-0 opacity-30"
+                className="absolute inset-0 opacity-30 rounded-t-3xl"
                 style={{
                   backgroundImage:
                     "radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)",
@@ -319,35 +319,44 @@ export default function Profile() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="inline-flex items-center space-x-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-5 py-2.5 shadow-lg mb-6"
+                className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-3 py-1.5 shadow-lg mb-2 sm:mb-3"
               >
-                <span className="text-white animate-pulse text-lg">✦</span>
-                <span className="text-white font-medium tracking-wide text-sm">
+                <span className="text-white animate-pulse text-sm">✦</span>
+                <span className="text-white font-medium tracking-wide text-xs">
                   Divine Devotee Profile
                 </span>
-                <span className="text-white animate-pulse text-lg">✦</span>
+                <span className="text-white animate-pulse text-sm">✦</span>
               </motion.div>
 
               <div className="relative inline-block">
                 <motion.div
                   ref={avatarRef}
-                  className="w-32 h-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-5xl font-bold text-white mx-auto mb-4 border-4 border-white/30 shadow-2xl relative overflow-hidden"
+                  className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-white mx-auto mb-2 border-4 border-white/30 shadow-2xl relative overflow-hidden"
                 >
                   {user.avatar ? (
                     <img
                       src={
                         user.isGoogleUser && user.avatar.startsWith("http")
                           ? user.avatar
-                          : `${user.avatar}`
+                          : user.avatar.startsWith("/uploads")
+                            ? `${baseUrl}${user.avatar}`
+                            : user.avatar.startsWith("http")
+                              ? user.avatar
+                              : `${baseUrl}/uploads/${user.avatar}`
                       }
                       alt={user.name}
                       className="w-full h-full rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
                     />
-                  ) : (
-                    <div className="bg-gradient-to-br from-amber-300 to-orange-400 w-full h-full rounded-full flex items-center justify-center">
-                      {user.name?.charAt(0).toUpperCase() || "🕉️"}
-                    </div>
-                  )}
+                  ) : null}
+                  <div
+                    className={`bg-gradient-to-br from-amber-300 to-orange-400 w-full h-full rounded-full flex items-center justify-center absolute inset-0 ${user.avatar ? "hidden" : ""}`}
+                  >
+                    {user.name?.charAt(0).toUpperCase() || "🕉️"}
+                  </div>
 
                   {/* Glowing ring effect */}
                   <motion.div
@@ -368,38 +377,40 @@ export default function Profile() {
                 )}
               </div>
 
-              <h1 className="text-3xl font-bold text-white mb-2 relative z-10">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-0.5 relative z-10">
                 {user.name}
               </h1>
-              <p className="text-white/90 relative z-10">{user.email}</p>
+              <p className="text-white/90 relative z-10 text-xs sm:text-sm break-all sm:break-normal">
+                {user.email}
+              </p>
 
               {/* Sanskrit blessing */}
-              <p className="text-white/70 text-sm mt-2 italic">
+              <p className="text-white/70 text-xs mt-1 italic hidden sm:block">
                 सर्वे भवन्तु सुखिनः
               </p>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-amber-400/20 bg-white/5">
+            <div className="flex border-b border-amber-400/20 bg-white/5 rounded-t-lg">
               {["profile", "spiritual", "settings"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-4 px-6 font-semibold capitalize transition-all ${
+                  className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 font-medium capitalize transition-all text-xs sm:text-sm whitespace-nowrap ${
                     activeTab === tab
                       ? "bg-gradient-to-r from-amber-400/20 to-orange-500/20 text-amber-300 border-b-2 border-amber-400"
                       : "text-blue-100/60 hover:text-amber-200 hover:bg-white/5"
                   }`}
                 >
                   {tab === "profile" && "🙏 Profile"}
-                  {tab === "spiritual" && "🕉️ Spiritual Journey"}
+                  {tab === "spiritual" && "🕉️ Journey"}
                   {tab === "settings" && "⚙️ Settings"}
                 </button>
               ))}
             </div>
 
             {/* Profile Content */}
-            <div ref={contentRef} className="p-8">
+            <div ref={contentRef} className="p-3 sm:p-4 lg:p-6">
               {message && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -415,10 +426,10 @@ export default function Profile() {
               )}
 
               {activeTab === "profile" && (
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
                   {/* Profile Information */}
                   <div ref={(el) => (cardsRef.current[0] = el)}>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
+                    <h2 className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 sm:mb-4">
                       Divine Information
                     </h2>
 
@@ -481,39 +492,39 @@ export default function Profile() {
                         </div>
                       </form>
                     ) : (
-                      <div className="space-y-4">
+                      <div className="space-y-2 sm:space-y-3">
                         <motion.div
-                          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-4 rounded-xl border border-white/20"
+                          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-3 rounded-xl border border-white/20"
                           whileHover={{ scale: 1.02 }}
                         >
-                          <label className="block text-sm font-medium text-cyan-300 mb-1">
+                          <label className="block text-xs font-medium text-cyan-300 mb-0.5">
                             Sacred Name
                           </label>
-                          <p className="text-lg font-semibold text-amber-200">
+                          <p className="text-sm sm:text-base font-semibold text-amber-200">
                             {user.name}
                           </p>
                         </motion.div>
 
                         <motion.div
-                          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-4 rounded-xl border border-white/20"
+                          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-3 rounded-xl border border-white/20"
                           whileHover={{ scale: 1.02 }}
                         >
-                          <label className="block text-sm font-medium text-cyan-300 mb-1">
+                          <label className="block text-xs font-medium text-cyan-300 mb-0.5">
                             Divine Email
                           </label>
-                          <p className="text-lg font-semibold text-amber-200">
+                          <p className="text-sm sm:text-base font-semibold text-amber-200 break-all">
                             {user.email}
                           </p>
                         </motion.div>
 
                         <motion.div
-                          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-4 rounded-xl border border-white/20"
+                          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-3 rounded-xl border border-white/20"
                           whileHover={{ scale: 1.02 }}
                         >
-                          <label className="block text-sm font-medium text-cyan-300 mb-1">
+                          <label className="block text-xs font-medium text-cyan-300 mb-0.5">
                             Spiritual Role
                           </label>
-                          <p className="text-lg font-semibold text-amber-200 capitalize flex items-center gap-2">
+                          <p className="text-sm sm:text-base font-semibold text-amber-200 capitalize flex items-center gap-2">
                             {user.role === "admin"
                               ? "👑 Divine Admin"
                               : "🙏 Blessed Devotee"}
@@ -522,13 +533,13 @@ export default function Profile() {
 
                         <motion.button
                           onClick={() => setIsEditing(true)}
-                          className="w-full group relative px-6 py-3 overflow-hidden rounded-full shadow-2xl mt-6"
+                          className="w-full group relative px-4 py-2 overflow-hidden rounded-full shadow-2xl mt-3"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                          <span className="relative text-white font-semibold">
-                            ✏️ Edit Divine Profile
+                          <span className="relative text-white font-medium text-sm">
+                            ✏️ Edit Profile
                           </span>
                         </motion.button>
                       </div>
@@ -536,41 +547,44 @@ export default function Profile() {
                   </div>
 
                   {/* Account Actions */}
-                  <div ref={(el) => (cardsRef.current[1] = el)}>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
+                  <div
+                    ref={(el) => (cardsRef.current[1] = el)}
+                    className="xl:col-span-2"
+                  >
+                    <h2 className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 sm:mb-4">
                       Sacred Actions
                     </h2>
 
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3">
                       <motion.div
-                        className="backdrop-blur-md bg-gradient-to-br from-green-400/10 to-green-500/10 p-6 rounded-xl border border-green-400/30"
-                        whileHover={{ scale: 1.02 }}
+                        className="backdrop-blur-md bg-gradient-to-br from-green-400/10 to-green-500/10 p-3 rounded-xl border border-green-400/30"
+                        whileHover={{ scale: 1.01 }}
                       >
-                        <h3 className="font-semibold text-green-300 mb-2 flex items-center gap-2">
+                        <h3 className="font-medium text-green-300 mb-1 flex items-center gap-1.5 text-xs sm:text-sm">
                           <span>🕉️</span> Spiritual Status
                         </h3>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           <motion.span
-                            className="w-3 h-3 bg-green-400 rounded-full"
+                            className="w-2 h-2 bg-green-400 rounded-full"
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 2, repeat: Infinity }}
                           />
-                          <span className="text-green-300 font-medium">
+                          <span className="text-green-300 font-medium text-sm">
                             Divinely Active
                           </span>
                         </div>
                       </motion.div>
 
                       <motion.div
-                        className="backdrop-blur-md bg-gradient-to-br from-purple-400/10 to-blue-500/10 p-6 rounded-xl border border-purple-400/30"
-                        whileHover={{ scale: 1.02 }}
+                        className="backdrop-blur-md bg-gradient-to-br from-purple-400/10 to-blue-500/10 p-3 rounded-xl border border-purple-400/30"
+                        whileHover={{ scale: 1.01 }}
                       >
-                        <h3 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">
+                        <h3 className="font-medium text-purple-300 mb-1 flex items-center gap-1.5 text-xs sm:text-sm">
                           <span>📿</span> Devotee Since
                         </h3>
-                        <p className="text-cyan-300">
+                        <p className="text-cyan-300 text-xs sm:text-sm">
                           {new Date(
-                            user.createdAt || Date.now()
+                            user.createdAt || Date.now(),
                           ).toLocaleDateString("en-US", {
                             year: "numeric",
                             month: "long",
@@ -580,55 +594,55 @@ export default function Profile() {
                       </motion.div>
 
                       <motion.div
-                        className="backdrop-blur-md bg-gradient-to-br from-amber-400/10 to-orange-500/10 p-6 rounded-xl border border-amber-400/30"
-                        whileHover={{ scale: 1.02 }}
+                        className="backdrop-blur-md bg-gradient-to-br from-amber-400/10 to-orange-500/10 p-3 rounded-xl border border-amber-400/30"
+                        whileHover={{ scale: 1.01 }}
                       >
-                        <h3 className="font-semibold text-amber-300 mb-2 flex items-center gap-2">
+                        <h3 className="font-medium text-amber-300 mb-1 flex items-center gap-1.5 text-xs sm:text-sm">
                           <span>🪔</span> Karma Points
                         </h3>
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl font-bold text-amber-300">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-lg sm:text-xl font-bold text-amber-300">
                             {Math.floor(Math.random() * 1000) + 100}
                           </span>
-                          <span className="text-amber-200/60 text-sm">
-                            Divine blessings earned
+                          <span className="text-amber-200/60 text-xs">
+                            blessings
                           </span>
                         </div>
                       </motion.div>
 
                       {user.role === "admin" && (
                         <motion.div
-                          className="backdrop-blur-md bg-gradient-to-br from-yellow-400/10 to-amber-500/10 p-6 rounded-xl border border-yellow-400/30"
-                          whileHover={{ scale: 1.02 }}
+                          className="backdrop-blur-md bg-gradient-to-br from-yellow-400/10 to-amber-500/10 p-3 rounded-xl border border-yellow-400/30"
+                          whileHover={{ scale: 1.01 }}
                         >
-                          <h3 className="font-semibold text-yellow-300 mb-2 flex items-center gap-2">
-                            <span>👑</span> Divine Admin Access
+                          <h3 className="font-medium text-yellow-300 mb-1 flex items-center gap-1.5 text-xs sm:text-sm">
+                            <span>👑</span> Admin Access
                           </h3>
                           <motion.button
                             onClick={() => navigate("/admin/dashboard")}
-                            className="bg-gradient-to-r from-amber-400 to-yellow-500 text-white px-4 py-2 rounded-lg font-medium shadow-lg"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            className="bg-gradient-to-r from-amber-400 to-yellow-500 text-white px-3 py-1.5 rounded-lg font-medium shadow-lg text-xs sm:text-sm"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                           >
-                            Enter Admin Realm
+                            Enter Admin
                           </motion.button>
                         </motion.div>
                       )}
 
                       <motion.div
-                        className="backdrop-blur-md bg-gradient-to-br from-red-400/10 to-red-500/10 p-6 rounded-xl border border-red-400/30"
-                        whileHover={{ scale: 1.02 }}
+                        className="backdrop-blur-md bg-gradient-to-br from-red-400/10 to-red-500/10 p-3 rounded-xl border border-red-400/30"
+                        whileHover={{ scale: 1.01 }}
                       >
-                        <h3 className="font-semibold text-red-300 mb-2 flex items-center gap-2">
-                          <span>⚠️</span> Sacred Zone
+                        <h3 className="font-medium text-red-300 mb-1 flex items-center gap-1.5 text-xs sm:text-sm">
+                          <span>⚠️</span> Logout
                         </h3>
                         <motion.button
                           onClick={handleLogout}
-                          className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg font-medium shadow-lg"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
+                          className="bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1.5 rounded-lg font-medium shadow-lg text-xs sm:text-sm"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                         >
-                          Leave Divine Realm
+                          Leave Realm
                         </motion.button>
                       </motion.div>
                     </div>
@@ -637,12 +651,12 @@ export default function Profile() {
               )}
 
               {activeTab === "spiritual" && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
+                <div className="space-y-3">
+                  <h2 className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3">
                     Your Spiritual Journey
                   </h2>
 
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-3">
                     {[
                       { icon: "🕉️", title: "Mantras Chanted", value: "1,008" },
                       { icon: "🪔", title: "Prayers Offered", value: "108" },
@@ -653,17 +667,19 @@ export default function Profile() {
                     ].map((stat, index) => (
                       <motion.div
                         key={index}
-                        className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-6 rounded-xl border border-white/20 text-center"
-                        whileHover={{ scale: 1.05 }}
+                        className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-2 sm:p-3 rounded-xl border border-white/20 text-center"
+                        whileHover={{ scale: 1.02 }}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
+                        transition={{ delay: index * 0.05 }}
                       >
-                        <div className="text-3xl mb-2">{stat.icon}</div>
-                        <div className="text-2xl font-bold text-amber-300">
+                        <div className="text-xl sm:text-2xl mb-0.5">
+                          {stat.icon}
+                        </div>
+                        <div className="text-sm sm:text-base lg:text-lg font-bold text-amber-300">
                           {stat.value}
                         </div>
-                        <div className="text-sm text-blue-100/60">
+                        <div className="text-xs text-blue-100/60 truncate">
                           {stat.title}
                         </div>
                       </motion.div>
@@ -673,12 +689,12 @@ export default function Profile() {
               )}
 
               {activeTab === "settings" && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
+                <div className="space-y-3">
+                  <h2 className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3">
                     Divine Settings
                   </h2>
 
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-3">
                     {[
                       {
                         title: "Email Notifications",
@@ -703,26 +719,26 @@ export default function Profile() {
                     ].map((setting, index) => (
                       <motion.div
                         key={index}
-                        className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-4 rounded-xl border border-white/20 flex items-center justify-between"
+                        className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 p-3 rounded-xl border border-white/20 flex items-center justify-between"
                         whileHover={{ scale: 1.02 }}
                       >
                         <div>
-                          <h3 className="font-semibold text-amber-200">
+                          <h3 className="font-medium text-amber-200 text-sm">
                             {setting.title}
                           </h3>
-                          <p className="text-sm text-blue-100/60">
+                          <p className="text-xs text-blue-100/60">
                             {setting.desc}
                           </p>
                         </div>
                         <motion.button
-                          className={`w-12 h-6 rounded-full p-1 transition-colors ${
+                          className={`w-10 h-5 rounded-full p-0.5 transition-colors flex-shrink-0 ml-2 ${
                             setting.enabled ? "bg-amber-400" : "bg-gray-400/30"
                           }`}
                           whileTap={{ scale: 0.9 }}
                         >
                           <motion.div
                             className="w-4 h-4 bg-white rounded-full"
-                            animate={{ x: setting.enabled ? 24 : 0 }}
+                            animate={{ x: setting.enabled ? 20 : 0 }}
                             transition={{
                               type: "spring",
                               stiffness: 500,
@@ -738,8 +754,8 @@ export default function Profile() {
             </div>
           </motion.div>
 
-          {/* Decorative Elements */}
-          <motion.div className="absolute -bottom-4 -right-4 text-6xl text-amber-400/20 rotating-symbol pointer-events-none">
+          {/* Decorative Elements - Hidden on mobile */}
+          <motion.div className="absolute -bottom-4 -right-4 text-4xl sm:text-6xl text-amber-400/20 rotating-symbol pointer-events-none hidden sm:block">
             ॐ
           </motion.div>
         </div>

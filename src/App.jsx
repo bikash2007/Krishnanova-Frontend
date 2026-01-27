@@ -1,11 +1,7 @@
-import React, { useEffect } from "react";
-
-// Hooks
-import useScrollAnimation from "./hooks/useScrollAnimation";
-
-// Utils
-import { createParticle } from "./utils/animations";
-import Navigation from "./components/Navigation/Navigation";
+import React, { useEffect, useRef, useLayoutEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 
 import Mission from "./components/Mission/Mission";
 
@@ -14,10 +10,7 @@ import KrishnaNames from "./components/KrishnaNames/KrishnaNames";
 import Community from "./components/Community/Community";
 import Festival from "./components/Festival/Festival";
 import Meditation from "./components/Meditation/Meditation";
-import Contact from "./components/Contact/Contact";
-import Footer from "./components/Footer/Footer";
-import MusicPlayer from "./components/MusicPlayer";
-import ScrollToHash from "./utils/ScrollToHash";
+
 import {
   FeatherSVG,
   FluteSVG,
@@ -29,41 +22,106 @@ import WisdomPortalPath from "./components/WisdomPortal/WisdomPortalPath";
 import CarouselSlider from "./components/Products/CarouselSlider";
 
 import HomeSection from "./components/Hero/HomeSection";
-import EnhancedKrishnaGame from "./components/FloatingKrishna";
+import Footer from "./components/Footer/Footer";
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const App = () => {
-  useScrollAnimation();
-
-  useEffect(() => {
-    // Parallax scrolling effect
-    const handleScroll = () => {
-      const scrolled = window.pageYOffset;
-      const parallaxBg = document.querySelector(".parallax-bg");
-      if (parallaxBg) {
-        parallaxBg.style.transform = `translateY(${scrolled * 0.5}px)`;
-      }
-
-      // Energy flows follow scroll
-      const energyFlows = document.querySelectorAll(".energy-flow");
-      energyFlows.forEach((flow, index) => {
-        flow.style.transform = `translateY(${
-          scrolled * (0.2 + index * 0.1)
-        }px)`;
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    // Create particles periodically
-    const particleInterval = setInterval(createParticle, 2000);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearInterval(particleInterval);
-    };
-  }, []);
+  const appRef = useRef(null);
   const location = useLocation();
+
+  // GSAP smooth scrolling and animations
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Smooth parallax for background elements
+      gsap.utils.toArray(".parallax-bg").forEach((bg) => {
+        gsap.to(bg, {
+          yPercent: 50,
+          ease: "none",
+          scrollTrigger: {
+            trigger: bg,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        });
+      });
+
+      // Smooth parallax for energy flows
+      gsap.utils.toArray(".energy-flow").forEach((flow, index) => {
+        gsap.to(flow, {
+          yPercent: 20 + index * 10,
+          ease: "none",
+          scrollTrigger: {
+            trigger: flow,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        });
+      });
+
+      // Reveal animations for scroll elements
+      gsap.utils.toArray(".scroll-reveal").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+
+      // Slide from left animations
+      gsap.utils.toArray(".scroll-slide-left").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, x: -80 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+
+      // Slide from right animations
+      gsap.utils.toArray(".scroll-slide-right").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, x: 80 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+    }, appRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Handle scrolling after navigation from other routes
   useEffect(() => {
@@ -74,10 +132,15 @@ const App = () => {
       const timer = setTimeout(() => {
         const section = document.getElementById(targetId);
         if (section) {
-          section.scrollIntoView({ behavior: "smooth", block: "start" });
+          // Use GSAP for smooth scrolling
+          gsap.to(window, {
+            duration: 1,
+            scrollTo: { y: section, offsetY: 0 },
+            ease: "power2.inOut",
+          });
         }
 
-        // Optional: Clear the state to prevent re-scrolling on page refresh
+        // Clear the state to prevent re-scrolling on page refresh
         window.history.replaceState({}, document.title);
       }, 100);
 
@@ -86,20 +149,17 @@ const App = () => {
   }, [location]);
 
   return (
-    <div className="app">
-      {/* <ScrollToHash /> */}
-      <MusicPlayer />
-      <Navigation />
-      <EnhancedKrishnaGame />
-
+    <div ref={appRef} className="app relative">
       {/* Add the correct IDs below 👇 */}
       <div id="home">
         <HomeSection />
       </div>
-      <div className="main min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 relative overflow-hidden">
-        {/* <div id="blurry "></div> */}
+
+      <div className="relative">
+        <div id="wisdom" className="relative z-10 ">
+          <WisdomPortalPath />
+        </div>
         <div id="products">
-          {/* <Products /> */}
           <CarouselSlider />
         </div>
 
@@ -111,45 +171,29 @@ const App = () => {
           <KrishnaNames />
         </div>
 
-        {/* 🎨 Decorative background */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          {/* Animated radial glow */}
-          <div className="absolute w-[40rem] h-[40rem] bg-[radial-gradient(circle,rgba(255,255,255,0.06),transparent_80%)] rounded-full top-20 left-1/4 animate-slow-spin"></div>
-
-          {/* Static radial glow */}
-          <div className="absolute w-[25rem] h-[25rem] bg-[radial-gradient(circle,rgba(255,255,255,0.04),transparent_70%)] rounded-full bottom-10 right-1/4"></div>
-
-          {/* Subtle grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_25%,transparent_25%,transparent_75%,rgba(255,255,255,0.02)_75%,rgba(255,255,255,0.02))] bg-[length:50px_50px]"></div>
-
+        {/* 🎨 Decorative background elements specific to Home */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           {/* Animated SVG flute / feather */}
           <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-20 left-10 animate-float-slow" />
-          <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-20 left-10 animate-float-slow" />
+          <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-[40%] right-10 animate-float-slow" />
           <FeatherSVG className="absolute w-32 md:w-48 opacity-10 bottom-10 right-10 animate-float-slower" />
           <PeacockFeatherSVG className="absolute w-48 opacity-8 top-1/3 right-1/3 animate-float-slower" />
 
           <LotusSVG className="absolute w-32 opacity-8 bottom-20 left-1/4 animate-float-slow" />
-          <LotusSVG className="absolute w-32 opacity-8 bottom-15 left-1/4 animate-float-slow" />
         </div>
 
         {/* 🌟 Main Content */}
-        <div id="wisdom" className="relative z-10 ">
-          <LotusSVG className="absolute w-32 opacity-8 bottom-15 left-1/4 animate-float-slow" />
-          <WisdomPortalPath />
-          <div id="community">
-            <PeacockFeatherSVG className="absolute w-48 opacity-8 top-1/3 right-1/3 animate-float-slower" />
-            <Community />
-          </div>
-          <div id="festival">
-            <LotusSVG className="absolute w-32 opacity-8 bottom-2 left-1/4 animate-float-slow" />
-            <Festival />
-          </div>
-          <div className="relative" id="meditation">
-            <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-20 left-10 animate-float-slow" />
-            <LotusSVG className="absolute w-32 opacity-8 bottom-2 left-1/4 animate-float-slow" />
-            <Meditation />
-          </div>
-          <div id="contact">{/* <Contact /> */}</div>
+
+        <div id="community">
+          <Community />
+        </div>
+        <div id="festival">
+          <Festival />
+        </div>
+        <div className="relative" id="meditation">
+          <Meditation />
+        </div>
+        <div id="contact">
           <Footer />
         </div>
       </div>

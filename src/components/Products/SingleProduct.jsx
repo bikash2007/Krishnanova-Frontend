@@ -818,7 +818,7 @@ export default function SingleProduct() {
                 )}
               </div>
 
-              {/* Tabs for Description/Features/Shipping */}
+              {/* Tabs for Description/Features/Shipping
               <div className="product-info-item">
                 <div className="flex gap-4 mb-6 border-b border-amber-400/20">
                   {["description", "features", "shipping"].map((tab) => (
@@ -923,7 +923,7 @@ export default function SingleProduct() {
                     )}
                   </motion.div>
                 </AnimatePresence>
-              </div>
+              </div> */}
 
               {/* Quantity and Actions */}
               <div className="product-info-item space-y-6">

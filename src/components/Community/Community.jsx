@@ -4,6 +4,14 @@ import { useApi } from "../../Context/baseUrl";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Import Sanga components for the preview
+import {
+  SangaProvider,
+  LevelProgressMini,
+  RasaTag,
+  DevoteeInlineBadge,
+} from "./SangaSystem";
+
 // Avatar component with Krishnova theme
 const Avatar = ({ user, size = "w-12 h-12", baseUrl, showOnline = false }) => {
   const [imageError, setImageError] = useState(false);
@@ -184,7 +192,10 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
                   <h4 className="font-semibold text-amber-300">
                     {post.author?.name || "Anonymous Devotee"}
                   </h4>
-                  <UserBadge user={post.author} size="sm" />
+                  <DevoteeInlineBadge
+                    level={post.author?.devoteeLevel}
+                    points={post.author?.spiritualPoints}
+                  />
                 </div>
                 <div className="flex items-center gap-2 text-xs text-blue-100/60">
                   <span>{formatTimeAgo(post.createdAt)}</span>
@@ -193,7 +204,15 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
                 </div>
               </div>
             </div>
-            {(post.likes?.length || 0) > 10 && (
+            {/* Rasa Tags for Story */}
+            {post.rasas?.length > 0 && (
+              <div className="flex gap-1">
+                {post.rasas.slice(0, 2).map((rasa) => (
+                  <RasaTag key={rasa} rasaId={rasa} size="xs" />
+                ))}
+              </div>
+            )}
+            {(post.likes?.length || 0) > 10 && !post.rasas?.length && (
               <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-orange-400 to-red-500 text-white">
                 🔥 Trending
               </span>

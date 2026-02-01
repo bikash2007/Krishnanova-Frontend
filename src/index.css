@@ -22,6 +22,27 @@
   body {
     min-height: -webkit-fill-available;
   }
+
+  /* Fix for fullscreen components on Safari mobile */
+  .safari-viewport-fix {
+    height: -webkit-fill-available;
+    max-height: -webkit-fill-available;
+  }
+}
+
+/* Modern viewport units fallback */
+@supports (height: 100dvh) {
+  .safari-viewport-fix {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
+@supports (height: 100svh) and (not (height: 100dvh)) {
+  .safari-viewport-fix {
+    height: 100svh;
+    max-height: 100svh;
+  }
 }
 
 /* Safe area padding for notched devices */
@@ -494,6 +515,16 @@ a:hover,
 
   100% {
     transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
   }
 }
 

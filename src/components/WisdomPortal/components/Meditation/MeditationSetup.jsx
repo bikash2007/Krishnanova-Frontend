@@ -1,19 +1,13 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  GiMeditation,
-  GiLotusFlower,
-  GiPeaceDove,
-  GiFlute,
-} from "react-icons/gi";
+import { GiLotusFlower, GiFlute } from "react-icons/gi";
 import {
   IoEye,
   IoEyeOff,
   IoMusicalNotes,
-  IoImage,
-  IoCloudUpload,
   IoCheckmark,
   IoArrowForward,
+  IoArrowBack,
   IoPlay,
   IoStop,
 } from "react-icons/io5";
@@ -28,264 +22,208 @@ const MeditationSetup = ({ onStart, onBack }) => {
     customImage: null,
   });
 
-  const [errors, setErrors] = useState({});
   const [previewPlaying, setPreviewPlaying] = useState(null);
   const audioPreviewRef = useRef(null);
 
-  // Music options
   const musicOptions = {
     background: [
       {
-        id: "calm-instrumental-1",
-        name: "Peaceful Flute Melody",
+        id: "1",
+        name: "🎵 Peaceful Flute",
         url: "/test/audio/meditation/calm-flute.mp3",
       },
       {
-        id: "calm-instrumental-2",
-        name: "Sitar Serenity",
+        id: "2",
+        name: "🎸 Sitar Serenity",
         url: "/test/audio/meditation/sitar-calm.mp3",
       },
       {
-        id: "calm-instrumental-3",
-        name: "Nature Sounds with Tabla",
+        id: "3",
+        name: "🍃 Nature Tabla",
         url: "/test/audio/meditation/nature-tabla.mp3",
       },
     ],
     chanting: [
       {
-        id: "chanting-1",
-        name: "Om Meditation Chant",
+        id: "4",
+        name: "🕉️ Om Chant",
         url: "/test/audio/meditation/om-chant.mp3",
       },
       {
-        id: "chanting-2",
-        name: "Hare Krishna Mantra",
+        id: "5",
+        name: "🙏 Hare Krishna",
         url: "/test/audio/meditation/hare-krishna.mp3",
       },
       {
-        id: "chanting-3",
-        name: "Gayatri Mantra",
+        id: "6",
+        name: "✨ Gayatri Mantra",
         url: "/test/audio/meditation/gayatri.mp3",
       },
     ],
   };
 
-  // Pre-designed images
   const meditationImages = [
     {
-      id: "krishna-1",
-      name: "Krishna with Flute",
+      id: "1",
+      emoji: "🪈",
+      name: "Krishna Flute",
       url: "/test/images/meditation/krishna-flute.png",
     },
     {
-      id: "radha-krishna",
+      id: "2",
+      emoji: "💕",
       name: "Radha Krishna",
       url: "/test/images/meditation/radha-krishna.png",
     },
     {
-      id: "krishna-meditation",
-      name: "Krishna Meditation",
+      id: "3",
+      emoji: "🧘",
+      name: "Meditation",
       url: "/test/images/meditation/krishna-meditation.png",
     },
     {
-      id: "lotus",
+      id: "4",
+      emoji: "🪷",
       name: "Sacred Lotus",
       url: "/test/images/meditation/lotus.png",
     },
     {
-      id: "om",
+      id: "5",
+      emoji: "🕉️",
       name: "Om Symbol",
       url: "/test/images/meditation/om-symbol.png",
     },
     {
-      id: "yantra",
+      id: "6",
+      emoji: "✡️",
       name: "Sri Yantra",
       url: "/test/images/meditation/sri-yantra.png",
     },
   ];
 
-  const validateStep = () => {
-    const newErrors = {};
-
-    if (step === 2 && !config.selectedMusic) {
-      newErrors.music = "Please select a music track";
-    }
-
-    if (step === 3 && config.eyesOpen && !config.selectedImage && !config.customImage) {
-      newErrors.image = "Please select or upload an image";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const totalSteps = config.eyesOpen ? 3 : 2;
 
   const handleNext = () => {
-    if (validateStep()) {
-      if (step === 3 || (step === 2 && !config.eyesOpen)) {
-        handleStart();
-      } else {
-        setStep(step + 1);
-      }
-    }
-  };
+    if (step === 2 && !config.selectedMusic) return;
+    if (step === 3 && !config.selectedImage && !config.customImage) return;
 
-  const handleStart = () => {
-    if (validateStep()) {
+    if (step === totalSteps) {
+      if (audioPreviewRef.current) audioPreviewRef.current.pause();
       onStart(config);
+    } else {
+      setStep(step + 1);
     }
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setConfig({ ...config, customImage: file, selectedImage: "" });
-      setErrors({ ...errors, image: "" });
-    }
+  const handleBack = () => {
+    if (audioPreviewRef.current) audioPreviewRef.current.pause();
+    setPreviewPlaying(null);
+    if (step === 1) onBack();
+    else setStep(step - 1);
   };
 
   const handlePreview = (musicUrl) => {
-    if (!audioPreviewRef.current) {
-      audioPreviewRef.current = new Audio();
-    }
-
+    if (!audioPreviewRef.current) audioPreviewRef.current = new Audio();
     if (previewPlaying === musicUrl) {
-      // Stop preview
       audioPreviewRef.current.pause();
-      audioPreviewRef.current.currentTime = 0;
       setPreviewPlaying(null);
     } else {
-      // Play new preview
       audioPreviewRef.current.pause();
       audioPreviewRef.current.src = musicUrl;
       audioPreviewRef.current.volume = 0.5;
-      audioPreviewRef.current.play().catch((err) => {
-        console.error("Audio preview failed:", err);
-      });
+      audioPreviewRef.current.play().catch(() => {});
       setPreviewPlaying(musicUrl);
-
-      // Auto-stop after 15 seconds
-      setTimeout(() => {
-        if (audioPreviewRef.current && !audioPreviewRef.current.paused) {
-          audioPreviewRef.current.pause();
-          audioPreviewRef.current.currentTime = 0;
-          setPreviewPlaying(null);
-        }
-      }, 15000);
     }
   };
 
+  const stepTitles = ["Meditation Style", "Choose Music", "Visualization"];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="inline-block mb-4"
+    <div className="min-h-[60vh] max-h-[90vh] bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex-shrink-0 px-4 pt-3 pb-2">
+        <div className="flex items-center justify-between mb-2">
+          <motion.button
+            onClick={handleBack}
+            className="p-2 rounded-full bg-white/10 text-white"
+            whileTap={{ scale: 0.9 }}
           >
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-2xl">
-              <GiMeditation className="text-3xl text-white" />
-            </div>
-          </motion.div>
-          <h1 className="text-3xl md:text-4xl font-bold text-amber-200 mb-2">
-            Customize Your Meditation
-          </h1>
-          <p className="text-blue-100/80">
-            How would you like to meditate today?
-          </p>
+            <IoArrowBack className="text-lg" />
+          </motion.button>
+          <h2 className="text-base font-bold text-amber-200">
+            {stepTitles[step - 1]}
+          </h2>
+          <div className="w-9" />
         </div>
 
-        {/* Progress Steps */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-2">
-            {[1, 2, 3].map((s) => (
-              <React.Fragment key={s}>
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                    s === step
-                      ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white scale-110"
-                      : s < step
-                      ? "bg-green-500 text-white"
-                      : "bg-white/20 text-blue-100/50"
-                  }`}
-                >
-                  {s < step ? <IoCheckmark /> : s}
-                </div>
-                {s < 3 && (
-                  <div
-                    className={`w-12 h-1 rounded ${
-                      s < step ? "bg-green-500" : "bg-white/20"
-                    }`}
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </div>
+        {/* Progress Bar */}
+        <div className="flex gap-2">
+          {[...Array(totalSteps)].map((_, i) => (
+            <div
+              key={i}
+              className={`h-1 flex-1 rounded-full transition-all ${
+                i < step ? "bg-amber-400" : "bg-white/20"
+              }`}
+            />
+          ))}
         </div>
+      </div>
 
-        {/* Step Content */}
+      {/* Step Content */}
+      <div className="flex-1 overflow-y-auto">
         <AnimatePresence mode="wait">
-          {/* Step 1: Eyes Selection */}
+          {/* Step 1: Eyes Open/Closed */}
           {step === 1 && (
             <motion.div
               key="step1"
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 md:p-8 border border-white/20 shadow-2xl"
+              exit={{ opacity: 0, x: -50 }}
+              className="h-full flex flex-col justify-center px-6"
             >
-              <h2 className="text-2xl font-bold text-amber-200 mb-6 flex items-center gap-2">
-                <IoEye className="text-3xl" />
-                Choose Your Eye Position
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <p className="text-center text-blue-100/70 mb-6">
+                How would you like to meditate?
+              </p>
+              <div className="grid grid-cols-2 gap-4">
                 <motion.button
                   onClick={() => setConfig({ ...config, eyesOpen: true })}
-                  className={`p-6 rounded-xl border-2 transition-all ${
+                  className={`p-6 rounded-2xl border-2 transition-all flex flex-col items-center ${
                     config.eyesOpen
                       ? "border-amber-400 bg-gradient-to-br from-amber-400/20 to-orange-500/20"
-                      : "border-white/20 bg-white/5 hover:border-amber-400/50"
+                      : "border-white/20 bg-white/5"
                   }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <IoEye className="text-4xl text-amber-300 mx-auto mb-3" />
-                  <h3 className="text-xl font-bold text-amber-200 mb-2">
+                  <IoEye className="text-5xl text-amber-300 mb-3" />
+                  <span className="text-amber-200 font-bold text-lg">
                     Eyes Open
-                  </h3>
-                  <p className="text-blue-100/80 text-sm">
-                    Focus on divine imagery
-                  </p>
+                  </span>
+                  <span className="text-blue-100/60 text-xs mt-1">
+                    Visual focus
+                  </span>
                   {config.eyesOpen && (
-                    <div className="mt-3 text-green-400 flex items-center justify-center gap-1">
-                      <IoCheckmark /> Selected
-                    </div>
+                    <IoCheckmark className="text-green-400 text-2xl mt-2" />
                   )}
                 </motion.button>
 
                 <motion.button
                   onClick={() => setConfig({ ...config, eyesOpen: false })}
-                  className={`p-6 rounded-xl border-2 transition-all ${
+                  className={`p-6 rounded-2xl border-2 transition-all flex flex-col items-center ${
                     !config.eyesOpen
-                      ? "border-amber-400 bg-gradient-to-br from-amber-400/20 to-orange-500/20"
-                      : "border-white/20 bg-white/5 hover:border-amber-400/50"
+                      ? "border-purple-400 bg-gradient-to-br from-purple-400/20 to-indigo-500/20"
+                      : "border-white/20 bg-white/5"
                   }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <IoEyeOff className="text-4xl text-purple-300 mx-auto mb-3" />
-                  <h3 className="text-xl font-bold text-amber-200 mb-2">
+                  <IoEyeOff className="text-5xl text-purple-300 mb-3" />
+                  <span className="text-amber-200 font-bold text-lg">
                     Eyes Closed
-                  </h3>
-                  <p className="text-blue-100/80 text-sm">
-                    Inner visualization
-                  </p>
+                  </span>
+                  <span className="text-blue-100/60 text-xs mt-1">
+                    Inner journey
+                  </span>
                   {!config.eyesOpen && (
-                    <div className="mt-3 text-green-400 flex items-center justify-center gap-1">
-                      <IoCheckmark /> Selected
-                    </div>
+                    <IoCheckmark className="text-green-400 text-2xl mt-2" />
                   )}
                 </motion.button>
               </div>
@@ -296,226 +234,184 @@ const MeditationSetup = ({ onStart, onBack }) => {
           {step === 2 && (
             <motion.div
               key="step2"
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 md:p-8 border border-white/20 shadow-2xl"
+              exit={{ opacity: 0, x: -50 }}
+              className="h-full flex flex-col px-4 py-2"
             >
-              <h2 className="text-2xl font-bold text-amber-200 mb-6 flex items-center gap-2">
-                <IoMusicalNotes className="text-3xl" />
-                Select Your Music
-              </h2>
-
-              {/* Music Type Selector */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <motion.button
+              {/* Music Type Toggle */}
+              <div className="flex gap-2 mb-4">
+                <button
                   onClick={() =>
-                    setConfig({ ...config, musicType: "background", selectedMusic: "" })
+                    setConfig({
+                      ...config,
+                      musicType: "background",
+                      selectedMusic: "",
+                    })
                   }
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
                     config.musicType === "background"
-                      ? "border-amber-400 bg-gradient-to-br from-amber-400/20 to-orange-500/20"
-                      : "border-white/20 bg-white/5"
+                      ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white"
+                      : "bg-white/10 text-blue-100"
                   }`}
-                  whileHover={{ scale: 1.02 }}
                 >
-                  <GiFlute className="text-3xl text-amber-300 mx-auto mb-2" />
-                  <p className="text-amber-200 font-semibold">
-                    Background Music
-                  </p>
-                  <p className="text-xs text-blue-100/60 mt-1">
-                    Instrumental & Calm
-                  </p>
-                </motion.button>
-
-                <motion.button
+                  <GiFlute className="text-lg" /> Instrumental
+                </button>
+                <button
                   onClick={() =>
-                    setConfig({ ...config, musicType: "chanting", selectedMusic: "" })
+                    setConfig({
+                      ...config,
+                      musicType: "chanting",
+                      selectedMusic: "",
+                    })
                   }
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
                     config.musicType === "chanting"
-                      ? "border-amber-400 bg-gradient-to-br from-amber-400/20 to-orange-500/20"
-                      : "border-white/20 bg-white/5"
+                      ? "bg-gradient-to-r from-purple-400 to-indigo-500 text-white"
+                      : "bg-white/10 text-blue-100"
                   }`}
-                  whileHover={{ scale: 1.02 }}
                 >
-                  <GiLotusFlower className="text-3xl text-purple-300 mx-auto mb-2" />
-                  <p className="text-amber-200 font-semibold">Chanting Music</p>
-                  <p className="text-xs text-blue-100/60 mt-1">
-                    Mantras & Devotional
-                  </p>
-                </motion.button>
+                  <GiLotusFlower className="text-lg" /> Chanting
+                </button>
               </div>
 
               {/* Music Options */}
-              <div className="space-y-3">
+              <div className="flex-1 space-y-3 overflow-y-auto">
                 {musicOptions[config.musicType].map((music) => (
-                  <motion.div
+                  <motion.button
                     key={music.id}
-                    className={`w-full p-4 rounded-xl border-2 transition-all ${
+                    onClick={() =>
+                      setConfig({ ...config, selectedMusic: music.url })
+                    }
+                    className={`w-full p-4 rounded-xl border-2 transition-all flex items-center justify-between ${
                       config.selectedMusic === music.url
                         ? "border-green-400 bg-gradient-to-r from-green-400/20 to-emerald-500/20"
-                        : "border-white/20 bg-white/5 hover:border-amber-400/50"
+                        : "border-white/20 bg-white/5"
                     }`}
-                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <button
-                        onClick={() =>
-                          setConfig({ ...config, selectedMusic: music.url })
-                        }
-                        className="flex items-center gap-3 flex-1 text-left"
-                      >
-                        <IoMusicalNotes className="text-2xl text-amber-300 flex-shrink-0" />
-                        <div className="flex-1">
-                          <p className="text-amber-200 font-semibold">
-                            {music.name}
-                          </p>
-                        </div>
-                        {config.selectedMusic === music.url && (
-                          <IoCheckmark className="text-2xl text-green-400 flex-shrink-0" />
-                        )}
-                      </button>
-                      
-                      {/* Preview Button */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">
+                        {music.name.split(" ")[0]}
+                      </span>
+                      <span className="text-amber-200 font-semibold">
+                        {music.name.slice(3)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {config.selectedMusic === music.url && (
+                        <IoCheckmark className="text-xl text-green-400" />
+                      )}
                       <motion.button
                         onClick={(e) => {
                           e.stopPropagation();
                           handlePreview(music.url);
                         }}
-                        className={`p-2 rounded-lg transition-all flex-shrink-0 ${
+                        className={`p-2 rounded-lg ${
                           previewPlaying === music.url
-                            ? "bg-red-500 hover:bg-red-600"
-                            : "bg-purple-500 hover:bg-purple-600"
+                            ? "bg-red-500"
+                            : "bg-purple-500/50"
                         }`}
-                        whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        title={previewPlaying === music.url ? "Stop Preview" : "Play Preview"}
                       >
                         {previewPlaying === music.url ? (
-                          <IoStop className="text-xl text-white" />
+                          <IoStop className="text-white" />
                         ) : (
-                          <IoPlay className="text-xl text-white" />
+                          <IoPlay className="text-white" />
                         )}
                       </motion.button>
                     </div>
-                  </motion.div>
+                  </motion.button>
                 ))}
               </div>
-
-              {errors.music && (
-                <p className="text-red-400 text-sm mt-2">{errors.music}</p>
-              )}
             </motion.div>
           )}
 
-          {/* Step 3: Image Selection (if eyes open) */}
+          {/* Step 3: Image Selection */}
           {step === 3 && config.eyesOpen && (
             <motion.div
               key="step3"
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 md:p-8 border border-white/20 shadow-2xl"
+              exit={{ opacity: 0, x: -50 }}
+              className="h-full flex flex-col px-4 py-2"
             >
-              <h2 className="text-2xl font-bold text-amber-200 mb-6 flex items-center gap-2">
-                <IoImage className="text-3xl" />
-                Choose Your Meditation Image
-              </h2>
+              <p className="text-center text-blue-100/70 mb-4">
+                Choose your visualization
+              </p>
 
               {/* Image Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                {meditationImages.map((image) => (
+              <div className="flex-1 grid grid-cols-2 gap-3 content-start overflow-y-auto pb-4">
+                {meditationImages.map((img) => (
                   <motion.button
-                    key={image.id}
+                    key={img.id}
                     onClick={() =>
                       setConfig({
                         ...config,
-                        selectedImage: image.url,
+                        selectedImage: img.url,
                         customImage: null,
                       })
                     }
-                    className={`relative aspect-square rounded-xl overflow-hidden border-4 transition-all ${
-                      config.selectedImage === image.url
-                        ? "border-green-400 shadow-lg shadow-green-400/50"
-                        : "border-white/20 hover:border-amber-400/50"
+                    className={`relative aspect-[4/3] rounded-2xl overflow-hidden border-3 transition-all ${
+                      config.selectedImage === img.url
+                        ? "border-green-400 shadow-lg shadow-green-400/40 ring-2 ring-green-400/50"
+                        : "border-white/20"
                     }`}
-                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
+                    {/* Background Image */}
                     <img
-                      src={image.url}
-                      alt={image.name}
-                      className="w-full h-full object-cover"
+                      src={img.url}
+                      alt={img.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "flex";
+                      }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2">
-                      <p className="text-white text-xs font-semibold">
-                        {image.name}
-                      </p>
+                    {/* Fallback with emoji */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 items-center justify-center hidden">
+                      <span className="text-5xl">{img.emoji}</span>
                     </div>
-                    {config.selectedImage === image.url && (
-                      <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                        <IoCheckmark className="text-white" />
+                    {/* Overlay with name */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-2">
+                      <span className="text-xs text-white font-semibold drop-shadow-lg">
+                        {img.name}
+                      </span>
+                    </div>
+                    {/* Selected checkmark */}
+                    {config.selectedImage === img.url && (
+                      <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-green-500 flex items-center justify-center shadow-lg">
+                        <IoCheckmark className="text-white text-lg" />
                       </div>
                     )}
                   </motion.button>
                 ))}
               </div>
-
-              {/* Custom Upload */}
-              <div className="border-2 border-dashed border-white/30 rounded-xl p-6 text-center hover:border-amber-400/50 transition-all">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="image-upload"
-                />
-                <label
-                  htmlFor="image-upload"
-                  className="cursor-pointer block"
-                >
-                  <IoCloudUpload className="text-5xl text-amber-300 mx-auto mb-3" />
-                  <p className="text-amber-200 font-semibold mb-1">
-                    Upload Custom Image
-                  </p>
-                  <p className="text-blue-100/60 text-sm">
-                    {config.customImage
-                      ? config.customImage.name
-                      : "Upload your own image"}
-                  </p>
-                </label>
-              </div>
-
-              {errors.image && (
-                <p className="text-red-400 text-sm mt-2">{errors.image}</p>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
-          <motion.button
-            onClick={() => (step === 1 ? onBack() : setStep(step - 1))}
-            className="px-6 py-3 bg-white/10 text-blue-100 rounded-full font-semibold hover:bg-white/20 transition-all"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Back
-          </motion.button>
-
-          <motion.button
-            onClick={handleNext}
-            className="px-8 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-bold shadow-lg hover:shadow-amber-400/50 transition-all flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {step === 3 || (step === 2 && !config.eyesOpen)
-              ? "Start Meditation"
-              : "Continue"}
-            <IoArrowForward />
-          </motion.button>
-        </div>
+      {/* Continue Button - Fixed at Bottom */}
+      <div className="flex-shrink-0 px-4 pb-6 pt-3">
+        <motion.button
+          onClick={handleNext}
+          disabled={
+            (step === 2 && !config.selectedMusic) ||
+            (step === 3 && !config.selectedImage && !config.customImage)
+          }
+          className={`w-full py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${
+            (step === 2 && !config.selectedMusic) ||
+            (step === 3 && !config.selectedImage)
+              ? "bg-white/20 text-white/50"
+              : "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-xl shadow-amber-500/30"
+          }`}
+          whileTap={{ scale: 0.98 }}
+        >
+          {step === totalSteps ? "Start Meditation" : "Continue"}
+          <IoArrowForward className="text-xl" />
+        </motion.button>
       </div>
     </div>
   );

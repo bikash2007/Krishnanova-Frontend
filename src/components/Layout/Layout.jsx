@@ -34,12 +34,10 @@ const Layout = ({ children }) => {
       </div>
 
       {!isAuthPage && <Navigation />}
-      {!isAuthPage && <MusicPlayer />}
+      {/* {!isAuthPage && <MusicPlayer />} */}
       {!isAuthPage && <EnhancedKrishnaGame />}
 
-      <main className="flex-grow relative z-10 w-full">
-        {children}
-      </main>
+      <main className="flex-grow relative z-10 w-full">{children}</main>
 
       {/* {!isAuthPage && <Footer />} */}
     </div>

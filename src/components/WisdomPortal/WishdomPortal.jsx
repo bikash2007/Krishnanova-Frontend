@@ -20,9 +20,16 @@ import NamingDialog from "./components/Layout/NamingDialog";
 // Shared Components
 import NotificationToast from "./components/Shared/NotificationToast";
 import AchievementNotification from "./components/Shared/AchievementNotification";
+import {
+  useSmartPresence,
+  EmotionPicker,
+  PendingPracticeBanner,
+  ContextGreeting,
+  EMOTIONAL_STATES,
+} from "./components/Shared/SmartPresence";
 
 // Tab Components
-import ChantingTab from "./components/Chanting/ChantingTab";
+
 import AchievementsTab from "./components/Progress/AchievementsTab";
 import HistoryTab from "./components/History/HistoryTab";
 import MeditationModule from "./components/Meditation/MeditationModule";
@@ -130,7 +137,7 @@ const VoiceSettings = ({ isOpen, onClose, settings, onSettingsChange }) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${baseUrl}/krishna/wisdom-portal/voice-options`
+        `${baseUrl}/krishna/wisdom-portal/voice-options`,
       );
       if (response.data.success) {
         setAvailableVoices(response.data.voices);
@@ -721,7 +728,7 @@ export default function WishdomPortal() {
   const [yourName, setYourName] = useState("");
   const [activeTab, setActiveTab] = useState("chat");
   const [currentSessionId, setCurrentSessionId] = useState(
-    Date.now().toString()
+    Date.now().toString(),
   );
   const [loadingData, setLoadingData] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
@@ -775,17 +782,17 @@ export default function WishdomPortal() {
   const [isMeditating, setIsMeditating] = useState(false);
   const [meditationTime, setMeditationTime] = useState(0);
   const [totalMeditationTime, setTotalMeditationTime] = useState(
-    user?.wisdomPortal?.stats?.totalMeditationTime || 0
+    user?.wisdomPortal?.stats?.totalMeditationTime || 0,
   );
   const [meditationStreak, setMeditationStreak] = useState(
-    user?.wisdomPortal?.stats?.meditationStreak || 0
+    user?.wisdomPortal?.stats?.meditationStreak || 0,
   );
   const [meditationDuration, setMeditationDuration] = useState(5);
 
   // Chanting State
   const [chantCount, setChantCount] = useState(0);
   const [totalChants, setTotalChants] = useState(
-    user?.wisdomPortal?.stats?.totalChants || 0
+    user?.wisdomPortal?.stats?.totalChants || 0,
   );
   const [selectedMantra, setSelectedMantra] = useState("Hare Krishna");
 
@@ -796,6 +803,20 @@ export default function WishdomPortal() {
     jnanaYoga: 0,
     rajaYoga: 0,
   });
+
+  // Bhakti Pillars Progress (4 Pillars of Bhakti)
+  const [bhaktiProgress, setBhaktiProgress] = useState({
+    sravanam: 0, // Clarity - from asking/reading wisdom
+    kirtanam: 0, // Vibration - from chanting
+    smaranam: 0, // Presence - from remembering/returning
+    archanam: 0, // Stillness - from meditation
+  });
+
+  // Smart Presence State
+  const [emotionalState, setEmotionalState] = useState(null);
+  const [showEmotionPicker, setShowEmotionPicker] = useState(false);
+  const [pendingDailyPractice, setPendingDailyPractice] = useState(null);
+  const [smartOpening, setSmartOpening] = useState(null);
 
   // User Stats
   const [userStats, setUserStats] = useState({
@@ -819,6 +840,17 @@ export default function WishdomPortal() {
   const containerRef = useRef(null);
   const chatEndRef = useRef(null);
   const timerInterval = useRef(null);
+
+  // Save bhakti progress to localStorage whenever it changes
+  useEffect(() => {
+    if (user) {
+      const username = user?.username || user?.email || user?._id;
+      localStorage.setItem(
+        `bhakti_progress_${username}`,
+        JSON.stringify(bhaktiProgress),
+      );
+    }
+  }, [bhaktiProgress, user]);
 
   // Mantras
   // Add this function to track user activity
@@ -904,7 +936,7 @@ export default function WishdomPortal() {
         gsap.fromTo(
           containerRef.current,
           { opacity: 0, scale: 0.9 },
-          { opacity: 1, scale: 1, duration: 1, ease: "power3.out" }
+          { opacity: 1, scale: 1, duration: 1, ease: "power3.out" },
         );
 
         gsap.to(".floating-element", {
@@ -935,7 +967,7 @@ export default function WishdomPortal() {
   // Load saved conversations from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(
-      `savedConversations_${getUserIdentifier()}`
+      `savedConversations_${getUserIdentifier()}`,
     );
     if (saved) {
       setSavedConversations(JSON.parse(saved));
@@ -965,7 +997,7 @@ export default function WishdomPortal() {
     setSavedConversations(updatedSaved);
     localStorage.setItem(
       `savedConversations_${getUserIdentifier()}`,
-      JSON.stringify(updatedSaved)
+      JSON.stringify(updatedSaved),
     );
     showToast("Conversation saved successfully!");
   };
@@ -1000,7 +1032,7 @@ export default function WishdomPortal() {
     setSavedConversations(updatedSaved);
     localStorage.setItem(
       `savedConversations_${getUserIdentifier()}`,
-      JSON.stringify(updatedSaved)
+      JSON.stringify(updatedSaved),
     );
     showToast("Conversation deleted");
   };
@@ -1022,7 +1054,7 @@ export default function WishdomPortal() {
       setLoadingData(true);
       const username = getUserIdentifier();
       const response = await axios.get(
-        `${baseUrl}/krishna/wisdom-portal/data/${username}`
+        `${baseUrl}/krishna/wisdom-portal/data/${username}`,
       );
 
       if (response.data.success) {
@@ -1061,8 +1093,59 @@ export default function WishdomPortal() {
             karmaYoga: 0,
             jnanaYoga: 0,
             rajaYoga: 0,
-          }
+          },
         );
+
+        // Load Bhakti Pillars progress from backend or localStorage
+        if (data.bhaktiProgress) {
+          setBhaktiProgress(data.bhaktiProgress);
+        } else {
+          // Try to load from localStorage as fallback
+          const savedBhakti = localStorage.getItem(
+            `bhakti_progress_${username}`,
+          );
+          if (savedBhakti) {
+            try {
+              setBhaktiProgress(JSON.parse(savedBhakti));
+            } catch (e) {
+              console.error("Failed to parse saved bhakti progress:", e);
+            }
+          }
+        }
+
+        // Track Smaranam (remembrance) - user returned to the portal
+        const lastVisitKey = `last_portal_visit_${username}`;
+        const lastVisit = localStorage.getItem(lastVisitKey);
+        const now = new Date();
+        const today = now.toDateString();
+
+        if (lastVisit !== today) {
+          // New day visit - add Smaranam point for remembering to return
+          setBhaktiProgress((prev) => {
+            const updated = { ...prev, smaranam: (prev.smaranam || 0) + 1 };
+            localStorage.setItem(
+              `bhakti_progress_${username}`,
+              JSON.stringify(updated),
+            );
+            return updated;
+          });
+          localStorage.setItem(lastVisitKey, today);
+
+          // Show subtle acknowledgment
+          setTimeout(() => {
+            showToast("🙏 Your return is remembered • +1 Smaraṇam", 3000);
+          }, 2000);
+        }
+
+        // Load pending daily practice if exists
+        if (data.pendingPractice) {
+          setPendingDailyPractice(data.pendingPractice);
+        }
+
+        // Load last emotional state
+        if (data.lastEmotionalState) {
+          setEmotionalState(EMOTIONAL_STATES[data.lastEmotionalState] || null);
+        }
 
         setTotalMeditationTime(data.stats?.totalMeditationTime || 0);
         setTotalChants(data.stats?.totalChants || 0);
@@ -1071,7 +1154,7 @@ export default function WishdomPortal() {
 
         if (data.activePractices && data.activePractices.length > 0) {
           const activePracticeNotCompleted = data.activePractices.find(
-            (p) => !p.completed
+            (p) => !p.completed,
           );
           setActivePractice(activePracticeNotCompleted || null);
         } else {
@@ -1175,7 +1258,7 @@ export default function WishdomPortal() {
           message: questionText,
           sessionId: currentSessionId,
           conversationHistory,
-        }
+        },
       );
 
       if (response.data.success) {
@@ -1202,18 +1285,32 @@ export default function WishdomPortal() {
             experience: prev.experience + response.data.experienceGained,
             experienceToNextLevel: Math.max(
               0,
-              prev.experienceToNextLevel - response.data.experienceGained
+              prev.experienceToNextLevel - response.data.experienceGained,
             ),
             progress: {
               ...prev.progress,
               wisdom: Math.min(
                 prev.progress.wisdom + 1,
-                prev.dailyGoals.wisdom
+                prev.dailyGoals.wisdom,
               ),
             },
           }));
 
-          showToast(`+${response.data.experienceGained} XP gained!`, 2000);
+          // Update Bhakti Pillars - Sravanam (Clarity from asking/reading)
+          setBhaktiProgress((prev) => ({
+            ...prev,
+            sravanam: prev.sravanam + 1, // Each wisdom interaction adds clarity
+          }));
+
+          // Add bonus to Krishna catch game if available
+          if (window.addKrishnaPracticeBonus) {
+            window.addKrishnaPracticeBonus("daily_wisdom");
+          }
+
+          showToast(
+            `+${response.data.experienceGained} XP • +1 Śravaṇam`,
+            2000,
+          );
         }
 
         if (response.data.leveledUp) {
@@ -1277,13 +1374,13 @@ export default function WishdomPortal() {
           practiceCategory: practice.category,
           practiceText: practice.text || practice.content,
           duration: practice.duration || meditationDuration,
-        }
+        },
       );
 
       if (response.data.success) {
         setActivePractice(response.data.practice);
         showToast(
-          "Practice accepted! Complete it to earn XP and achievements."
+          "Practice accepted! Complete it to earn XP and achievements.",
         );
       }
     } catch (error) {
@@ -1307,7 +1404,7 @@ export default function WishdomPortal() {
           userId: username,
           practiceId: activePractice.id,
           actualDuration: meditationTime / 60,
-        }
+        },
       );
 
       if (response.data.success) {
@@ -1319,7 +1416,7 @@ export default function WishdomPortal() {
             experience: prev.experience + response.data.experience,
             experienceToNextLevel: Math.max(
               0,
-              prev.experienceToNextLevel - response.data.experience
+              prev.experienceToNextLevel - response.data.experience,
             ),
           }));
           showToast(`Practice completed! +${response.data.experience} XP`);
@@ -1377,7 +1474,7 @@ export default function WishdomPortal() {
           {
             userId: username,
             duration: meditationTime,
-          }
+          },
         );
 
         if (response.data.success) {
@@ -1386,23 +1483,36 @@ export default function WishdomPortal() {
 
           const minutes = Math.floor(meditationTime / 60);
 
+          // Update Bhakti Pillars - Archanam (Stillness from meditation)
+          setBhaktiProgress((prev) => ({
+            ...prev,
+            archanam: prev.archanam + minutes, // Each minute adds stillness
+          }));
+
+          // Add bonus to Krishna catch game
+          if (window.addKrishnaPracticeBonus) {
+            window.addKrishnaPracticeBonus("meditation");
+          }
+
           if (response.data.experience) {
             setUserStats((prev) => ({
               ...prev,
               experience: prev.experience + response.data.experience,
               experienceToNextLevel: Math.max(
                 0,
-                prev.experienceToNextLevel - response.data.experience
+                prev.experienceToNextLevel - response.data.experience,
               ),
               progress: {
                 ...prev.progress,
                 meditation: Math.min(
                   prev.progress.meditation + minutes,
-                  prev.dailyGoals.meditation
+                  prev.dailyGoals.meditation,
                 ),
               },
             }));
-            showToast(`Meditation completed! +${response.data.experience} XP`);
+            showToast(
+              `Meditation completed! +${response.data.experience} XP • +${minutes} Arcanam`,
+            );
           }
 
           if (response.data.achievements?.length > 0) {
@@ -1448,7 +1558,7 @@ export default function WishdomPortal() {
       gsap.fromTo(
         ".chant-bead",
         { scale: 1, opacity: 0.5 },
-        { scale: 1.2, opacity: 1, duration: 0.3, ease: "back.out(1.7)" }
+        { scale: 1.2, opacity: 1, duration: 0.3, ease: "back.out(1.7)" },
       );
     }
   };
@@ -1462,11 +1572,22 @@ export default function WishdomPortal() {
           userId: username,
           count,
           mantra: selectedMantra,
-        }
+        },
       );
 
       if (response.data.success) {
         setTotalChants(response.data.totalChants);
+
+        // Update Bhakti Pillars - Kirtanam (Vibration from chanting)
+        setBhaktiProgress((prev) => ({
+          ...prev,
+          kirtanam: prev.kirtanam + count, // Each chant adds vibration
+        }));
+
+        // Add bonus to Krishna catch game
+        if (window.addKrishnaPracticeBonus) {
+          window.addKrishnaPracticeBonus("mantra_chanting");
+        }
 
         if (response.data.experience) {
           setUserStats((prev) => ({
@@ -1474,17 +1595,19 @@ export default function WishdomPortal() {
             experience: prev.experience + response.data.experience,
             experienceToNextLevel: Math.max(
               0,
-              prev.experienceToNextLevel - response.data.experience
+              prev.experienceToNextLevel - response.data.experience,
             ),
             progress: {
               ...prev.progress,
               chanting: Math.min(
                 prev.progress.chanting + count,
-                prev.dailyGoals.chanting
+                prev.dailyGoals.chanting,
               ),
             },
           }));
-          showToast(`Mala completed! +${response.data.experience} XP`);
+          showToast(
+            `Mala completed! +${response.data.experience} XP • +${count} Kīrtanam`,
+          );
         }
 
         if (response.data.achievements?.length > 0) {
@@ -1550,7 +1673,7 @@ export default function WishdomPortal() {
               });
             }, 3000);
           },
-        }
+        },
       );
     } else {
       showToast(`${achievement.name} - ${achievement.description}`, 4000);
@@ -1592,7 +1715,7 @@ export default function WishdomPortal() {
     try {
       const username = getUserIdentifier();
       const response = await axios.get(
-        `${baseUrl}/krishna/wisdom-portal/proactive/${username}`
+        `${baseUrl}/krishna/wisdom-portal/proactive/${username}`,
       );
 
       if (response.data.success && response.data.proactiveMessage) {
@@ -1724,6 +1847,28 @@ export default function WishdomPortal() {
 
       <AchievementNotification isMobile={isMobile} />
 
+      {/* Emotion Picker Modal */}
+      <AnimatePresence>
+        {showEmotionPicker && (
+          <EmotionPicker
+            isOpen={showEmotionPicker}
+            onSelect={(emotionKey) => {
+              setEmotionalState(EMOTIONAL_STATES[emotionKey]);
+              setShowEmotionPicker(false);
+              // Save to localStorage
+              const username = user?.username || user?.email || user?._id;
+              localStorage.setItem(`emotional_state_${username}`, emotionKey);
+              showToast(
+                `Krishna acknowledges your ${EMOTIONAL_STATES[emotionKey].name.toLowerCase()} heart 🙏`,
+                3000,
+              );
+            }}
+            onClose={() => setShowEmotionPicker(false)}
+            isMobile={isMobile}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Saved Conversations Modal */}
       <SavedConversationsModal
         isOpen={showSavedConversations}
@@ -1751,7 +1896,9 @@ export default function WishdomPortal() {
 
       <StatsOverview
         meditationStreak={meditationStreak}
-        totalMeditationTime={totalMeditationTime} /* Already in minutes from backend */
+        totalMeditationTime={
+          totalMeditationTime
+        } /* Already in minutes from backend */
         totalChants={totalChants}
         achievementsCount={userStats.achievements.length}
         isMobile={isMobile}
@@ -1796,6 +1943,27 @@ export default function WishdomPortal() {
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {/* Emotion Picker Button */}
+                    <motion.button
+                      onClick={() => setShowEmotionPicker(true)}
+                      className={`p-2 rounded-lg hover:bg-white/10 transition-all ${
+                        emotionalState ? "text-amber-400" : "text-blue-100/50"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      title={
+                        emotionalState
+                          ? `Feeling: ${emotionalState.name}`
+                          : "How are you feeling?"
+                      }
+                    >
+                      {emotionalState ? (
+                        <emotionalState.icon className="text-xl" />
+                      ) : (
+                        <IoHeart className="text-xl" />
+                      )}
+                    </motion.button>
+
                     <motion.button
                       onClick={saveConversation}
                       className="p-2 rounded-lg hover:bg-white/10 text-amber-200 transition-all"
@@ -1888,7 +2056,7 @@ export default function WishdomPortal() {
                             isSaved={savedMessages.has(msg.id)}
                             userId={getUserIdentifier()} // ← Make sure this is passed
                           />
-                        )
+                        ),
                       )}
                       <div ref={chatEndRef} />
                     </>
@@ -1987,7 +2155,7 @@ export default function WishdomPortal() {
                               100,
                               (userStats.progress.meditation /
                                 userStats.dailyGoals.meditation) *
-                                100
+                                100,
                             )}%`,
                           }}
                           transition={{ duration: 1 }}
@@ -2012,7 +2180,7 @@ export default function WishdomPortal() {
                               100,
                               (userStats.progress.chanting /
                                 userStats.dailyGoals.chanting) *
-                                100
+                                100,
                             )}%`,
                           }}
                           transition={{ duration: 1 }}
@@ -2037,7 +2205,7 @@ export default function WishdomPortal() {
                               100,
                               (userStats.progress.wisdom /
                                 userStats.dailyGoals.wisdom) *
-                                100
+                                100,
                             )}%`,
                           }}
                           transition={{ duration: 1 }}
@@ -2093,6 +2261,7 @@ export default function WishdomPortal() {
               practices={practices}
               userStats={userStats}
               isMobile={isMobile}
+              bhaktiProgress={bhaktiProgress}
             />
           )}
 

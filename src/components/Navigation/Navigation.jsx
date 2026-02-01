@@ -112,7 +112,11 @@ export default function Navigation() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <img src={logo} className="h-8" alt="Krishnova" />
+            <img
+              src={logo}
+              className="h-5 flex lg:h-8 mr-3 lg:mr-1 "
+              alt="Krishnova"
+            />
             {/* <span className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent hidden sm:block">
               Krishnova
             </span> */}

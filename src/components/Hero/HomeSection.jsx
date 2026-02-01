@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+﻿import React, { useEffect, useState, useRef, useCallback } from "react";
 import kPng from "../../Media/k.png";
 import { NavLink } from "react-router-dom";
+import "./HomeSection.css";
 
 const HomeSection = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -88,66 +89,67 @@ const HomeSection = () => {
       <div className="lg:scale-90 relative z-10 container mx-auto px-4 py-4 md:px-6 md:py-0 flex flex-col lg:flex-row items-center justify-between min-h-[100dvh]">
         {/* Left Content */}
         <div
-          className={`w-full lg:w-1/2 space-y-6 transform transition-all duration-1000 ${
+          className={`w-full lg:w-1/2 space-y-4 md:space-y-5 lg:space-y-6 transform transition-all duration-1000 ${
             isVisible
               ? "translate-x-0 opacity-100"
               : "-translate-x-10 md:-translate-x-20 opacity-0"
           }`}
         >
           {/* Sacred Badge */}
-          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full scale-90 md:scale-100 px-4 py-2 md:px-5 md:py-2.5 shadow-lg">
-            <span className="text-amber-300 animate-pulse text-lg">✦</span>
-            <span className="text-amber-100 font-medium tracking-wide text-sm text-float">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/15 to-orange-500/15 backdrop-blur-md border border-amber-400/30 rounded-full px-3 py-1.5 md:px-4 md:py-2 shadow-lg border-golden-wave">
+            <span className="text-amber-400 text-sm md:text-base text-golden-glow">
+              ✦
+            </span>
+            <span className="text-amber-100 font-medium tracking-widest text-xs md:text-sm uppercase">
               Śrī Kṛṣṇa
             </span>
-            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+            <span className="text-amber-400 text-sm md:text-base text-golden-glow">
+              ✦
+            </span>
           </div>
 
-          {/* Main Heading */}
-          <div className="space-y-2">
-            <h1 className="text-4xl md:text-6xl lg:text-8xl font-bold leading-tight">
-              <span className="inline-block bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent animate-shimmer">
-                Krishnova
-              </span>
+          {/* Main Heading - Brand Name */}
+          <div className="space-y-2 md:space-y-3">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-none">
+              <span className="brand-name-animate">KRISHNOVA</span>
             </h1>
-            <p className="text-xl md:text-2xl lg:text-3xl text-blue-100 font-light leading-relaxed">
-              <span className="inline-block text-float animation-delay-100">
-                Where
-              </span>{" "}
-              <span className="inline-block text-float animation-delay-200">
-                Divine
-              </span>{" "}
-              <span className="inline-block text-float animation-delay-300">
-                Grace
-              </span>{" "}
-              <span className="inline-block text-float">Meets</span>
-              <span className="block font-semibold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent mt-1 text-float">
-                Contemporary Devotion
-              </span>
-            </p>
+
+            {/* Tagline with vibrant colors */}
+            <div className="text-xl md:text-2xl lg:text-3xl leading-relaxed pt-2 md:pt-3">
+              <p className="flex flex-wrap items-center gap-x-2">
+                <span className="text-white/90 font-medium">Where</span>
+                <span className="tagline-highlight">Divine Grace</span>
+                <span className="text-white/90 font-medium">Meets</span>
+              </p>
+              <p className="mt-1">
+                <span className="tagline-secondary">Contemporary Devotion</span>
+              </p>
+            </div>
           </div>
 
           {/* Description */}
-          <div className="space-y-3 max-w-xl">
-            <p className="text-blue-100/80 text-base md:text-lg leading-relaxed">
+          <div className="max-w-lg space-y-3">
+            <p className="text-blue-100/80 text-sm md:text-base lg:text-lg leading-relaxed">
               Experience the divine presence of Lord Krishna through our curated
               collection of sacred artifacts and spiritual treasures.
             </p>
-            <div className="flex items-center space-x-2 text-amber-200/60 text-sm">
+            <div className="flex items-center gap-2 text-amber-300 text-sm md:text-base">
               <span className="animate-pulse">🪔</span>
-              <span className="italic text-float">Bhagavad Gita</span>
+              <span className="italic font-medium">
+                "The soul is eternal" — Bhagavad Gita
+              </span>
             </div>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col md:flex-row flex-wrap gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <NavLink
               to={"/productpage"}
-              className="group relative px-6 py-3.5 md:px-8 md:py-4 w-full md:w-auto overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300 flex justify-center items-center"
+              className="group relative px-5 py-3 md:px-7 md:py-3.5 overflow-hidden rounded-full shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex justify-center items-center"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500 animate-gradient"></div>
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <span className="relative z-10 text-indigo-900 font-bold tracking-wide flex items-center gap-2">
+              <span className="relative z-10 text-indigo-900 font-bold tracking-wide text-sm md:text-base flex items-center gap-2">
                 Explore Divine Collection
                 <span className="group-hover:translate-x-1 transition-transform">
                   →
@@ -157,7 +159,7 @@ const HomeSection = () => {
 
             <NavLink
               to="/readvagwatgita"
-              className="group px-6 py-3.5 md:px-8 md:py-4 w-full md:w-auto border-2 border-amber-400/50 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transform hover:-translate-y-1 transition-all duration-300 flex justify-center items-center"
+              className="group px-5 py-3 md:px-7 md:py-3.5 border-2 border-amber-400/40 text-amber-200 rounded-full font-semibold backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transform hover:-translate-y-0.5 transition-all duration-300 flex justify-center items-center text-sm md:text-base"
             >
               <span className="flex items-center gap-2">
                 📖 Read Bhagavad Gita
@@ -165,29 +167,29 @@ const HomeSection = () => {
             </NavLink>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-2 md:flex md:gap-8 pt-6 mb-6 md:mb-2">
-            <div className="group cursor-pointer text-center md:text-left">
-              <div className="text-xl md:text-3xl font-bold text-amber-300 group-hover:scale-110 transition-transform text-float">
+          {/* Stats - Compact */}
+          <div className="flex justify-between sm:justify-start sm:gap-8 pt-3 pb-4 md:pb-0">
+            <div className="group cursor-pointer text-center sm:text-left">
+              <div className="text-xl md:text-2xl font-bold text-amber-400 group-hover:scale-105 transition-transform">
                 500+
               </div>
-              <div className="text-xs md:text-sm text-blue-200/60">
+              <div className="text-[10px] md:text-xs text-blue-200/50 group-hover:text-amber-200/70 transition-colors">
                 Blessed Devotees
               </div>
             </div>
-            <div className="group cursor-pointer text-center md:text-left">
-              <div className="text-xl md:text-3xl font-bold text-cyan-300 group-hover:scale-110 transition-transform text-float animation-delay-100">
+            <div className="group cursor-pointer text-center sm:text-left">
+              <div className="text-xl md:text-2xl font-bold text-cyan-400 group-hover:scale-105 transition-transform">
                 108
               </div>
-              <div className="text-xs md:text-sm text-blue-200/60">
+              <div className="text-[10px] md:text-xs text-blue-200/50 group-hover:text-cyan-200/70 transition-colors">
                 Sacred Items
               </div>
             </div>
-            <div className="group cursor-pointer text-center md:text-left">
-              <div className="text-xl md:text-3xl font-bold text-purple-300 group-hover:scale-110 transition-transform text-float animation-delay-200">
+            <div className="group cursor-pointer text-center sm:text-left">
+              <div className="text-xl md:text-2xl font-bold text-purple-400 group-hover:scale-105 transition-transform">
                 4.9★
               </div>
-              <div className="text-xs md:text-sm text-blue-200/60">
+              <div className="text-[10px] md:text-xs text-blue-200/50 group-hover:text-purple-200/70 transition-colors">
                 Divine Rating
               </div>
             </div>
@@ -196,7 +198,7 @@ const HomeSection = () => {
 
         {/* Right Content - Enhanced Hero Visual */}
         <div
-          className={`w-full lg:w-1/2 mt-12 md:mt-0 relative transform transition-all duration-1000 delay-300 ${
+          className={`w-full lg:w-1/2 -mt-2 md:mt-0 relative transform transition-all duration-1000 delay-300 ${
             isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
           }`}
           ref={mandalaRef}
@@ -286,7 +288,7 @@ const HomeSection = () => {
                   <img
                     src={kPng}
                     alt="Krishna"
-                    className="w-16 md:w-72 text-float krishna-image"
+                    className="w-16 md:w-72 krishna-image"
                     style={{
                       filter: "drop-shadow(0 0 8px rgba(251, 191, 36, 0.3))",
                       transition: "filter 0.3s ease",
@@ -302,8 +304,8 @@ const HomeSection = () => {
                   />
                 </div>
                 <p
-                  className="text-amber-200 text-lg md:text-xl text-float"
-                  style={{ textShadow: "0 0 10px rgba(251, 191, 36, 0.8)" }}
+                  className="text-amber-200 text-lg md:text-xl font-medium tracking-wide"
+                  style={{ textShadow: "0 0 10px rgba(251, 191, 36, 0.6)" }}
                 >
                   कृष्ण
                 </p>
@@ -386,7 +388,7 @@ const HomeSection = () => {
                   📿
                 </div>
                 <div>
-                  <p className="text-xs md:text-sm font-semibold text-amber-100">
+                  <p className="text-xs md:text-sm font-semibold text-amber-100 text-glow-pulse">
                     Sacred Mala
                   </p>
                   <p className="text-xs text-amber-200/60">108 Beads</p>
@@ -405,7 +407,7 @@ const HomeSection = () => {
                   📖
                 </div>
                 <div>
-                  <p className="text-xs md:text-sm font-semibold text-blue-100">
+                  <p className="text-xs md:text-sm font-semibold text-blue-100 text-glow-pulse">
                     Bhagavad Gita
                   </p>
                   <p className="text-xs text-blue-200/60">Divine Wisdom</p>

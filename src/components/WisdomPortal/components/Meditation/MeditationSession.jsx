@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GiMeditation, GiLotusFlower } from "react-icons/gi";
+import { GiLotusFlower } from "react-icons/gi";
 import {
   IoStop,
-  IoTime,
   IoTrophy,
-  IoSparkles,
   IoHeart,
   IoVolumeHigh,
+  IoVolumeMute,
 } from "react-icons/io5";
 import confetti from "canvas-confetti";
 
 const MeditationSession = ({ config, onComplete, onStop }) => {
-  const [time, setTime] = useState(0); // in seconds
+  const [time, setTime] = useState(0);
   const [isActive, setIsActive] = useState(true);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [volume, setVolume] = useState(0.6);
@@ -21,406 +20,253 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
   const audioRef = useRef(null);
   const timerRef = useRef(null);
   const bellSoundRef = useRef(null);
-
   const startTimeRef = useRef(null);
 
   useEffect(() => {
-    // Start timer
     if (isActive) {
-      if (!startTimeRef.current) {
-        startTimeRef.current = Date.now() - (time * 1000);
-      }
-      
+      if (!startTimeRef.current)
+        startTimeRef.current = Date.now() - time * 1000;
       timerRef.current = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        setTime(elapsed);
+        setTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
       }, 1000);
     } else {
-      // Pause
-      if (startTimeRef.current) {
-         // Keep the current time but clear ref so on resume it calculates correctly
-         startTimeRef.current = null;
-      }
+      if (startTimeRef.current) startTimeRef.current = null;
     }
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
+    return () => clearInterval(timerRef.current);
   }, [isActive]);
 
-  // Milestone tracking
   useEffect(() => {
     const minutes = Math.floor(time / 60);
-    const milestones = [5, 10, 20, 30];
-    
-    milestones.forEach((milestone) => {
-      if (minutes === milestone && !milestonesReached.includes(milestone)) {
-        setMilestonesReached([...milestonesReached, milestone]);
-        
-        // Show milestone notification
-        setShowMilestone(milestone);
+    [5, 10, 20, 30].forEach((m) => {
+      if (minutes === m && !milestonesReached.includes(m)) {
+        setMilestonesReached([...milestonesReached, m]);
+        setShowMilestone(m);
         setTimeout(() => setShowMilestone(null), 4000);
-        
-        // Play bell sound
-        if (!bellSoundRef.current) {
+        if (!bellSoundRef.current)
           bellSoundRef.current = new Audio("/test/audio/bell.mp3");
-        }
         bellSoundRef.current.volume = 0.4;
-        bellSoundRef.current.play().catch((err) => {
-          console.error("Bell sound failed:", err);
-        });
-
-        // Trigger confetti
+        bellSoundRef.current.play().catch(() => {});
         confetti({
           particleCount: 50,
           spread: 60,
           origin: { y: 0.7 },
-          colors: ["#FFB700", "#FF6B35", "#6B46C1", "#02C39A"],
+          colors: ["#FFB700", "#FF6B35", "#6B46C1"],
         });
       }
     });
   }, [time, milestonesReached]);
 
   useEffect(() => {
-    // Play music
     if (config.selectedMusic && audioRef.current) {
       audioRef.current.src = config.selectedMusic;
       audioRef.current.loop = true;
       audioRef.current.volume = volume;
-      audioRef.current.play().catch((err) => {
-        console.error("Audio playback failed:", err);
-      });
+      audioRef.current.play().catch(() => {});
     }
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
+    return () => audioRef.current?.pause();
   }, [config.selectedMusic]);
 
-  // Volume control
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
+    if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
-  // Cleanup: Restore scroll on unmount
-  useEffect(() => {
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
+  useEffect(
+    () => () => {
+      document.body.style.overflow = "auto";
+    },
+    [],
+  );
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
+  const formatTime = (s) =>
+    `${Math.floor(s / 60)
       .toString()
-      .padStart(2, "0")}`;
-  };
+      .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
   const handleStop = () => {
     setIsActive(false);
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-    
-    // Lock body scroll when modal opens
-    document.body.style.overflow = 'hidden';
-    
+    audioRef.current?.pause();
+    document.body.style.overflow = "hidden";
     setShowCompletionModal(true);
-
-    // Trigger confetti
     confetti({
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ["#FFB700", "#FF6B35", "#6B46C1", "#02C39A"],
+      colors: ["#FFB700", "#FF6B35", "#6B46C1"],
     });
-
-    // Call onComplete callback
-    if (onComplete) {
-      onComplete({
-        duration: time,
-        config,
-      });
-    }
+    onComplete?.({ duration: time, config });
   };
 
-  const motivationalMessages = [
+  const messages = [
     "Your dedication to inner peace is inspiring! 🙏",
-    "You've taken another step on the path to enlightenment! ✨",
     "Krishna is pleased with your devotion! 💫",
-    "Your mind is becoming clearer with each session! 🧘",
     "The divine light within you grows brighter! 🌟",
-    "You are cultivating the garden of your soul! 🌸",
     "Peace and clarity are your companions now! 🕊️",
+    "You are cultivating the garden of your soul! 🌸",
     "Your spiritual journey is beautiful! 🌺",
   ];
 
-  const getRandomMessage = () => {
-    return motivationalMessages[
-      Math.floor(Math.random() * motivationalMessages.length)
-    ];
+  // Select random message once when modal opens
+  const completionMessage = useMemo(() => {
+    return messages[Math.floor(Math.random() * messages.length)];
+  }, [showCompletionModal]);
+
+  const getAchievementLevel = (s) => {
+    const m = Math.floor(s / 60);
+    if (m >= 30)
+      return {
+        level: "Master",
+        color: "from-purple-400 to-indigo-500",
+        emoji: "👑",
+      };
+    if (m >= 20)
+      return {
+        level: "Advanced",
+        color: "from-blue-400 to-cyan-500",
+        emoji: "⭐",
+      };
+    if (m >= 10)
+      return {
+        level: "Seeker",
+        color: "from-green-400 to-emerald-500",
+        emoji: "🌿",
+      };
+    if (m >= 5)
+      return {
+        level: "Beginner",
+        color: "from-amber-400 to-orange-500",
+        emoji: "🌱",
+      };
+    return { level: "Novice", color: "from-pink-400 to-rose-500", emoji: "✨" };
   };
 
-  const getAchievementLevel = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    if (minutes >= 30) return { level: "Master", color: "from-purple-400 to-indigo-500" };
-    if (minutes >= 20) return { level: "Advanced", color: "from-blue-400 to-cyan-500" };
-    if (minutes >= 10) return { level: "Intermediate", color: "from-green-400 to-emerald-500" };
-    if (minutes >= 5) return { level: "Beginner", color: "from-amber-400 to-orange-500" };
-    return { level: "Novice", color: "from-pink-400 to-rose-500" };
-  };
+  const imageUrl = config.customImage
+    ? URL.createObjectURL(config.customImage)
+    : config.selectedImage;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 relative overflow-hidden">
-      {/* Background Audio */}
+    <div className="h-[100dvh] relative overflow-hidden">
       <audio ref={audioRef} />
 
-      {/* Animated Background */}
-      <div className="absolute inset-0 opacity-20">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 60,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-500/30 blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-          }}
-          transition={{
-            duration: 45,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-purple-400/30 to-blue-500/30 blur-3xl"
-        />
-        
-        {/* Floating Particles */}
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              y: [0, -100, 0],
-              x: [0, Math.sin(i) * 50, 0],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{
-              duration: 8 + i * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5,
-            }}
-            className="absolute w-2 h-2 rounded-full bg-amber-300"
-            style={{
-              left: `${10 + i * 12}%`,
-              top: `${20 + (i % 3) * 30}%`,
-            }}
+      {/* Fullscreen Background Image */}
+      {config.eyesOpen && imageUrl ? (
+        <div className="absolute inset-0">
+          <img
+            src={imageUrl}
+            alt="Meditation"
+            className="w-full h-full object-cover"
           />
-        ))}
-      </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/60" />
+        </div>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
+          {/* Animated orbs for eyes-closed mode */}
+          <motion.div
+            animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity }}
+            className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-500/20 blur-3xl"
+          />
+          <motion.div
+            animate={{ scale: [1.2, 1, 1.2] }}
+            transition={{ duration: 10, repeat: Infinity }}
+            className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/20 blur-3xl"
+          />
+        </div>
+      )}
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        {/* Image Display (if eyes open) */}
-        {config.eyesOpen && (config.selectedImage || config.customImage) && (
+      <div className="relative z-10 h-full flex flex-col">
+        {/* Top Bar - Timer & Volume */}
+        <div className="flex-shrink-0 px-4 pt-4 flex items-center justify-between">
+          <div className="backdrop-blur-md bg-white/10 rounded-full px-4 py-2 border border-white/20">
+            <span className="text-2xl font-mono font-bold text-white">
+              {formatTime(time)}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <motion.button
+              onClick={() => setVolume(volume > 0 ? 0 : 0.6)}
+              className="p-3 rounded-full backdrop-blur-md bg-white/10 border border-white/20"
+              whileTap={{ scale: 0.9 }}
+            >
+              {volume > 0 ? (
+                <IoVolumeHigh className="text-xl text-white" />
+              ) : (
+                <IoVolumeMute className="text-xl text-white/50" />
+              )}
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Center - Breathing Circle */}
+        <div className="flex-1 flex flex-col items-center justify-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-8"
+            animate={{ scale: [1, 1.25, 1], opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
           >
-            <div className="relative">
-              <motion.div
-                animate={{
-                  boxShadow: [
-                    "0 0 20px rgba(255, 183, 0, 0.3)",
-                    "0 0 60px rgba(255, 183, 0, 0.6)",
-                    "0 0 20px rgba(255, 183, 0, 0.3)",
-                  ],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="rounded-2xl overflow-hidden border-4 border-amber-400/50"
-              >
-                <img
-                  src={
-                    config.customImage
-                      ? URL.createObjectURL(config.customImage)
-                      : config.selectedImage
-                  }
-                  alt="Meditation focus"
-                  className="w-64 h-64 md:w-96 md:h-96 object-cover"
-                />
-              </motion.div>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg"
-              >
-                <GiLotusFlower className="text-2xl text-white" />
-              </motion.div>
+            <div className="w-40 h-40 md:w-52 md:h-52 rounded-full bg-gradient-to-br from-cyan-400/30 to-blue-500/30 backdrop-blur-sm border-4 border-cyan-400/50 flex items-center justify-center shadow-2xl shadow-cyan-500/20">
+              <GiLotusFlower className="text-6xl md:text-7xl text-cyan-300" />
+            </div>
+            {/* Outer ring */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 rounded-full border-2 border-dashed border-amber-400/40"
+              style={{ margin: "-12px" }}
+            />
+          </motion.div>
+
+          {/* Breathing Text */}
+          <motion.p
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 4, repeat: Infinity }}
+            className="mt-8 text-xl text-cyan-200 font-medium"
+          >
+            Breathe in... Breathe out...
+          </motion.p>
+
+          {/* Minutes Counter */}
+          <div className="mt-6 text-center">
+            <p className="text-4xl md:text-5xl font-bold text-white">
+              {Math.floor(time / 60)}
+            </p>
+            <p className="text-sm text-white/60 uppercase tracking-wider">
+              minutes
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom - End Button */}
+        <div className="flex-shrink-0 px-6 pb-8">
+          <motion.button
+            onClick={handleStop}
+            className="w-full py-4 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-2xl font-bold text-lg shadow-xl shadow-red-500/30 flex items-center justify-center gap-2"
+            whileTap={{ scale: 0.98 }}
+          >
+            <IoStop className="text-xl" /> End Meditation
+          </motion.button>
+        </div>
+      </div>
+
+      {/* Milestone Notification */}
+      <AnimatePresence>
+        {showMilestone && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+            className="absolute top-20 left-4 right-4 z-50"
+          >
+            <div className="backdrop-blur-md bg-gradient-to-r from-amber-400/30 to-orange-500/30 rounded-2xl p-4 border-2 border-amber-400 text-center">
+              <IoTrophy className="text-3xl text-amber-300 mx-auto mb-1" />
+              <p className="text-lg font-bold text-amber-200">
+                {showMilestone} Minutes! 🎉
+              </p>
             </div>
           </motion.div>
         )}
-
-        {/* Timer Display */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl mb-6"
-        >
-          <div className="text-center">
-            <motion.div
-              animate={{
-                scale: [1, 1.05, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="text-6xl md:text-8xl font-bold text-amber-200 mb-4 font-mono"
-            >
-              {formatTime(time)}
-            </motion.div>
-            <div className="flex items-center justify-center gap-2 text-blue-100/80 text-lg md:text-xl">
-              <IoTime className="text-2xl text-amber-300" />
-              <p>Time in Meditation</p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Goal Text */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center mb-8"
-        >
-          <p className="text-xl md:text-2xl text-amber-200 font-semibold mb-2">
-            We have now meditated for
-          </p>
-          <p className="text-3xl md:text-4xl text-white font-bold">
-            {Math.floor(time / 60)} minute{Math.floor(time / 60) !== 1 ? "s" : ""}
-          </p>
-        </motion.div>
-
-        {/* Breathing Animation Circle */}
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.6, 1, 0.6],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="mb-8"
-        >
-          <div className="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full bg-gradient-to-br from-cyan-400/30 to-blue-500/30 border-4 border-cyan-400/50 flex items-center justify-center backdrop-blur-sm">
-            <GiLotusFlower className="text-5xl md:text-6xl text-cyan-300" />
-          </div>
-        </motion.div>
-
-        {/* Breathing Reminder */}
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="text-center mb-6 text-cyan-300 text-lg"
-        >
-          <p>Breathe in... Breathe out...</p>
-        </motion.div>
-
-        {/* Volume Control */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="mb-8 max-w-xs mx-auto"
-        >
-          <div className="backdrop-blur-md bg-white/10 rounded-2xl p-4 border border-white/20">
-            <div className="flex items-center gap-3">
-              <IoVolumeHigh className="text-2xl text-amber-300 flex-shrink-0" />
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume * 100}
-                onChange={(e) => setVolume(e.target.value / 100)}
-                className="flex-1 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
-                style={{
-                  background: `linear-gradient(to right, rgb(251, 191, 36) 0%, rgb(251, 191, 36) ${volume * 100}%, rgba(255, 255, 255, 0.2) ${volume * 100}%, rgba(255, 255, 255, 0.2) 100%)`,
-                }}
-              />
-              <span className="text-amber-200 font-semibold text-sm w-12 text-right">
-                {Math.round(volume * 100)}%
-              </span>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Milestone Notification */}
-        <AnimatePresence>
-          {showMilestone && (
-            <motion.div
-              initial={{ opacity: 0, y: -50, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.8 }}
-              className="mb-8"
-            >
-              <div className="backdrop-blur-md bg-gradient-to-r from-amber-400/30 to-orange-500/30 rounded-2xl p-6 border-2 border-amber-400 shadow-2xl max-w-md mx-auto">
-                <div className="text-center">
-                  <IoTrophy className="text-5xl text-amber-300 mx-auto mb-3" />
-                  <h3 className="text-2xl font-bold text-amber-200 mb-2">
-                    Milestone Reached! 🎉
-                  </h3>
-                  <p className="text-white text-xl font-semibold">
-                    {showMilestone} Minutes of Meditation
-                  </p>
-                  <p className="text-blue-100/80 text-sm mt-2">
-                    Keep going! You're doing amazing! 🙏
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Stop Button */}
-        <motion.button
-          onClick={handleStop}
-          className="px-8 md:px-12 py-4 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-full font-bold text-lg md:text-xl shadow-2xl hover:shadow-red-500/50 transition-all flex items-center gap-3"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <IoStop className="text-2xl" />
-          End Meditation
-        </motion.button>
-      </div>
+      </AnimatePresence>
 
       {/* Completion Modal */}
       <AnimatePresence>
@@ -429,79 +275,67 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                document.body.style.overflow = 'auto';
-                setShowCompletionModal(false);
-                if (onStop) onStop();
-              }
-            }}
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-6"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="backdrop-blur-md bg-gradient-to-br from-white/20 to-white/10 rounded-3xl p-8 md:p-12 border border-white/30 shadow-2xl max-w-2xl w-full text-center max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
+              className="backdrop-blur-md bg-gradient-to-br from-white/20 to-white/10 rounded-3xl p-6 border border-white/30 shadow-2xl w-full max-w-sm text-center"
             >
-              {/* Trophy Icon */}
+              {/* Achievement Badge */}
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ delay: 0.2, type: "spring" }}
-                className="inline-block mb-6"
+                className="mb-4"
               >
-                <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${getAchievementLevel(time).color} flex items-center justify-center shadow-2xl`}>
-                  <IoTrophy className="text-5xl text-white" />
+                <div
+                  className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${getAchievementLevel(time).color} flex items-center justify-center shadow-2xl`}
+                >
+                  <span className="text-4xl">
+                    {getAchievementLevel(time).emoji}
+                  </span>
                 </div>
               </motion.div>
 
-              <h2 className="text-3xl md:text-4xl font-bold text-amber-200 mb-4">
-                Meditation Complete! 🙏
+              <h2 className="text-2xl font-bold text-amber-200 mb-1">
+                Session Complete!
               </h2>
+              <p className="text-blue-100/70 text-sm mb-4">
+                {getAchievementLevel(time).level} Level
+              </p>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="backdrop-blur-md bg-white/10 rounded-xl p-4">
-                  <IoTime className="text-3xl text-amber-300 mx-auto mb-2" />
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-white/10 rounded-xl p-3">
                   <p className="text-2xl font-bold text-white">
                     {formatTime(time)}
                   </p>
-                  <p className="text-sm text-blue-100/80">Time Meditated</p>
+                  <p className="text-xs text-blue-100/60">Duration</p>
                 </div>
-                <div className="backdrop-blur-md bg-white/10 rounded-xl p-4">
-                  <IoSparkles className="text-3xl text-purple-300 mx-auto mb-2" />
+                <div className="bg-white/10 rounded-xl p-3">
                   <p className="text-2xl font-bold text-white">
-                    {getAchievementLevel(time).level}
+                    {Math.floor(time / 60)}
                   </p>
-                  <p className="text-sm text-blue-100/80">Achievement</p>
+                  <p className="text-xs text-blue-100/60">Minutes</p>
                 </div>
               </div>
 
-              {/* Motivational Message */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-gradient-to-r from-amber-400/20 to-orange-500/20 rounded-xl p-6 mb-6 border border-amber-400/30"
-              >
-                <IoHeart className="text-4xl text-rose-400 mx-auto mb-3" />
-                <p className="text-lg md:text-xl text-amber-100 font-semibold">
-                  {getRandomMessage()}
-                </p>
-              </motion.div>
+              {/* Message */}
+              <div className="bg-gradient-to-r from-amber-400/20 to-orange-500/20 rounded-xl p-4 mb-5 border border-amber-400/30">
+                <IoHeart className="text-2xl text-rose-400 mx-auto mb-2" />
+                <p className="text-sm text-amber-100">{completionMessage}</p>
+              </div>
 
               {/* Close Button */}
               <motion.button
                 onClick={() => {
-                  document.body.style.overflow = 'auto';
+                  document.body.style.overflow = "auto";
                   setShowCompletionModal(false);
-                  if (onStop) onStop();
+                  onStop?.();
                 }}
-                className="px-8 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-bold text-lg shadow-lg hover:shadow-amber-400/50 transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                className="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-xl font-bold text-lg shadow-lg"
+                whileTap={{ scale: 0.98 }}
               >
                 Continue
               </motion.button>

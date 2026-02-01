@@ -226,11 +226,11 @@ export default function ProductPage() {
   }, [products, activeFilter, sortBy]);
 
   const Skeleton = () => (
-    <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl p-6 border border-white/20 animate-pulse">
-      <div className="h-56 rounded-xl bg-amber-200/20 mb-5" />
-      <div className="h-5 rounded bg-amber-200/20 mb-3 w-3/4" />
-      <div className="h-4 rounded bg-blue-100/20 mb-6 w-5/6" />
-      <div className="h-10 rounded-xl bg-amber-400/20" />
+    <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-lg p-2 md:p-4 border border-white/20 animate-pulse">
+      <div className="aspect-square rounded-lg bg-amber-200/20 mb-2" />
+      <div className="h-3 md:h-4 rounded bg-amber-200/20 mb-1.5 w-3/4" />
+      <div className="h-2.5 md:h-3 rounded bg-blue-100/20 mb-2 w-1/2" />
+      <div className="h-6 md:h-8 rounded-lg bg-amber-400/20" />
     </div>
   );
 
@@ -263,291 +263,160 @@ export default function ProductPage() {
 
   return (
     <div ref={mainRef} className="min-h-screen relative">
-      {/* Hero Section with Krishna Theme */}
-      <section className="hero-section relative pt-20 pb-10 overflow-hidden">
-        {/* Background Patterns */}
+      {/* Compact Hero Section - Daraz Style */}
+      <section className="hero-section relative pt-16 pb-4 md:pt-20 md:pb-6 overflow-hidden">
+        {/* Subtle Background */}
         <div className="hero-bg-pattern absolute inset-0">
-          {/* Mandala Pattern */}
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
-              backgroundSize: "30px 30px",
-            }}
-          />
-
-          {/* Grid Pattern */}
           <div
             className="absolute inset-0 opacity-10"
             style={{
-              backgroundImage: `
-              linear-gradient(to right, #fbbf24 1px, transparent 1px),
-              linear-gradient(to bottom, #fbbf24 1px, transparent 1px)`,
-              backgroundSize: "50px 50px",
-            }}
-          />
-
-          {/* Floating Orbs */}
-          <motion.div
-            className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl"
-            animate={{
-              x: [0, 50, 0],
-              y: [0, -30, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-          <motion.div
-            className="absolute bottom-20 right-10 w-40 h-40 rounded-full bg-gradient-to-br from-cyan-400/20 to-blue-500/20 blur-3xl"
-            animate={{
-              x: [0, -30, 0],
-              y: [0, 50, 0],
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
+              backgroundImage:
+                "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
             }}
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-4xl mx-auto">
-            {/* Sacred Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-6"
-            >
-              <span className="text-amber-300 animate-pulse text-lg">✦</span>
-              <span className="text-amber-100 font-medium tracking-wide text-sm">
-                Handcrafted in Nepal • Shipped from USA
-              </span>
-              <span className="text-amber-300 animate-pulse text-lg">✦</span>
-            </motion.div>
-
+        <div className="relative z-10 max-w-7xl mx-auto px-4">
+          {/* Compact Header */}
+          <div className="text-left md:text-center">
+            {/* Title Row */}
             <motion.h1
-              className="font-bold text-3xl lg:text-4xl mb-4 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 30 }}
+              className="font-bold text-xl md:text-3xl lg:text-4xl mb-1 md:mb-2 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.5 }}
             >
-              Authentic Krishna Collection
+              Krishna Collection
             </motion.h1>
 
             <motion.p
-              className="text-base lg:text-lg leading-relaxed mb-6 text-blue-100/80"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-            >
-              Experience the divine energy of{" "}
-              <span className="font-semibold text-amber-200">
-                authentic Himalayan spirituality
-              </span>{" "}
-              delivered to your doorstep
-            </motion.p>
-
-            {/* Trust Badges for US Market */}
-            <motion.div
-              className="flex flex-wrap justify-center gap-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-            >
-              {[
-                "🦚 Authentic & Blessed",
-                "📦 Free US Shipping $99+",
-                "🔒 Secure Checkout",
-                "⭐ 5-Star Reviews",
-                "🌿 Eco-Friendly",
-              ].map((t, i) => (
-                <motion.span
-                  key={i}
-                  className="px-4 py-2 rounded-full backdrop-blur-md bg-white/5 border border-amber-400/30 text-sm font-medium text-amber-200 shadow-lg"
-                  whileHover={{
-                    scale: 1.05,
-                    backgroundColor: "rgba(251, 191, 36, 0.1)",
-                    borderColor: "rgba(251, 191, 36, 0.5)",
-                  }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + i * 0.1 }}
-                >
-                  {t}
-                </motion.span>
-              ))}
-            </motion.div>
-
-            {/* Special US Market Notice */}
-            <motion.div
-              className="mt-6 inline-flex items-center gap-2 text-cyan-300 text-sm"
+              className="text-xs md:text-sm text-blue-100/70 mb-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
+              transition={{ delay: 0.2 }}
             >
-              <span>🚚</span>
-              <span>
-                Fast 2-5 day delivery across USA • Express shipping available
-              </span>
+              Handcrafted in Nepal • Fast US Shipping
+            </motion.p>
+
+            {/* Horizontal Scrollable Trust Badges */}
+            <motion.div
+              className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide md:justify-center md:flex-wrap"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              {[
+                { icon: "🦚", text: "Authentic" },
+                { icon: "📦", text: "Free $99+" },
+                { icon: "🔒", text: "Secure" },
+                { icon: "⭐", text: "5-Star" },
+                { icon: "🚚", text: "2-5 Days" },
+              ].map((t, i) => (
+                <span
+                  key={i}
+                  className="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 border border-amber-400/20 text-[10px] md:text-xs text-amber-200"
+                >
+                  <span>{t.icon}</span>
+                  <span>{t.text}</span>
+                </span>
+              ))}
             </motion.div>
           </div>
 
-          {/* Filter Bar with Glassmorphism */}
-          <motion.div
-            className="mt-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-          >
-            <div className="sticky top-16 z-20">
-              {/* Mobile Filter Toggle */}
-              <div className="md:hidden mb-4">
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 border border-white/20 shadow-lg"
+          {/* Compact Filter Bar - Daraz Style */}
+          <div className="mt-3 md:mt-6">
+            <div className="sticky top-14 z-20">
+              {/* Mobile: Inline Filter Row */}
+              <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
+                {/* Sort Dropdown - Compact */}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="flex-shrink-0 text-[11px] md:text-xs rounded-lg px-2 py-1.5 bg-white/10 text-amber-200 border border-amber-400/30 focus:outline-none"
                 >
-                  <span className="font-semibold text-amber-200">
-                    Filters & Sort
-                  </span>
-                  <motion.span
-                    className="text-amber-200"
-                    animate={{ rotate: showFilters ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    ↓
-                  </motion.span>
-                </button>
+                  <option value="featured">Featured</option>
+                  <option value="new">New</option>
+                  <option value="rating">Top Rated</option>
+                  <option value="priceLow">Price ↑</option>
+                  <option value="priceHigh">Price ↓</option>
+                </select>
+
+                {/* Filter Pills - Horizontal Scroll */}
+                {availableFilters.map((f) => {
+                  const active = activeFilter === f;
+                  return (
+                    <button
+                      key={f}
+                      onClick={() => setActiveFilter(f)}
+                      className={`flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] md:text-xs font-medium transition-all border ${
+                        active
+                          ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white border-amber-400"
+                          : "bg-white/5 text-amber-200/80 border-amber-400/20"
+                      }`}
+                    >
+                      {f === "all"
+                        ? "All"
+                        : f
+                            .replace(/_/g, " ")
+                            .replace(/\b\w/g, (m) => m.toUpperCase())}
+                    </button>
+                  );
+                })}
+
+                {/* View Mode - Desktop Only */}
+                <div className="hidden md:flex gap-1 ml-auto">
+                  {[
+                    { mode: "grid", icon: "⊞" },
+                    { mode: "cards", icon: "▭" },
+                    { mode: "mandala", icon: "☸" },
+                  ].map((v) => (
+                    <button
+                      key={v.mode}
+                      onClick={() => setViewMode(v.mode)}
+                      className={`px-2 py-1 rounded text-sm transition-all ${
+                        viewMode === v.mode
+                          ? "bg-amber-500 text-white"
+                          : "bg-white/5 text-amber-200"
+                      }`}
+                    >
+                      {v.icon}
+                    </button>
+                  ))}
+                </div>
               </div>
-
-              {/* Filter Content */}
-              <AnimatePresence>
-                {(showFilters || window.innerWidth >= 768) && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 rounded-xl backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 border border-white/20 shadow-2xl px-6 py-4">
-                      {/* View Mode Switcher */}
-                      <div className="flex gap-2">
-                        {[
-                          { mode: "grid", icon: "⊞", label: "Grid" },
-                          { mode: "cards", icon: "▭", label: "Cards" },
-                          { mode: "mandala", icon: "☸", label: "Sacred" },
-                        ].map((v) => (
-                          <motion.button
-                            key={v.mode}
-                            onClick={() => setViewMode(v.mode)}
-                            className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
-                              viewMode === v.mode
-                                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white"
-                                : "bg-white/5 text-amber-200 border border-amber-400/30"
-                            }`}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <span className="mr-1">{v.icon}</span>
-                            {v.label}
-                          </motion.button>
-                        ))}
-                      </div>
-
-                      {/* Filters */}
-                      <div className="flex flex-wrap gap-2">
-                        {availableFilters.map((f) => {
-                          const active = activeFilter === f;
-                          return (
-                            <motion.button
-                              key={f}
-                              onClick={() => setActiveFilter(f)}
-                              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all border ${
-                                active
-                                  ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white border-amber-400"
-                                  : "bg-white/5 text-amber-200 border-amber-400/30"
-                              }`}
-                              whileHover={{
-                                scale: 1.05,
-                                backgroundColor: active
-                                  ? undefined
-                                  : "rgba(251, 191, 36, 0.1)",
-                              }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              {f === "all"
-                                ? "All"
-                                : f
-                                    .replace(/_/g, " ")
-                                    .replace(/\b\w/g, (m) => m.toUpperCase())}
-                            </motion.button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Sort */}
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-blue-100/80">
-                          Sort:
-                        </span>
-                        <select
-                          value={sortBy}
-                          onChange={(e) => setSortBy(e.target.value)}
-                          className="border text-sm rounded-lg px-3 py-2 bg-white/5 backdrop-blur-md text-amber-200 border-amber-400/30 focus:outline-none focus:ring-2 focus:ring-amber-400/50"
-                          style={{ minWidth: "140px" }}
-                        >
-                          <option value="featured">Featured</option>
-                          <option value="new">New Arrivals</option>
-                          <option value="rating">Customer Favorites</option>
-                          <option value="priceLow">Price: Low to High</option>
-                          <option value="priceHigh">Price: High to Low</option>
-                        </select>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Products Section with Different View Modes */}
-      <section className="relative pb-20 px-6">
-        {/* Background Pattern */}
-        {/* <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 50% 50%, #fbbf24 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        /> */}
-
+      {/* Products Section - Compact Grid */}
+      <section className="relative pb-10 md:pb-20 px-3 md:px-6">
         <div className="relative z-10 max-w-7xl mx-auto">
+          {/* Product Count */}
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-[11px] md:text-xs text-blue-100/60">
+              {filteredProducts.length} products
+            </span>
+          </div>
+
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4">
+              {[...Array(10)].map((_, i) => (
                 <Skeleton key={i} />
               ))}
             </div>
           ) : filteredProducts.length === 0 ? (
             <motion.div
-              className="text-center py-20 text-blue-100"
+              className="text-center py-12 text-blue-100"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold mb-2 text-amber-200">
+              <div className="text-4xl mb-3">🔍</div>
+              <h3 className="text-lg font-bold mb-1 text-amber-200">
                 No products found
               </h3>
-              <p className="text-blue-100/80">
+              <p className="text-sm text-blue-100/80">
                 Try adjusting your filters or check back soon for new arrivals!
               </p>
             </motion.div>
@@ -555,10 +424,10 @@ export default function ProductPage() {
             <div
               className={
                 viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                  ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4"
                   : viewMode === "cards"
-                    ? "space-y-6"
-                    : "relative min-h-[600px]"
+                    ? "space-y-4"
+                    : "relative min-h-[400px] md:min-h-[600px]"
               }
             >
               {viewMode === "mandala" ? (
@@ -763,202 +632,105 @@ export default function ProductPage() {
                     );
                   }
 
-                  // Grid View (Default)
+                  // Grid View (Default) - Daraz Style Compact Cards
                   return (
                     <motion.div
                       key={p._id}
                       ref={(el) => (productsRef.current[index] = el)}
-                      initial={{ opacity: 0, y: 30 }}
+                      initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      transition={{ delay: index * 0.1, duration: 0.6 }}
-                      onHoverStart={() => setHovered(p._id)}
-                      onHoverEnd={() => setHovered(null)}
-                      className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 group cursor-pointer overflow-hidden"
-                      whileHover={{
-                        y: -4,
-                        scale: 1.01,
-                      }}
+                      viewport={{ once: true, margin: "-30px" }}
+                      transition={{ delay: index * 0.05, duration: 0.4 }}
+                      className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-lg border border-white/15 hover:border-amber-400/40 transition-all duration-200 group cursor-pointer overflow-hidden"
+                      whileHover={{ y: -2 }}
                       onClick={() => navigate(`/product/${p._id}`)}
                     >
-                      {/* Divine Aura Effect */}
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-amber-400/0 via-amber-400/5 to-amber-400/0"
-                        animate={{
-                          opacity: hovered === p._id ? 1 : 0,
-                        }}
-                        transition={{ duration: 0.3 }}
-                      />
+                      {/* Product Image Area - Compact */}
+                      <div className="relative aspect-square bg-gradient-to-br from-amber-400/5 to-orange-500/5">
+                        {/* Discount Badge - Top Left */}
+                        {discount > 0 && (
+                          <span className="absolute top-1.5 left-1.5 md:top-2 md:left-2 px-1.5 md:px-2 py-0.5 rounded text-[9px] md:text-[10px] font-bold text-white bg-gradient-to-r from-rose-500 to-orange-500 z-10">
+                            -{discount}%
+                          </span>
+                        )}
 
-                      {/* Product Image Area */}
-                      <div className="relative aspect-[4/3] p-6 bg-gradient-to-br from-amber-400/10 to-orange-500/10">
-                        {/* Badges */}
-                        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                          {discount > 0 && (
-                            <motion.span
-                              className="px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-amber-400 to-orange-500"
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ delay: index * 0.1 + 0.3 }}
-                            >
-                              {discount}% OFF
-                            </motion.span>
-                          )}
-                          {p.badge && (
-                            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-gradient-to-r from-purple-400/20 to-blue-400/20 backdrop-blur-md border border-purple-400/30 text-purple-200">
-                              {p.badge}
-                            </span>
-                          )}
-                          {p.new && (
-                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-cyan-400/20 to-blue-400/20 backdrop-blur-md border border-cyan-400/30 text-cyan-200">
-                              NEW
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Wishlist Button */}
-                        <motion.button
+                        {/* Wishlist - Top Right */}
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             addToWishlist(p._id);
                           }}
-                          className="absolute top-4 right-4 w-10 h-10 rounded-full backdrop-blur-md bg-white/10 border border-amber-400/30 flex items-center justify-center z-10"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
+                          className="absolute top-1.5 right-1.5 md:top-2 md:right-2 w-6 h-6 md:w-7 md:h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center z-10"
                         >
-                          <motion.span
-                            className={
-                              inWishlist
-                                ? "text-amber-400"
-                                : "text-amber-200/50"
-                            }
-                            animate={{ scale: inWishlist ? [1, 1.3, 1] : 1 }}
-                            transition={{ duration: 0.3 }}
+                          <span
+                            className={`text-xs md:text-sm ${inWishlist ? "text-rose-400" : "text-white/70"}`}
                           >
                             {inWishlist ? "♥" : "♡"}
-                          </motion.span>
-                        </motion.button>
+                          </span>
+                        </button>
 
-                        {/* Product Image with Hover Effect */}
-                        <motion.img
+                        {/* Product Image */}
+                        <img
                           src={
                             firstImage(p)
                               ? getMediaUrl(firstImage(p))
                               : placeholderImg
                           }
                           alt={p.title}
-                          className="w-full h-full object-contain"
-                          animate={{
-                            scale: hovered === p._id ? 1.05 : 1,
-                          }}
-                          transition={{ duration: 0.3, ease: "easeOut" }}
+                          className="w-full h-full object-contain p-2 md:p-3 group-hover:scale-105 transition-transform duration-300"
                           loading="lazy"
                         />
-
-                        {/* Floating Elements on Hover */}
-                        {hovered === p._id && (
-                          <>
-                            <motion.div
-                              className="absolute top-2 left-2 text-2xl"
-                              initial={{ opacity: 0, scale: 0 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: 0.1 }}
-                            >
-                              🦚
-                            </motion.div>
-                            <motion.div
-                              className="absolute bottom-2 right-2 text-2xl"
-                              initial={{ opacity: 0, scale: 0 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: 0.2 }}
-                            >
-                              🪈
-                            </motion.div>
-                          </>
-                        )}
                       </div>
 
-                      {/* Product Info */}
-                      <div className="px-4 pb-4">
-                        <h3 className="text-base font-bold mb-1 line-clamp-2 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                      {/* Product Info - Compact */}
+                      <div className="p-2 md:p-3">
+                        {/* Title */}
+                        <h3 className="text-[11px] md:text-sm font-semibold mb-1 line-clamp-2 text-amber-100 leading-tight">
                           {p.title}
                         </h3>
-                        <p className="text-amber-200/80 text-xs italic mb-1">
-                          Authentic Himalayan Craft
-                        </p>
-                        <p className="text-xs line-clamp-2 mb-2 leading-relaxed text-blue-100/80">
-                          {p.desc}
-                        </p>
 
-                        {/* Rating with US Market Focus */}
-                        <div className="flex items-center gap-1 mb-2">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <span
-                                key={i}
-                                className={`text-xs ${
-                                  i < Math.round(p.rating || 0)
-                                    ? "text-amber-400"
-                                    : "text-amber-400/30"
-                                }`}
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                          <span className="text-xs text-blue-100/60">
+                        {/* Rating - Compact */}
+                        <div className="flex items-center gap-1 mb-1">
+                          <span className="text-[10px] md:text-xs text-amber-400">
+                            ★
+                          </span>
+                          <span className="text-[10px] md:text-xs text-amber-200/70">
+                            {p.rating?.toFixed(1) || "0.0"}
+                          </span>
+                          <span className="text-[9px] md:text-[10px] text-blue-100/40">
                             ({p.numReviews || 0})
                           </span>
                         </div>
 
-                        {/* Price & CTAs */}
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-lg font-bold text-amber-300">
-                              {formatPrice(p.price)}
+                        {/* Price Row */}
+                        <div className="flex items-baseline gap-1.5 mb-1.5">
+                          <span className="text-sm md:text-base font-bold text-amber-300">
+                            {formatPrice(p.price)}
+                          </span>
+                          {p.originalPrice && (
+                            <span className="text-[10px] md:text-xs line-through text-blue-100/40">
+                              {formatPrice(p.originalPrice)}
                             </span>
-                            {p.originalPrice && (
-                              <span className="text-xs line-through text-blue-100/50">
-                                {formatPrice(p.originalPrice)}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="flex gap-2">
-                            <motion.button
-                              className="group relative flex-1 px-3 py-1.5 overflow-hidden rounded-lg shadow-lg transform transition-all duration-300"
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/product/${p._id}?buy=1`);
-                              }}
-                            >
-                              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                              <span className="relative text-white text-xs font-semibold">
-                                Add to Cart
-                              </span>
-                            </motion.button>
-                            <motion.button
-                              className="flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold border border-amber-400/50 text-amber-200 backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transition-all duration-300"
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/product/${p._id}`);
-                              }}
-                            >
-                              View
-                            </motion.button>
-                          </div>
-
-                          {/* Quick US Market Trust Badge */}
-                          {p.price > 99 && (
-                            <div className="text-center text-[10px] text-cyan-300">
-                              ✓ Free US Shipping
-                            </div>
                           )}
                         </div>
+
+                        {/* Free Shipping Badge */}
+                        {p.price > 99 && (
+                          <div className="text-[9px] md:text-[10px] text-cyan-300/80 mb-1.5">
+                            🚚 Free Shipping
+                          </div>
+                        )}
+
+                        {/* Add to Cart Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/product/${p._id}?buy=1`);
+                          }}
+                          className="w-full py-1.5 md:py-2 rounded-lg text-[10px] md:text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 transition-all"
+                        >
+                          Add to Cart
+                        </button>
                       </div>
                     </motion.div>
                   );
@@ -969,89 +741,41 @@ export default function ProductPage() {
         </div>
       </section>
 
-      {/* US Market Trust Section */}
-      <section className="relative pb-20">
-        <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-6"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+      {/* Trust Section - Compact */}
+      <section className="relative pb-10 md:pb-16">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Horizontal Scrollable Trust Badges on Mobile */}
+          <div className="flex md:grid md:grid-cols-4 gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {[
-              {
-                icon: "🚚",
-                title: "Free US Shipping",
-                desc: "Orders over $99",
-                detail: "2-5 business days",
-              },
-              {
-                icon: "🪔",
-                title: "Authentic & Blessed",
-                desc: "Direct from Nepal",
-                detail: "Certified genuine",
-              },
-              {
-                icon: "📿",
-                title: "Easy Returns",
-                desc: "30-day guarantee",
-                detail: "No questions asked",
-              },
-              {
-                icon: "🔒",
-                title: "Secure Payment",
-                desc: "All cards accepted",
-                detail: "PayPal, Apple Pay",
-              },
+              { icon: "🚚", title: "Free Shipping", desc: "$99+" },
+              { icon: "✓", title: "Authentic", desc: "Nepal" },
+              { icon: "↩", title: "30-Day", desc: "Returns" },
+              { icon: "🔒", title: "Secure", desc: "Pay" },
             ].map((f, i) => (
-              <motion.div
+              <div
                 key={i}
-                className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 text-center border border-white/20 hover:border-amber-400/50 transition-all duration-300 group"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                whileHover={{
-                  scale: 1.05,
-                  y: -5,
-                }}
-                {...floatAnimation}
+                className="flex-shrink-0 w-[120px] md:w-auto backdrop-blur-md bg-gradient-to-br from-white/8 to-white/3 rounded-xl p-3 text-center border border-white/10"
               >
-                <motion.div
-                  className="text-3xl mb-2"
-                  whileHover={{ scale: 1.2, rotate: 10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {f.icon}
-                </motion.div>
-                <div className="font-bold text-base mb-1 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+                <div className="text-xl md:text-2xl mb-1">{f.icon}</div>
+                <div className="font-semibold text-[11px] md:text-xs text-amber-200">
                   {f.title}
                 </div>
-                <div className="text-sm leading-relaxed text-blue-100/80 mb-1">
+                <div className="text-[10px] md:text-[11px] text-blue-100/60">
                   {f.desc}
                 </div>
-                <div className="text-xs text-cyan-300">{f.detail}</div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
 
-          {/* US Customer Testimonial */}
-          <motion.div
-            className="mt-12 text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-          >
-            <p className="text-amber-200/80 italic text-lg mb-2">
-              "The quality and authenticity of these spiritual items are
-              unmatched. Fast shipping to California and beautiful packaging!"
+          {/* Testimonial - More Compact */}
+          <div className="mt-6 text-center">
+            <p className="text-amber-200/70 italic text-sm md:text-base mb-1">
+              "Fast shipping to California. Beautiful packaging!"
             </p>
-            <p className="text-blue-100/60 text-sm">
-              - Sarah M., Verified US Customer ⭐⭐⭐⭐⭐
+            <p className="text-blue-100/50 text-xs">
+              - Sarah M., US Customer ⭐⭐⭐⭐⭐
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

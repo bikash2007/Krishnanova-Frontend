@@ -88,6 +88,14 @@ const LuckyKrishna = () => {
   const [attempts, setAttempts] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState(null);
 
+  // **Mobile & Touch States**
+  const [isMobile, setIsMobile] = useState(false);
+  const [tapFeedback, setTapFeedback] = useState(null);
+  const [practiceBonus, setPracticeBonus] = useState(0);
+  const [showTapHint, setShowTapHint] = useState(true);
+  const [nearMissStreak, setNearMissStreak] = useState(0);
+  const [lastTapTime, setLastTapTime] = useState(0);
+
   // **UI Control States**
   const [gameEnabled, setGameEnabled] = useState(() => {
     const saved = localStorage.getItem("krishna_game_enabled");
@@ -120,7 +128,7 @@ const LuckyKrishna = () => {
     user?.id ||
       user?._id ||
       localStorage.getItem("krishna_user_id") ||
-      `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
   );
 
   // Update userId when user changes
@@ -129,6 +137,36 @@ const LuckyKrishna = () => {
       userId.current = user.id || user._id;
     }
   }, [user]);
+
+  // **Mobile Detection**
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice =
+        "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth <= 768;
+      setIsMobile(isTouchDevice || isSmallScreen);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // **Load Practice Bonus from localStorage**
+  useEffect(() => {
+    const savedBonus = localStorage.getItem("krishna_practice_bonus");
+    const lastPracticeDate = localStorage.getItem("krishna_last_practice_date");
+    const today = new Date().toDateString();
+
+    if (savedBonus && lastPracticeDate === today) {
+      setPracticeBonus(parseFloat(savedBonus));
+    } else {
+      // Reset bonus if it's a new day
+      localStorage.setItem("krishna_practice_bonus", "0");
+      localStorage.setItem("krishna_last_practice_date", today);
+      setPracticeBonus(0);
+    }
+  }, []);
 
   // **Persist preferences**
   useEffect(() => {
@@ -185,7 +223,7 @@ const LuckyKrishna = () => {
   const redirectToLogin = useCallback(() => {
     localStorage.setItem(
       "krishna_redirect_after_login",
-      window.location.pathname
+      window.location.pathname,
     );
     localStorage.setItem("krishna_open_dashboard_after_login", "true");
     navigate("/login");
@@ -210,7 +248,7 @@ const LuckyKrishna = () => {
       const headers = getAuthHeaders();
       const response = await fetch(
         `${baseUrl}/api/krishna/keychain/${userId.current}`,
-        { headers }
+        { headers },
       );
       const data = await response.json();
 
@@ -230,7 +268,7 @@ const LuckyKrishna = () => {
   const fetchLeaderboard = useCallback(async () => {
     if (!isAuthenticated || !gameEnabled) {
       console.log(
-        "[Krishna] Skipping leaderboard fetch - not authenticated or game disabled"
+        "[Krishna] Skipping leaderboard fetch - not authenticated or game disabled",
       );
       return;
     }
@@ -330,6 +368,40 @@ const LuckyKrishna = () => {
     }
   }, [difficulty, consecutiveMisses, gameEnabled, baseUrl, getAuthHeaders]);
 
+  // **Function to add practice bonus (called from other components)**
+  const addPracticeBonus = useCallback(
+    (bonusType) => {
+      const bonusValues = {
+        meditation: 0.15, // 15% bonus for meditation
+        gita_reading: 0.1, // 10% bonus for Gita reading
+        mantra_chanting: 0.12, // 12% bonus for mantra
+        daily_wisdom: 0.05, // 5% bonus for reading daily wisdom
+        community_post: 0.08, // 8% bonus for community engagement
+      };
+
+      const bonus = bonusValues[bonusType] || 0.05;
+      const newBonus = Math.min(practiceBonus + bonus, 0.5); // Cap at 50% bonus
+
+      setPracticeBonus(newBonus);
+      localStorage.setItem("krishna_practice_bonus", String(newBonus));
+      localStorage.setItem(
+        "krishna_last_practice_date",
+        new Date().toDateString(),
+      );
+
+      return newBonus;
+    },
+    [practiceBonus],
+  );
+
+  // Expose addPracticeBonus globally for other components
+  useEffect(() => {
+    window.addKrishnaPracticeBonus = addPracticeBonus;
+    return () => {
+      delete window.addKrishnaPracticeBonus;
+    };
+  }, [addPracticeBonus]);
+
   // **Game Logic Functions**
   const calculateCatchChance = useMemo(() => {
     if (!gameEnabled) return 0;
@@ -338,25 +410,55 @@ const LuckyKrishna = () => {
     const difficultyMultiplier = Math.max(0.1, 1 - difficulty * 0.08);
     const missedPenalty = Math.max(0.3, 1 - consecutiveMisses * 0.02);
 
-    return baseLuck * difficultyMultiplier * missedPenalty;
-  }, [difficulty, consecutiveMisses, gameEnabled]);
+    // Practice bonus increases catch chance
+    const practiceMultiplier = 1 + practiceBonus;
+
+    // Near-miss streak bonus (encouragement after close calls)
+    const nearMissBonus = nearMissStreak * 0.005;
+
+    return Math.min(
+      0.25,
+      baseLuck * difficultyMultiplier * missedPenalty * practiceMultiplier +
+        nearMissBonus,
+    );
+  }, [
+    difficulty,
+    consecutiveMisses,
+    gameEnabled,
+    practiceBonus,
+    nearMissStreak,
+  ]);
 
   const moveKrishna = useCallback(() => {
     if (isScrolling || !canAttempt || !gameStarted || !gameEnabled) return;
 
-    const speed = Math.max(2000, 5000 - difficulty * 200);
-    const edgeBuffer = Math.max(5, 30 - difficulty * 2);
+    // Slower on mobile for better tap accuracy
+    const baseSpeed = isMobile ? 6000 : 5000;
+    const speed = Math.max(
+      isMobile ? 2500 : 2000,
+      baseSpeed - difficulty * 200,
+    );
+
+    // Larger edge buffer on mobile for easier tapping
+    const mobileBuffer = isMobile ? 15 : 5;
+    const edgeBuffer = Math.max(mobileBuffer, 30 - difficulty * 2);
+
+    // Avoid positioning too close to HUD on mobile
+    const topMin = isMobile ? 25 : edgeBuffer;
+    const topMax = isMobile ? 75 : 100 - edgeBuffer;
+    const leftMin = edgeBuffer;
+    const leftMax = 100 - edgeBuffer - (isMobile ? 5 : 0);
 
     setPosition({
-      top: `${edgeBuffer + Math.random() * (100 - 2 * edgeBuffer)}%`,
-      left: `${edgeBuffer + Math.random() * (100 - 2 * edgeBuffer)}%`,
+      top: `${topMin + Math.random() * (topMax - topMin)}%`,
+      left: `${leftMin + Math.random() * (leftMax - leftMin)}%`,
     });
 
     if (moveIntervalRef.current) {
       clearInterval(moveIntervalRef.current);
     }
     moveIntervalRef.current = setInterval(moveKrishna, speed);
-  }, [isScrolling, canAttempt, difficulty, gameStarted, gameEnabled]);
+  }, [isScrolling, canAttempt, difficulty, gameStarted, gameEnabled, isMobile]);
 
   const playAudio = useCallback(() => {
     if (!audioRef.current || !gameEnabled) return;
@@ -367,57 +469,139 @@ const LuckyKrishna = () => {
     }
   }, [gameEnabled]);
 
-  const handleHover = useCallback(async () => {
-    if (!canAttempt || isLoading || !gameStarted || !gameEnabled) return;
+  // **Haptic Feedback for Mobile**
+  const triggerHaptic = useCallback((type = "light") => {
+    if ("vibrate" in navigator) {
+      const patterns = {
+        light: [10],
+        medium: [20],
+        heavy: [30, 50, 30],
+        success: [50, 100, 50, 100, 100],
+        miss: [15],
+      };
+      navigator.vibrate(patterns[type] || patterns.light);
+    }
+  }, []);
 
-    playAudio();
-    setAttempts((prev) => prev + 1);
+  // **Tap Feedback Animation**
+  const showTapFeedbackAt = useCallback((x, y, isHit) => {
+    const id = Date.now();
+    setTapFeedback({ id, x, y, isHit });
+    setTimeout(() => setTapFeedback(null), 600);
+  }, []);
 
-    const catchChance = calculateCatchChance;
-    const isLucky = Math.random() < catchChance;
+  // **Main Catch Attempt Handler (supports both hover and tap)**
+  const handleCatchAttempt = useCallback(
+    async (event) => {
+      if (!canAttempt || isLoading || !gameStarted || !gameEnabled) return;
 
-    if (isLucky) {
-      const keychainAwarded = await recordCatch();
+      // Prevent double-taps on mobile
+      const now = Date.now();
+      if (now - lastTapTime < 300) return;
+      setLastTapTime(now);
 
-      if (keychainAwarded) {
-        const randomLesson =
-          lessons[Math.floor(Math.random() * lessons.length)];
-        const rarityText =
-          keychainAwarded.rarity === "rare"
-            ? "⭐ RARE DIVINE BLESSING! ⭐"
-            : "";
+      // Hide tap hint after first interaction
+      setShowTapHint(false);
 
-        setSuccessMessage(
-          Math.random() < 0.6
-            ? `✨ Krishna has blessed you with the "${keychainAwarded.name}"! ${rarityText} Your devotion has been rewarded! ✨`
-            : `🪷 Krishna blesses you with wisdom: "${randomLesson}" 🪷\n\nYou have also received the "${keychainAwarded.name}"!`
-        );
-        setTease("Divine blessing received!");
-        setConsecutiveMisses(0);
-        setDifficulty(1);
-        setGameStarted(false);
-
-        if (isAuthenticated) {
-          fetchLeaderboard();
+      // Get tap position for feedback
+      let tapX = 50,
+        tapY = 50;
+      if (event) {
+        if (event.touches && event.touches[0]) {
+          tapX = (event.touches[0].clientX / window.innerWidth) * 100;
+          tapY = (event.touches[0].clientY / window.innerHeight) * 100;
+        } else if (event.clientX !== undefined) {
+          tapX = (event.clientX / window.innerWidth) * 100;
+          tapY = (event.clientY / window.innerHeight) * 100;
         }
       }
-    } else {
-      setConsecutiveMisses((prev) => prev + 1);
-      const randomTease = teases[Math.floor(Math.random() * teases.length)];
-      setTease(randomTease);
-      moveKrishna();
-    }
-  }, [
-    canAttempt,
-    isLoading,
-    gameStarted,
-    gameEnabled,
-    calculateCatchChance,
-    recordCatch,
-    moveKrishna,
-    isAuthenticated,
-    fetchLeaderboard,
-  ]);
+
+      playAudio();
+      setAttempts((prev) => prev + 1);
+      triggerHaptic("light");
+
+      const catchChance = calculateCatchChance;
+      const roll = Math.random();
+      const isLucky = roll < catchChance;
+
+      // Near miss detection (within 2x of catch chance)
+      const isNearMiss = !isLucky && roll < catchChance * 2;
+
+      if (isLucky) {
+        triggerHaptic("success");
+        showTapFeedbackAt(tapX, tapY, true);
+        setNearMissStreak(0);
+
+        const keychainAwarded = await recordCatch();
+
+        if (keychainAwarded) {
+          const randomLesson =
+            lessons[Math.floor(Math.random() * lessons.length)];
+          const rarityText =
+            keychainAwarded.rarity === "rare"
+              ? "⭐ RARE DIVINE BLESSING! ⭐"
+              : "";
+
+          setSuccessMessage(
+            Math.random() < 0.6
+              ? `✨ Krishna has blessed you with the "${keychainAwarded.name}"! ${rarityText} Your devotion has been rewarded! ✨`
+              : `🪷 Krishna blesses you with wisdom: "${randomLesson}" 🪷\n\nYou have also received the "${keychainAwarded.name}"!`,
+          );
+          setTease("Divine blessing received!");
+          setConsecutiveMisses(0);
+          setDifficulty(1);
+          setGameStarted(false);
+
+          if (isAuthenticated) {
+            fetchLeaderboard();
+          }
+        }
+      } else {
+        triggerHaptic("miss");
+        showTapFeedbackAt(tapX, tapY, false);
+        setConsecutiveMisses((prev) => prev + 1);
+
+        // Handle near misses
+        if (isNearMiss) {
+          setNearMissStreak((prev) => prev + 1);
+          const nearMissTeases = [
+            "So close! 🙏",
+            "Almost caught me!",
+            "Your devotion grows stronger!",
+            "Nearly blessed!",
+            "Krishna feels your presence!",
+          ];
+          setTease(
+            nearMissTeases[Math.floor(Math.random() * nearMissTeases.length)],
+          );
+        } else {
+          setNearMissStreak(0);
+          const randomTease = teases[Math.floor(Math.random() * teases.length)];
+          setTease(randomTease);
+        }
+
+        moveKrishna();
+      }
+    },
+    [
+      canAttempt,
+      isLoading,
+      gameStarted,
+      gameEnabled,
+      calculateCatchChance,
+      recordCatch,
+      moveKrishna,
+      isAuthenticated,
+      fetchLeaderboard,
+      triggerHaptic,
+      showTapFeedbackAt,
+      playAudio,
+      lastTapTime,
+    ],
+  );
+
+  // Keep legacy handleHover for desktop compatibility
+  const handleHover = handleCatchAttempt;
 
   const startGame = useCallback(() => {
     if (!canAttempt || !gameEnabled) return;
@@ -456,7 +640,7 @@ const LuckyKrishna = () => {
         fetchLeaderboard();
       }
     },
-    [isAuthenticated, fetchLeaderboard]
+    [isAuthenticated, fetchLeaderboard],
   );
 
   // **Effects**
@@ -527,7 +711,7 @@ const LuckyKrishna = () => {
   // **Check for redirect after login**
   useEffect(() => {
     const shouldOpenDashboard = localStorage.getItem(
-      "krishna_open_dashboard_after_login"
+      "krishna_open_dashboard_after_login",
     );
 
     if (
@@ -587,7 +771,7 @@ const LuckyKrishna = () => {
       zIndex: 30,
       display: gameEnabled ? "block" : "none",
     }),
-    [position, isScrolling, canAttempt, isLoading, gameEnabled]
+    [position, isScrolling, canAttempt, isLoading, gameEnabled],
   );
 
   // **Update countdown every minute**
@@ -700,6 +884,20 @@ const LuckyKrishna = () => {
                   <span className="text-orange-300">{consecutiveMisses}</span>
                 </div>
               )}
+              {practiceBonus > 0 && (
+                <div className="flex justify-between">
+                  <span>🙏 Practice:</span>
+                  <span className="text-green-300">
+                    +{Math.round(practiceBonus * 100)}%
+                  </span>
+                </div>
+              )}
+              {nearMissStreak > 0 && (
+                <div className="flex justify-between">
+                  <span>🔥 Near Miss:</span>
+                  <span className="text-orange-300">{nearMissStreak}x</span>
+                </div>
+              )}
             </div>
 
             {/* **Keychain Display** */}
@@ -803,7 +1001,7 @@ const LuckyKrishna = () => {
                           <span className="text-gray-300">Session Time:</span>
                           <span className="text-green-400 font-bold">
                             {Math.floor(
-                              (new Date() - sessionStartTime) / 60000
+                              (new Date() - sessionStartTime) / 60000,
                             )}
                             m
                           </span>
@@ -903,10 +1101,10 @@ const LuckyKrishna = () => {
                                       index === 0
                                         ? "bg-yellow-600/20 border-yellow-400/30"
                                         : index === 1
-                                        ? "bg-gray-400/20 border-gray-300/30"
-                                        : index === 2
-                                        ? "bg-orange-600/20 border-orange-400/30"
-                                        : "bg-purple-600/20 border-purple-400/30"
+                                          ? "bg-gray-400/20 border-gray-300/30"
+                                          : index === 2
+                                            ? "bg-orange-600/20 border-orange-400/30"
+                                            : "bg-purple-600/20 border-purple-400/30"
                                     }`}
                                   >
                                     <div className="flex items-center justify-between">
@@ -962,36 +1160,102 @@ const LuckyKrishna = () => {
         </div>
       )}
 
-      {/* **Krishna Character** */}
+      {/* **Tap Feedback Ripple Effect** */}
+      {tapFeedback && (
+        <div
+          key={tapFeedback.id}
+          className="fixed pointer-events-none z-50"
+          style={{
+            left: `${tapFeedback.x}%`,
+            top: `${tapFeedback.y}%`,
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <div
+            className={`rounded-full animate-ping ${
+              tapFeedback.isHit
+                ? "bg-yellow-400 w-20 h-20"
+                : "bg-purple-400 w-12 h-12"
+            }`}
+            style={{ opacity: 0.6 }}
+          />
+          <div
+            className={`absolute inset-0 flex items-center justify-center text-2xl animate-bounce ${
+              tapFeedback.isHit ? "" : "opacity-70"
+            }`}
+          >
+            {tapFeedback.isHit ? "✨" : "💨"}
+          </div>
+        </div>
+      )}
+
+      {/* **Krishna Character - Hover for Desktop, Tap for Mobile** */}
       {gameEnabled && (
         <div
-          onMouseEnter={handleHover}
-          className={`fixed cursor-pointer text-center transition-all duration-300 ${
+          onMouseEnter={!isMobile ? handleHover : undefined}
+          onClick={isMobile ? handleCatchAttempt : undefined}
+          onTouchStart={
+            isMobile
+              ? (e) => {
+                  e.preventDefault();
+                  handleCatchAttempt(e);
+                }
+              : undefined
+          }
+          className={`fixed cursor-pointer text-center transition-all duration-300 select-none touch-manipulation ${
             isLoading ? "animate-pulse" : ""
           } ${gameStarted ? "animate-bounce" : ""}`}
           style={krishnaStyle}
         >
-          <div className="relative">
+          {/* Larger tap target for mobile */}
+          <div className={`relative ${isMobile ? "p-4 -m-4" : ""}`}>
+            {/* Tap hint ring for mobile */}
+            {isMobile && gameStarted && canAttempt && showTapHint && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-24 h-24 border-2 border-dashed border-yellow-400 rounded-full animate-pulse opacity-50" />
+                <span className="absolute -bottom-8 text-xs text-yellow-300 font-semibold whitespace-nowrap">
+                  👆 Tap to catch!
+                </span>
+              </div>
+            )}
+
             <img
               src={kpng}
               alt="Lord Krishna"
-              className={`w-16 mx-auto transition-all duration-300 ${
+              className={`${isMobile ? "w-20" : "w-16"} mx-auto transition-all duration-300 ${
                 !canAttempt ? "filter grayscale" : ""
               } ${isLoading ? "animate-spin" : ""} drop-shadow-lg`}
               loading="lazy"
+              draggable="false"
             />
 
             {gameStarted && canAttempt && (
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-transparent to-blue-400 rounded-full opacity-30 animate-pulse" />
+              <div
+                className={`absolute inset-0 bg-gradient-to-r from-yellow-400 via-transparent to-blue-400 rounded-full opacity-30 animate-pulse ${isMobile ? "scale-125" : ""}`}
+              />
             )}
 
             {isLoading && (
               <div className="absolute inset-0 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
             )}
+
+            {/* Near miss streak indicator */}
+            {nearMissStreak > 0 && gameStarted && (
+              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">
+                🔥 {nearMissStreak}x close!
+              </div>
+            )}
+
+            {/* Practice bonus indicator */}
+            {practiceBonus > 0 && gameStarted && (
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
+                🙏 +{Math.round(practiceBonus * 100)}% blessed
+              </div>
+            )}
           </div>
 
           <div
-            className={`font-semibold mt-1 px-2 py-1 rounded-full text-xs transition-all duration-300 ${
+            className={`font-semibold mt-1 px-2 py-1 rounded-full ${isMobile ? "text-sm" : "text-xs"} transition-all duration-300 ${
               canAttempt
                 ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
                 : "bg-gray-600 text-gray-300"

@@ -92,7 +92,7 @@ const Mission = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start pt-6">
-              <Link to="/productpage" className="group w-full sm:w-auto">
+              <Link to="/wishdomportal" className="group w-full sm:w-auto">
                 <div className="relative px-8 py-4 rounded-full overflow-hidden shadow-lg transform transition-all duration-300 group-hover:-translate-y-1">
                   <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500 opacity-90 group-hover:opacity-100 transition-opacity" />
                   <div className="relative flex items-center justify-center gap-2 text-indigo-950 font-bold tracking-wide">

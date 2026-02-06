@@ -715,6 +715,89 @@ export default function WishdomPortal() {
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_URL;
 
+  // ===== BHAKTI API HELPER =====
+  // Call backend API to add bhakti activity with proper points
+  const addBhaktiActivity = useCallback(
+    async (pillar, activity) => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return { success: false, message: "Not logged in" };
+
+        const response = await axios.post(
+          `${baseUrl}/bhakti/add-activity`,
+          { pillar, activity },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+
+        if (response.data.success) {
+          // Update local state with server values
+          setBhaktiProgress((prev) => ({
+            ...prev,
+            [pillar]: response.data.pillarProgress,
+            // Also update smaranam if streak bonus was earned
+            ...(response.data.streak?.bonusEarned > 0 && pillar !== "smaranam"
+              ? {
+                  smaranam:
+                    (prev.smaranam || 0) + response.data.streak.bonusEarned,
+                }
+              : {}),
+          }));
+
+          // Show streak bonus message if earned
+          if (response.data.streak?.bonusEarned > 0) {
+            showToast(response.data.streak.message, 4000);
+          }
+
+          return response.data;
+        }
+
+        return { success: false };
+      } catch (error) {
+        // Handle rate limiting
+        if (error.response?.status === 429) {
+          console.log("Rate limited:", error.response.data.message);
+          return {
+            success: false,
+            rateLimited: true,
+            message: error.response.data.message,
+          };
+        }
+        console.error("Failed to add bhakti activity:", error);
+        return { success: false, message: "Failed to connect" };
+      }
+    },
+    [baseUrl],
+  );
+
+  // Listen for bhakti points from Gita reader
+  useEffect(() => {
+    const handleBhaktiPoints = (event) => {
+      const { pillar, points, description, xpAwarded, leveledUp, newLevel } =
+        event.detail;
+
+      // Update local state
+      setBhaktiProgress((prev) => ({
+        ...prev,
+        [pillar]: (prev[pillar] || 0) + points,
+      }));
+
+      // Show toast
+      showToast(
+        `+${xpAwarded} XP • +${points} ${pillar === "sravanam" ? "Śravaṇam" : pillar}`,
+        3000,
+      );
+
+      // Handle level up
+      if (leveledUp) {
+        showLevelUpNotification(newLevel);
+      }
+    };
+
+    window.addEventListener("bhaktiPointsEarned", handleBhaktiPoints);
+    return () =>
+      window.removeEventListener("bhaktiPointsEarned", handleBhaktiPoints);
+  }, []);
+
   // Protect Route
   useEffect(() => {
     if (!loading && !user) {
@@ -1096,45 +1179,97 @@ export default function WishdomPortal() {
           },
         );
 
-        // Load Bhakti Pillars progress from backend or localStorage
-        if (data.bhaktiProgress) {
-          setBhaktiProgress(data.bhaktiProgress);
+        // Load Bhakti Pillars progress from backend API
+        const token = localStorage.getItem("token");
+        if (token) {
+          try {
+            const bhaktiResponse = await axios.get(
+              `${baseUrl}/bhakti/progress`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              },
+            );
+            if (bhaktiResponse.data.success) {
+              const backendProgress = bhaktiResponse.data.bhaktiPillars || {};
+              setBhaktiProgress({
+                sravanam: backendProgress.sravanam || 0,
+                kirtanam: backendProgress.kirtanam || 0,
+                smaranam: backendProgress.smaranam || 0,
+                archanam: backendProgress.archanam || 0,
+              });
+            }
+          } catch (bhaktiError) {
+            console.log(
+              "Failed to load bhakti from backend, using fallback:",
+              bhaktiError.message,
+            );
+            // Fallback to localStorage
+            if (data.bhaktiProgress) {
+              setBhaktiProgress(data.bhaktiProgress);
+            } else {
+              const savedBhakti = localStorage.getItem(
+                `bhakti_progress_${username}`,
+              );
+              if (savedBhakti) {
+                try {
+                  setBhaktiProgress(JSON.parse(savedBhakti));
+                } catch (e) {
+                  console.error("Failed to parse saved bhakti progress:", e);
+                }
+              }
+            }
+          }
         } else {
-          // Try to load from localStorage as fallback
-          const savedBhakti = localStorage.getItem(
-            `bhakti_progress_${username}`,
-          );
-          if (savedBhakti) {
-            try {
-              setBhaktiProgress(JSON.parse(savedBhakti));
-            } catch (e) {
-              console.error("Failed to parse saved bhakti progress:", e);
+          // No token - use localStorage fallback
+          if (data.bhaktiProgress) {
+            setBhaktiProgress(data.bhaktiProgress);
+          } else {
+            const savedBhakti = localStorage.getItem(
+              `bhakti_progress_${username}`,
+            );
+            if (savedBhakti) {
+              try {
+                setBhaktiProgress(JSON.parse(savedBhakti));
+              } catch (e) {
+                console.error("Failed to parse saved bhakti progress:", e);
+              }
             }
           }
         }
 
-        // Track Smaranam (remembrance) - user returned to the portal
-        const lastVisitKey = `last_portal_visit_${username}`;
-        const lastVisit = localStorage.getItem(lastVisitKey);
-        const now = new Date();
-        const today = now.toDateString();
-
-        if (lastVisit !== today) {
-          // New day visit - add Smaranam point for remembering to return
-          setBhaktiProgress((prev) => {
-            const updated = { ...prev, smaranam: (prev.smaranam || 0) + 1 };
-            localStorage.setItem(
-              `bhakti_progress_${username}`,
-              JSON.stringify(updated),
+        // Track Smaranam (remembrance) via backend daily check-in
+        try {
+          const token = localStorage.getItem("token");
+          if (token) {
+            const checkInResponse = await axios.post(
+              `${baseUrl}/bhakti/daily-check-in`,
+              {},
+              { headers: { Authorization: `Bearer ${token}` } },
             );
-            return updated;
-          });
-          localStorage.setItem(lastVisitKey, today);
 
-          // Show subtle acknowledgment
-          setTimeout(() => {
-            showToast("🙏 Your return is remembered • +1 Smaraṇam", 3000);
-          }, 2000);
+            if (
+              checkInResponse.data.success &&
+              !checkInResponse.data.alreadyCheckedIn
+            ) {
+              // Update local state with the new points
+              setBhaktiProgress((prev) => ({
+                ...prev,
+                smaranam:
+                  (prev.smaranam || 0) + checkInResponse.data.pointsEarned,
+              }));
+
+              // Show subtle acknowledgment
+              setTimeout(() => {
+                showToast(
+                  checkInResponse.data.message ||
+                    "🙏 Your return is remembered • +1 Smaraṇam",
+                  3000,
+                );
+              }, 2000);
+            }
+          }
+        } catch (checkInError) {
+          console.log("Daily check-in skipped:", checkInError.message);
         }
 
         // Load pending daily practice if exists
@@ -1296,21 +1431,26 @@ export default function WishdomPortal() {
             },
           }));
 
-          // Update Bhakti Pillars - Sravanam (Clarity from asking/reading)
-          setBhaktiProgress((prev) => ({
-            ...prev,
-            sravanam: prev.sravanam + 1, // Each wisdom interaction adds clarity
-          }));
+          // Update Bhakti Pillars via backend API - Sravanam (asking spiritual questions)
+          const bhaktiResult = await addBhaktiActivity(
+            "sravanam",
+            "asking_question",
+          );
 
           // Add bonus to Krishna catch game if available
           if (window.addKrishnaPracticeBonus) {
             window.addKrishnaPracticeBonus("daily_wisdom");
           }
 
-          showToast(
-            `+${response.data.experienceGained} XP • +1 Śravaṇam`,
-            2000,
-          );
+          // Show toast with proper points from backend
+          if (bhaktiResult.success) {
+            showToast(
+              `+${response.data.experienceGained} XP • +${bhaktiResult.pointsEarned} Śravaṇam`,
+              2000,
+            );
+          } else if (!bhaktiResult.rateLimited) {
+            showToast(`+${response.data.experienceGained} XP`, 2000);
+          }
         }
 
         if (response.data.leveledUp) {
@@ -1483,11 +1623,10 @@ export default function WishdomPortal() {
 
           const minutes = Math.floor(meditationTime / 60);
 
-          // Update Bhakti Pillars - Archanam (Stillness from meditation)
-          setBhaktiProgress((prev) => ({
-            ...prev,
-            archanam: prev.archanam + minutes, // Each minute adds stillness
-          }));
+          // Update Bhakti Pillars via backend API - Archanam (meditation)
+          // Use meditation_session for sessions, roop_dhyana for longer ones
+          const activity = minutes >= 10 ? "roop_dhyana" : "meditation_session";
+          const bhaktiResult = await addBhaktiActivity("archanam", activity);
 
           // Add bonus to Krishna catch game
           if (window.addKrishnaPracticeBonus) {
@@ -1510,8 +1649,12 @@ export default function WishdomPortal() {
                 ),
               },
             }));
+
+            const pointsMsg = bhaktiResult.success
+              ? `+${bhaktiResult.pointsEarned} Arcanam`
+              : `+${minutes} Arcanam`;
             showToast(
-              `Meditation completed! +${response.data.experience} XP • +${minutes} Arcanam`,
+              `Meditation completed! +${response.data.experience} XP • ${pointsMsg}`,
             );
           }
 
@@ -1578,11 +1721,10 @@ export default function WishdomPortal() {
       if (response.data.success) {
         setTotalChants(response.data.totalChants);
 
-        // Update Bhakti Pillars - Kirtanam (Vibration from chanting)
-        setBhaktiProgress((prev) => ({
-          ...prev,
-          kirtanam: prev.kirtanam + count, // Each chant adds vibration
-        }));
+        // Update Bhakti Pillars via backend API - Kirtanam (chanting)
+        // Use japa_round for 108 counts, chanting_mahamantra for smaller counts
+        const activity = count >= 108 ? "japa_round" : "chanting_mahamantra";
+        const bhaktiResult = await addBhaktiActivity("kirtanam", activity);
 
         // Add bonus to Krishna catch game
         if (window.addKrishnaPracticeBonus) {
@@ -1605,8 +1747,12 @@ export default function WishdomPortal() {
               ),
             },
           }));
+
+          const pointsMsg = bhaktiResult.success
+            ? `+${bhaktiResult.pointsEarned} Kīrtanam`
+            : `+${count} Kīrtanam`;
           showToast(
-            `Mala completed! +${response.data.experience} XP • +${count} Kīrtanam`,
+            `Mala completed! +${response.data.experience} XP • ${pointsMsg}`,
           );
         }
 

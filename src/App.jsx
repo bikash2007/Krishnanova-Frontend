@@ -27,100 +27,106 @@ import Footer from "./components/Footer/Footer";
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+// Configure ScrollTrigger for optimal performance
+ScrollTrigger.config({
+  limitCallbacks: true,
+  ignoreMobileResize: true,
+});
+
 const App = () => {
   const appRef = useRef(null);
   const location = useLocation();
 
-  // GSAP smooth scrolling and animations
+  // GSAP smooth scrolling and animations - optimized for performance
   useLayoutEffect(() => {
+    // Use RAF for smooth updates
+    gsap.ticker.lagSmoothing(0);
+
     const ctx = gsap.context(() => {
-      // Smooth parallax for background elements
-      gsap.utils.toArray(".parallax-bg").forEach((bg) => {
-        gsap.to(bg, {
-          yPercent: 50,
-          ease: "none",
-          scrollTrigger: {
-            trigger: bg,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.5,
-          },
+      // Batch ScrollTriggers for better performance
+      ScrollTrigger.batch(".scroll-reveal", {
+        onEnter: (elements) => {
+          gsap.fromTo(
+            elements,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.1,
+              overwrite: true,
+            },
+          );
+        },
+        start: "top 90%",
+        once: true,
+      });
+
+      ScrollTrigger.batch(".scroll-slide-left", {
+        onEnter: (elements) => {
+          gsap.fromTo(
+            elements,
+            { opacity: 0, x: -50 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.1,
+              overwrite: true,
+            },
+          );
+        },
+        start: "top 90%",
+        once: true,
+      });
+
+      ScrollTrigger.batch(".scroll-slide-right", {
+        onEnter: (elements) => {
+          gsap.fromTo(
+            elements,
+            { opacity: 0, x: 50 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              stagger: 0.1,
+              overwrite: true,
+            },
+          );
+        },
+        start: "top 90%",
+        once: true,
+      });
+
+      // Simplified parallax - only on desktop for performance
+      if (window.innerWidth > 768) {
+        gsap.utils.toArray(".parallax-bg").forEach((bg) => {
+          gsap.to(bg, {
+            yPercent: 30,
+            ease: "none",
+            scrollTrigger: {
+              trigger: bg,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true, // Use true instead of number for native performance
+            },
+          });
         });
-      });
-
-      // Smooth parallax for energy flows
-      gsap.utils.toArray(".energy-flow").forEach((flow, index) => {
-        gsap.to(flow, {
-          yPercent: 20 + index * 10,
-          ease: "none",
-          scrollTrigger: {
-            trigger: flow,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.5,
-          },
-        });
-      });
-
-      // Reveal animations for scroll elements
-      gsap.utils.toArray(".scroll-reveal").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 60 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
-      });
-
-      // Slide from left animations
-      gsap.utils.toArray(".scroll-slide-left").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, x: -80 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
-      });
-
-      // Slide from right animations
-      gsap.utils.toArray(".scroll-slide-right").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, x: 80 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
-      });
+      }
     }, appRef);
 
-    return () => ctx.revert();
+    // Refresh ScrollTrigger after layout settles
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
+    return () => {
+      clearTimeout(refreshTimer);
+      ctx.revert();
+    };
   }, []);
 
   // Handle scrolling after navigation from other routes
@@ -128,23 +134,21 @@ const App = () => {
     if (location.state?.scrollToId) {
       const targetId = location.state.scrollToId;
 
-      // Small delay to ensure the page has fully rendered
-      const timer = setTimeout(() => {
+      // Use requestAnimationFrame for smoother scroll initialization
+      requestAnimationFrame(() => {
         const section = document.getElementById(targetId);
         if (section) {
-          // Use GSAP for smooth scrolling
+          // Use GSAP for smooth scrolling with optimized duration
           gsap.to(window, {
-            duration: 1,
+            duration: 0.8,
             scrollTo: { y: section, offsetY: 0 },
-            ease: "power2.inOut",
+            ease: "power2.out",
           });
         }
 
         // Clear the state to prevent re-scrolling on page refresh
         window.history.replaceState({}, document.title);
-      }, 100);
-
-      return () => clearTimeout(timer);
+      });
     }
   }, [location]);
 
@@ -178,7 +182,6 @@ const App = () => {
           <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-[40%] right-10 animate-float-slow" />
           <FeatherSVG className="absolute w-32 md:w-48 opacity-10 bottom-10 right-10 animate-float-slower" />
           <PeacockFeatherSVG className="absolute w-48 opacity-8 top-1/3 right-1/3 animate-float-slower" />
-
           <LotusSVG className="absolute w-32 opacity-8 bottom-20 left-1/4 animate-float-slow" />
         </div>
 

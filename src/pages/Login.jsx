@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import gsap from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
@@ -65,7 +64,7 @@ export default function Login() {
           rotationY: 0,
           duration: 1,
           ease: "power3.out",
-        }
+        },
       );
 
       // Title animation
@@ -78,7 +77,7 @@ export default function Login() {
           duration: 0.8,
           delay: 0.3,
           ease: "back.out(1.7)",
-        }
+        },
       );
 
       // Form fields stagger animation
@@ -93,7 +92,7 @@ export default function Login() {
           stagger: 0.1,
           delay: 0.5,
           ease: "power3.out",
-        }
+        },
       );
 
       // Button entrance
@@ -106,7 +105,7 @@ export default function Login() {
           duration: 0.6,
           delay: 0.8,
           ease: "power3.out",
-        }
+        },
       );
 
       // Floating animation for decorative elements
@@ -180,7 +179,7 @@ export default function Login() {
     try {
       const response = await axios.post(
         import.meta.env.VITE_API_URL + "/auth/login",
-        formData
+        formData,
       );
       const { token, ...userData } = response.data;
       localStorage.setItem("token", token);
@@ -269,85 +268,24 @@ export default function Login() {
         />
 
         {/* Floating Krishna Elements */}
-        <motion.div
-          className="floating-element absolute top-20 left-10 text-6xl opacity-20"
-          animate={{
-            rotate: 360,
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
+        <div className="floating-element absolute top-20 left-10 text-6xl opacity-20 animate-spin-slow">
           🦚
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="floating-element absolute bottom-20 right-10 text-6xl opacity-20"
-          animate={{
-            rotate: -360,
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
+        <div className="floating-element absolute bottom-20 right-10 text-6xl opacity-20 animate-bounce-slow">
           🪈
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="floating-element absolute top-40 right-20 text-5xl opacity-15"
-          animate={{
-            x: [0, 30, 0],
-            y: [0, -20, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        >
+        <div className="floating-element absolute top-40 right-20 text-5xl opacity-15 animate-pulse">
           🪔
-        </motion.div>
+        </div>
 
         {/* Floating Orbs */}
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl animate-pulse" />
 
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full bg-gradient-to-br from-cyan-400/20 to-blue-500/20 blur-3xl"
-          animate={{
-            x: [0, -30, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+        <div className="absolute bottom-1/4 right-1/4 w-72 h-72 rounded-full bg-gradient-to-br from-cyan-400/20 to-blue-500/20 blur-3xl animate-pulse" />
 
-        <motion.div
-          ref={containerRef}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative w-full max-w-md z-10"
-        >
+        <div ref={containerRef} className="relative w-full max-w-md z-10">
           <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 mt-20 rounded-3xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden">
             {/* Header with Sacred Badge */}
             <div className="bg-gradient-to-r from-amber-400 via-yellow-500 to-orange-500 p-8 text-center relative">
@@ -361,29 +299,18 @@ export default function Login() {
                 }}
               />
 
-              <motion.div
-                ref={titleRef}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring" }}
-                className="text-5xl mb-4 relative z-10"
-              >
+              <div ref={titleRef} className="text-5xl mb-4 relative z-10">
                 🕉️
-              </motion.div>
+              </div>
 
               {/* Sacred Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="inline-flex items-center space-x-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-5 py-2.5 shadow-lg mb-4"
-              >
+              <div className="inline-flex items-center space-x-3 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-5 py-2.5 shadow-lg mb-4">
                 <span className="text-white animate-pulse text-lg">✦</span>
                 <span className="text-white font-medium tracking-wide text-sm">
                   कृष्णं वन्दे जगद्गुरुम्
                 </span>
                 <span className="text-white animate-pulse text-lg">✦</span>
-              </motion.div>
+              </div>
 
               <h1 className="text-3xl font-bold text-white mb-2 relative z-10">
                 Welcome Back, Devotee
@@ -399,13 +326,9 @@ export default function Login() {
               className="p-8 space-y-6"
             >
               {errors.general && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-400/20 backdrop-blur-sm border border-red-400/30 text-red-300 px-4 py-3 rounded-xl text-sm"
-                >
+                <div className="bg-red-400/20 backdrop-blur-sm border border-red-400/30 text-red-300 px-4 py-3 rounded-xl text-sm">
                   {errors.general}
-                </motion.div>
+                </div>
               )}
 
               {/* Identifier Field */}
@@ -489,13 +412,11 @@ export default function Login() {
               </div>
 
               {/* Submit Button */}
-              <motion.button
+              <button
                 ref={buttonRef}
                 type="submit"
                 disabled={loading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="group relative w-full px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
                 <span className="relative text-white font-bold text-lg flex items-center justify-center">
@@ -529,7 +450,7 @@ export default function Login() {
                     </>
                   )}
                 </span>
-              </motion.button>
+              </button>
 
               {/* Divider */}
               <div className="relative">
@@ -565,42 +486,33 @@ export default function Login() {
 
               {/* Trust Badges */}
               <div className="flex justify-center space-x-4 pt-4">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="text-xs text-cyan-300/60 flex items-center space-x-1"
-                >
+                <div className="text-xs text-cyan-300/60 flex items-center space-x-1 hover:scale-110 transition-transform">
                   <span>🔒</span>
                   <span>Secure</span>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="text-xs text-cyan-300/60 flex items-center space-x-1"
-                >
+                </div>
+                <div className="text-xs text-cyan-300/60 flex items-center space-x-1 hover:scale-110 transition-transform">
                   <span>🛡️</span>
                   <span>Protected</span>
-                </motion.div>
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="text-xs text-cyan-300/60 flex items-center space-x-1"
-                >
+                </div>
+                <div className="text-xs text-cyan-300/60 flex items-center space-x-1 hover:scale-110 transition-transform">
                   <span>✨</span>
                   <span>Blessed</span>
-                </motion.div>
+                </div>
               </div>
             </form>
           </div>
 
           {/* Decorative Elements */}
-          <motion.div className="absolute -bottom-4 -right-4 text-4xl text-amber-400/30 rotating-element">
+          <div className="absolute -bottom-4 -right-4 text-4xl text-amber-400/30 rotating-element">
             ॐ
-          </motion.div>
-          <motion.div
+          </div>
+          <div
             className="absolute -top-4 -left-4 text-4xl text-cyan-400/30 rotating-element"
             style={{ animationDelay: "2s" }}
           >
             ✦
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </GoogleOAuthProvider>
   );

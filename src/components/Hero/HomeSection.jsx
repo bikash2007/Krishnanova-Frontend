@@ -433,7 +433,7 @@ const HomeSection = () => {
       </div>
 
       {/* Add custom styles */}
-      <style jsx>{`
+      <style jsx="true">{`
         @media (max-width: 768px) {
           .krishna-container {
             transform-origin: center;

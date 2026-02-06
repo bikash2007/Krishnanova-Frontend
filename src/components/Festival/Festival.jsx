@@ -796,7 +796,7 @@ const Festival = () => {
       </div>
 
       {/* Custom CSS */}
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes float {
           0% {
             transform: translate(0, 0);

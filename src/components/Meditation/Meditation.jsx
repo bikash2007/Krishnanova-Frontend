@@ -1,11 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const Meditation = () => {
   const sectionRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   useEffect(() => {
     // SEO Logic
@@ -54,37 +52,24 @@ const Meditation = () => {
 
       <div className="relative z-10 container mx-auto px-4 md:px-6 h-full flex flex-col justify-center">
         {/* Compact Header */}
-        <motion.div
-          className="text-center mb-6 md:mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-        >
+        <div className="text-center mb-6 md:mb-8">
           <div className="inline-block text-amber-200 text-xs md:text-sm font-medium tracking-[0.2em] uppercase mb-2">
             Spiritual Practice
           </div>
           <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
             Daily Meditation Guide
           </h1>
-        </motion.div>
+        </div>
 
         {/* Main Content Card - Compacted */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.8 }}
-          className="w-full max-w-6xl mx-auto"
-        >
+        <div className="w-full max-w-6xl mx-auto">
           <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col lg:flex-row">
             {/* LEFT: Visual (Smaller on Desktop) */}
             <div className="lg:w-4/12 relative bg-gradient-to-br from-amber-400/10 via-purple-400/10 to-indigo-400/10 p-8 flex flex-col justify-center items-center min-h-[200px] lg:min-h-[450px]">
               {/* Om Animation */}
-              <motion.div
-                className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 backdrop-blur-md border border-amber-400/40 flex items-center justify-center shadow-[0_0_30px_rgba(251,191,36,0.3)] relative z-10"
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 4, repeat: Infinity }}
-              >
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 backdrop-blur-md border border-amber-400/40 flex items-center justify-center shadow-[0_0_30px_rgba(251,191,36,0.3)] relative z-10 animate-pulse">
                 <span className="text-5xl md:text-6xl text-amber-300">ॐ</span>
-              </motion.div>
+              </div>
               <div className="absolute inset-0 z-0">
                 <div
                   className="absolute inset-0 opacity-10 animate-[spin_60s_linear_infinite]"
@@ -148,7 +133,7 @@ const Meditation = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Footer Quote */}
         <div className="text-center mt-6 md:mt-8 opacity-60 text-xs md:text-sm font-serif italic text-amber-100">

@@ -1,38 +1,89 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "./animations.css";
 import "./premium.css";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ProductPage from "./components/Products/ProductPage.jsx";
 
 import { ApiProvider } from "./Context/baseUrl.jsx";
-import SingleProduct from "./components/Products/SingleProduct.jsx";
-import Login from "./pages/Login.jsx";
 import { AuthProvider } from "./Context/AuthContext.jsx";
-import Signup from "./pages/Signup.jsx";
-import Profile from "./pages/Profile.jsx";
-import AdminDashboard from "./components/Dashboard/AdminDashboard.jsx";
-import AdminLayout from "./components/Dashboard/AdminLayout.jsx";
-import ProductManagement from "./components/Dashboard/ProductManagement.jsx";
-import EventManagement from "./components/Dashboard/EventManagement.jsx";
-import UserManagement from "./components/Dashboard/UserManagement.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import WishdomPortal from "./components/WisdomPortal/WishdomPortal.jsx";
-import GitaModule from "./components/WisdomPortal/components/Gita/GitaModule.jsx";
-import CommunityBlog from "./components/Community/CommunityBlog.jsx";
-import BlogManagment from "./components/Dashboard/BlogManagment.jsx";
-import Cart from "./pages/Cart.jsx";
-import MyOrders from "./pages/MyOrders.jsx";
 import { CartProvider } from "./Context/CartContext.jsx";
-import CheckoutPage from "./components/CheckOut.jsx";
-import OrderManagement from "./components/Dashboard/OrderManagment.jsx";
-import BlogPost from "./components/Community/BlogPost.jsx";
-import KrishnaKeychainCustomize from "./pages/KrishnaKeychainCustomize.jsx";
-import GitaManager from "./components/Admin/GitaManager/GitaManager.jsx";
-
 import Layout from "./components/Layout/Layout.jsx";
+
+// ============================================
+// PERFORMANCE OPTIMIZATION: Lazy load all routes
+// This reduces initial bundle size significantly
+// ============================================
+
+// Eagerly loaded - needed immediately
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
+
+// Lazy loaded - loaded only when user navigates to them
+const ProductPage = lazy(() => import("./components/Products/ProductPage.jsx"));
+const SingleProduct = lazy(
+  () => import("./components/Products/SingleProduct.jsx"),
+);
+const Profile = lazy(() => import("./pages/Profile.jsx"));
+const Cart = lazy(() => import("./pages/Cart.jsx"));
+const MyOrders = lazy(() => import("./pages/MyOrders.jsx"));
+const CheckoutPage = lazy(() => import("./components/CheckOut.jsx"));
+const WishdomPortal = lazy(
+  () => import("./components/WisdomPortal/WishdomPortal.jsx"),
+);
+const GitaModule = lazy(
+  () => import("./components/WisdomPortal/components/Gita/GitaModule.jsx"),
+);
+const CommunityBlog = lazy(
+  () => import("./components/Community/CommunityBlog.jsx"),
+);
+const BlogPost = lazy(() => import("./components/Community/BlogPost.jsx"));
+const KrishnaKeychainCustomize = lazy(
+  () => import("./pages/KrishnaKeychainCustomize.jsx"),
+);
+
+// Admin routes - lazy loaded
+const AdminLayout = lazy(
+  () => import("./components/Dashboard/AdminLayout.jsx"),
+);
+const AdminDashboard = lazy(
+  () => import("./components/Dashboard/AdminDashboard.jsx"),
+);
+const ProductManagement = lazy(
+  () => import("./components/Dashboard/ProductManagement.jsx"),
+);
+const EventManagement = lazy(
+  () => import("./components/Dashboard/EventManagement.jsx"),
+);
+const UserManagement = lazy(
+  () => import("./components/Dashboard/UserManagement.jsx"),
+);
+const BlogManagment = lazy(
+  () => import("./components/Dashboard/BlogManagment.jsx"),
+);
+const OrderManagement = lazy(
+  () => import("./components/Dashboard/OrderManagment.jsx"),
+);
+const GitaManager = lazy(
+  () => import("./components/Admin/GitaManager/GitaManager.jsx"),
+);
+
+// Loading spinner for lazy routes
+const RouteLoader = () => (
+  <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-10 h-10 border-3 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+      <p className="text-amber-300/80 text-sm">Loading...</p>
+    </div>
+  </div>
+);
+
+// Wrapper for lazy components
+const LazyRoute = ({ children }) => (
+  <Suspense fallback={<RouteLoader />}>{children}</Suspense>
+);
 
 const router = createBrowserRouter(
   [
@@ -48,7 +99,9 @@ const router = createBrowserRouter(
       path: "/productpage",
       element: (
         <Layout>
-          <ProductPage />
+          <LazyRoute>
+            <ProductPage />
+          </LazyRoute>
         </Layout>
       ),
     },
@@ -56,55 +109,93 @@ const router = createBrowserRouter(
       path: "/product/:id",
       element: (
         <Layout>
-          <SingleProduct />
+          <LazyRoute>
+            <SingleProduct />
+          </LazyRoute>
         </Layout>
       ),
     },
     {
-      path: "/admin", // This is the base path for all admin functionalities
-      element: <AdminLayout />, // This will render the AdminSidebar and an <Outlet />
+      path: "/admin",
+      element: (
+        <LazyRoute>
+          <AdminLayout />
+        </LazyRoute>
+      ),
       children: [
         {
-          index: true, // This makes /admin render AdminDashboard by default
-          element: <AdminDashboard />,
+          index: true,
+          element: (
+            <LazyRoute>
+              <AdminDashboard />
+            </LazyRoute>
+          ),
         },
         {
-          path: "dashboard", // Full path: /admin/dashboard
-          element: <AdminDashboard />,
+          path: "dashboard",
+          element: (
+            <LazyRoute>
+              <AdminDashboard />
+            </LazyRoute>
+          ),
         },
         {
-          path: "products", // Full path: /admin/products
-          element: <ProductManagement />,
+          path: "products",
+          element: (
+            <LazyRoute>
+              <ProductManagement />
+            </LazyRoute>
+          ),
         },
         {
-          path: "events", // Full path: /admin/events
-          element: <EventManagement />,
+          path: "events",
+          element: (
+            <LazyRoute>
+              <EventManagement />
+            </LazyRoute>
+          ),
         },
         {
-          path: "users", // Full path: /admin/users
-          element: <UserManagement />,
+          path: "users",
+          element: (
+            <LazyRoute>
+              <UserManagement />
+            </LazyRoute>
+          ),
         },
         {
-          path: "blogs", // Full path: /admin/users
-          element: <BlogManagment />,
+          path: "blogs",
+          element: (
+            <LazyRoute>
+              <BlogManagment />
+            </LazyRoute>
+          ),
         },
         {
-          path: "orders", // Full path: /admin/users
-          element: <OrderManagement />,
+          path: "orders",
+          element: (
+            <LazyRoute>
+              <OrderManagement />
+            </LazyRoute>
+          ),
         },
         {
-          path: "gita", // Full path: /admin/gita
-          element: <GitaManager />,
+          path: "gita",
+          element: (
+            <LazyRoute>
+              <GitaManager />
+            </LazyRoute>
+          ),
         },
-
-        // Add more admin-specific routes here as needed
       ],
     },
     {
       path: "/cart",
       element: (
         <Layout>
-          <Cart />
+          <LazyRoute>
+            <Cart />
+          </LazyRoute>
         </Layout>
       ),
     },
@@ -112,11 +203,12 @@ const router = createBrowserRouter(
       path: "/orders",
       element: (
         <Layout>
-          <MyOrders />
+          <LazyRoute>
+            <MyOrders />
+          </LazyRoute>
         </Layout>
       ),
     },
-
     {
       path: "/login",
       element: (
@@ -137,7 +229,9 @@ const router = createBrowserRouter(
       path: "/profile",
       element: (
         <Layout>
-          <Profile />
+          <LazyRoute>
+            <Profile />
+          </LazyRoute>
         </Layout>
       ),
     },
@@ -145,7 +239,9 @@ const router = createBrowserRouter(
       path: "/wishdomportal",
       element: (
         <Layout>
-          <WishdomPortal />
+          <LazyRoute>
+            <WishdomPortal />
+          </LazyRoute>
         </Layout>
       ),
     },
@@ -153,7 +249,9 @@ const router = createBrowserRouter(
       path: "/readvagwatgita",
       element: (
         <Layout>
-          <GitaModule />
+          <LazyRoute>
+            <GitaModule />
+          </LazyRoute>
         </Layout>
       ),
     },
@@ -161,7 +259,9 @@ const router = createBrowserRouter(
       path: "/communityblog",
       element: (
         <Layout>
-          <CommunityBlog />
+          <LazyRoute>
+            <CommunityBlog />
+          </LazyRoute>
         </Layout>
       ),
     },
@@ -169,16 +269,19 @@ const router = createBrowserRouter(
       path: "/blog/:id",
       element: (
         <Layout>
-          <BlogPost />
+          <LazyRoute>
+            <BlogPost />
+          </LazyRoute>
         </Layout>
       ),
     },
-
     {
       path: "/checkout",
       element: (
         <Layout>
-          <CheckoutPage />
+          <LazyRoute>
+            <CheckoutPage />
+          </LazyRoute>
         </Layout>
       ),
     },
@@ -186,14 +289,16 @@ const router = createBrowserRouter(
       path: "/customize-krishna",
       element: (
         <Layout>
-          <KrishnaKeychainCustomize />
+          <LazyRoute>
+            <KrishnaKeychainCustomize />
+          </LazyRoute>
         </Layout>
       ),
     },
   ],
   {
-    basename: "/test", // 🎯 ADD THIS LINE
-  }
+    basename: "/test",
+  },
 );
 
 createRoot(document.getElementById("root")).render(
@@ -207,5 +312,5 @@ createRoot(document.getElementById("root")).render(
         </AuthProvider>
       </GoogleOAuthProvider>
     </ApiProvider>
-  </StrictMode>
+  </StrictMode>,
 );

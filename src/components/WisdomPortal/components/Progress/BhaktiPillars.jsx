@@ -206,8 +206,8 @@ const PillarCard = ({
   return (
     <motion.div
       onClick={() => onPillarClick?.(pillarKey)}
-      className="relative backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer group overflow-hidden"
-      whileHover={{ scale: 1.02, y: -5 }}
+      className="relative bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer group overflow-hidden active:scale-[0.98]"
+      style={{ touchAction: 'manipulation' }}
       whileTap={{ scale: 0.98 }}
     >
       {/* Background glow effect */}
@@ -296,14 +296,14 @@ const PillarDetailModal = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-blue-900/95 rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-white/20"
+        className="bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-white/20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -439,7 +439,7 @@ const BhaktiPillarsConnected = ({
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="backdrop-blur-md bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-xl p-4 md:p-6 border border-amber-400/30"
+        className="bg-gradient-to-br from-amber-400/15 to-orange-500/15 rounded-xl p-4 md:p-6 border border-amber-400/30"
       >
         <div className="flex items-center justify-between mb-3">
           <div>
@@ -576,7 +576,7 @@ const BhaktiPillars = ({
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="backdrop-blur-md bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-xl p-4 md:p-6 border border-amber-400/30"
+        className="bg-gradient-to-br from-amber-400/15 to-orange-500/15 rounded-xl p-4 md:p-6 border border-amber-400/30"
       >
         <div className="flex items-center justify-between mb-3">
           <div>

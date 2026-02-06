@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   FaShoppingBag,
   FaUser,
@@ -36,81 +35,111 @@ export default function Navigation() {
   const { user, logout, isAdmin, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdown, setUserDropdown] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [navVisible, setNavVisible] = useState(true);
+  const lastScrollYRef = useRef(0);
   const navRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const baseUrl = useApi();
 
-  // Mouse tracking for glow effect
+  // Scroll direction detection for nav hide/show
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (navRef.current) {
-        const rect = navRef.current.getBoundingClientRect();
-        setMousePosition({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        });
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const lastScrollY = lastScrollYRef.current;
+      const scrollThreshold = 5; // Minimum scroll to trigger hide/show
+
+      // Don't hide nav if mobile menu is open
+      if (menuOpen) {
+        setNavVisible(true);
+        lastScrollYRef.current = currentScrollY;
+        return;
+      }
+
+      // Always show nav at the top of the page
+      if (currentScrollY < 80) {
+        setNavVisible(true);
+        lastScrollYRef.current = currentScrollY;
+        return;
+      }
+
+      // Scrolling down - hide nav
+      if (currentScrollY > lastScrollY + scrollThreshold) {
+        setNavVisible(false);
+        lastScrollYRef.current = currentScrollY;
+      }
+      // Scrolling up - show nav
+      else if (currentScrollY < lastScrollY - scrollThreshold) {
+        setNavVisible(true);
+        lastScrollYRef.current = currentScrollY;
       }
     };
 
-    const nav = navRef.current;
-    if (nav) {
-      nav.addEventListener("mousemove", handleMouseMove);
-      return () => nav.removeEventListener("mousemove", handleMouseMove);
-    }
-  }, []);
-
-  // Scroll to section by id or navigate home
-  const scrollToSection = (id) => {
-    setMenuOpen(false);
-    if (location.pathname === "/") {
-      const section = document.getElementById(id);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Throttle scroll events for performance
+    let ticking = false;
+    const throttledScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
       }
-    } else {
-      navigate("/", { state: { scrollToId: id } });
-    }
-  };
+    };
 
-  const handleLogout = () => {
+    window.addEventListener("scroll", throttledScroll, { passive: true });
+    return () => window.removeEventListener("scroll", throttledScroll);
+  }, [menuOpen]);
+
+  // Memoized scroll handler to prevent recreation
+  const scrollToSection = useCallback(
+    (id) => {
+      setMenuOpen(false);
+      if (location.pathname === "/") {
+        const section = document.getElementById(id);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        navigate("/", { state: { scrollToId: id } });
+      }
+    },
+    [location.pathname, navigate],
+  );
+
+  const handleLogout = useCallback(() => {
     logout();
     navigate("/");
-  };
+  }, [logout, navigate]);
 
-  const getInitial = () => {
+  const getInitial = useCallback(() => {
     if (user?.name) return user.name[0].toUpperCase();
     if (user?.username) return user.username[0].toUpperCase();
     return "U";
-  };
+  }, [user?.name, user?.username]);
 
   return (
     <>
       <nav
         ref={navRef}
-        className="fixed top-0 w-full z-50 backdrop-blur-xl py-3 md:py-4 shadow-lg border-b bg-gradient-to-r from-indigo-900/95 via-purple-900/95 to-blue-900/95"
+        className={`fixed top-0 w-full z-50 backdrop-blur-xl py-3 md:py-4 shadow-lg border-b bg-gradient-to-r from-indigo-900/95 via-purple-900/95 to-blue-900/95 nav-glow-hover transition-all duration-300 ease-out ${
+          navVisible
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
+        }`}
+        style={{
+          willChange: "transform, opacity",
+          backfaceVisibility: "hidden",
+        }}
       >
-        {/* Mouse Glow Effect */}
-        <div
-          className="pointer-events-none absolute w-[400px] h-[400px] opacity-30"
-          style={{
-            background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.2) 0%, transparent 50%)`,
-            transform: `translate3d(${mousePosition.x - 200}px, ${
-              mousePosition.y - 200
-            }px, 0)`,
-            transition: "transform 150ms ease-out",
-            willChange: "transform",
-          }}
-        />
+        {/* OPTIMIZATION: Replaced JS mouse tracking with CSS hover effect */}
+        {/* This gradient now uses CSS and only activates on hover, not every mouse move */}
 
         <div className="mx-auto flex justify-between items-center px-4 sm:px-6 md:px-12 relative z-10">
           {/* Logo */}
-          <motion.button
+          <button
             onClick={() => scrollToSection("home")}
-            className="flex items-center gap-3"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-3 hover:scale-105 active:scale-95 transition-transform"
           >
             <img
               src={logo}
@@ -120,28 +149,20 @@ export default function Navigation() {
             {/* <span className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent hidden sm:block">
               Krishnova
             </span> */}
-          </motion.button>
+          </button>
 
           {/* Desktop Nav */}
           <ul className="hidden lg:flex space-x-4 xl:space-x-6">
             {sectionNavItems.map((item, index) => (
               <li key={item.id}>
-                <motion.button
+                <button
                   onClick={() => scrollToSection(item.id)}
-                  className="relative text-blue-100 font-medium hover:text-amber-300 transition-all duration-200 ease-out px-3 py-2 rounded-lg group/nav"
+                  className="relative text-blue-100 font-medium hover:text-amber-300 hover:scale-110 hover:-translate-y-0.5 transition-all duration-200 ease-out px-3 py-2 rounded-lg group/nav"
                   style={{ transform: "translateZ(0)" }}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: index * 0.1,
-                    scale: { type: "tween", duration: 0.15 },
-                    y: { type: "tween", duration: 0.15 },
-                  }}
                 >
                   {item.label}
                   <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-orange-500 group-hover/nav:w-full ease-out transition-all duration-200" />
-                </motion.button>
+                </button>
               </li>
             ))}
           </ul>
@@ -187,12 +208,10 @@ export default function Navigation() {
             {/* User Avatar/Dropdown */}
             {!loading && user && (
               <div className="relative">
-                <motion.button
-                  className="flex items-center gap-2 focus:outline-none group/avatar p-1"
+                <button
+                  className="flex items-center gap-2 focus:outline-none group/avatar p-1 hover:scale-105 active:scale-95 transition-transform"
                   onClick={() => setUserDropdown((v) => !v)}
                   onBlur={() => setTimeout(() => setUserDropdown(false), 150)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                 >
                   {user.avatar ? (
                     <img
@@ -216,11 +235,10 @@ export default function Navigation() {
                     {user.name?.split(" ")[0]}
                   </span>
 
-                  <motion.svg
-                    className="w-4 h-4 text-amber-300"
+                  <svg
+                    className={`w-4 h-4 text-amber-300 transition-transform duration-200 ${userDropdown ? "rotate-180" : ""}`}
                     fill="none"
                     viewBox="0 0 24 24"
-                    animate={{ rotate: userDropdown ? 180 : 0 }}
                   >
                     <path
                       d="M6 9l6 6 6-6"
@@ -228,65 +246,56 @@ export default function Navigation() {
                       strokeWidth="2"
                       strokeLinecap="round"
                     />
-                  </motion.svg>
-                </motion.button>
+                  </svg>
+                </button>
 
-                <AnimatePresence>
-                  {userDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-48 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl shadow-2xl border border-white/20 py-2 z-50"
+                {userDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl shadow-2xl border border-white/20 py-2 z-50">
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-3 px-4 py-3 text-blue-100 hover:bg-white/10 transition-all duration-200"
+                      onClick={() => setUserDropdown(false)}
                     >
+                      <FaUser size={14} />
+                      <span>Profile</span>
+                    </Link>
+
+                    <Link
+                      to="/orders"
+                      className="flex items-center gap-3 px-4 py-3 text-blue-100 hover:bg-white/10 transition-all duration-200"
+                      onClick={() => setUserDropdown(false)}
+                    >
+                      <FaShoppingBag size={14} />
+                      <span>My Orders</span>
+                    </Link>
+
+                    {isAdmin && (
                       <Link
-                        to="/profile"
-                        className="flex items-center gap-3 px-4 py-3 text-blue-100 hover:bg-white/10 transition-all duration-200"
+                        to="/admin/dashboard"
+                        className="flex items-center gap-3 px-4 py-3 text-amber-300 hover:bg-white/10 transition-all duration-200"
                         onClick={() => setUserDropdown(false)}
                       >
-                        <FaUser size={14} />
-                        <span>Profile</span>
+                        <FaCog size={14} />
+                        <span>Admin Dashboard</span>
                       </Link>
+                    )}
 
-                      <Link
-                        to="/orders"
-                        className="flex items-center gap-3 px-4 py-3 text-blue-100 hover:bg-white/10 transition-all duration-200"
-                        onClick={() => setUserDropdown(false)}
-                      >
-                        <FaShoppingBag size={14} />
-                        <span>My Orders</span>
-                      </Link>
-
-                      {isAdmin && (
-                        <Link
-                          to="/admin/dashboard"
-                          className="flex items-center gap-3 px-4 py-3 text-amber-300 hover:bg-white/10 transition-all duration-200"
-                          onClick={() => setUserDropdown(false)}
-                        >
-                          <FaCog size={14} />
-                          <span>Admin Dashboard</span>
-                        </Link>
-                      )}
-
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-3 w-full text-left px-4 py-3 text-red-400 hover:bg-white/10 transition-all duration-200"
-                      >
-                        <FaSignOutAlt size={14} />
-                        <span>Logout</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 w-full text-left px-4 py-3 text-red-400 hover:bg-white/10 transition-all duration-200"
+                    >
+                      <FaSignOutAlt size={14} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
             {/* Mobile Menu Button */}
-            <motion.button
+            <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="lg:hidden text-amber-300 p-2"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              className="lg:hidden text-amber-300 p-2 hover:scale-110 active:scale-90 transition-transform"
             >
               <svg
                 className="w-6 h-6"
@@ -301,37 +310,27 @@ export default function Navigation() {
                   <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
-            </motion.button>
+            </button>
           </div>
         </div>
       </nav>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-16 left-0 right-0 z-40 backdrop-blur-xl bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-blue-900/95 shadow-2xl border-b border-white/10 lg:hidden"
-          >
-            <div className="px-4 py-6 space-y-2">
-              {sectionNavItems.map((item, index) => (
-                <motion.button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="block w-full text-left px-4 py-3 text-blue-100 font-medium hover:text-amber-300 hover:bg-white/10 rounded-lg transition-all duration-300"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  {item.label}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {menuOpen && (
+        <div className="fixed top-16 left-0 right-0 z-40 backdrop-blur-xl bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-blue-900/95 shadow-2xl border-b border-white/10 lg:hidden">
+          <div className="px-4 py-6 space-y-2">
+            {sectionNavItems.map((item, index) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="block w-full text-left px-4 py-3 text-blue-100 font-medium hover:text-amber-300 hover:bg-white/10 rounded-lg transition-all duration-300"
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }

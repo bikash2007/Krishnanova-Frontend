@@ -102,7 +102,7 @@ const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
       // Generate UI Avatars fallback
       const name = user?.name || "User";
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(
-        name
+        name,
       )}&background=fbbf24&color=1e3a8a&size=128`;
     }
 
@@ -135,7 +135,7 @@ const Avatar = ({ user, size = "w-16 h-16", baseUrl, artistic = true }) => {
             setImageError(true);
             const name = user?.name || "User";
             e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-              name
+              name,
             )}&background=fbbf24&color=1e3a8a&size=128`;
           }}
         />
@@ -208,7 +208,7 @@ const CommentItem = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [isLiked, setIsLiked] = useState(
-    user && comment.likes?.includes(user._id)
+    user && comment.likes?.includes(user._id),
   );
   const [likesCount, setLikesCount] = useState(comment.likes?.length || 0);
   const commentRef = useRef(null);
@@ -224,7 +224,7 @@ const CommentItem = ({
           scale: 1,
           duration: 0.5,
           ease: "power3.out",
-        }
+        },
       );
     }
   }, []);
@@ -263,7 +263,7 @@ const CommentItem = ({
           ease: "back.out(2)",
           yoyo: true,
           repeat: 1,
-        }
+        },
       );
     }
   };
@@ -282,26 +282,26 @@ const CommentItem = ({
       ref={commentRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`${level > 0 ? "ml-8 mt-4" : "mb-6"}`}
+      className={`${level > 0 ? "ml-4 sm:ml-8 mt-3 sm:mt-4" : "mb-4 sm:mb-6"}`}
     >
-      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 p-4">
+      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 p-3 sm:p-4">
         {/* Comment Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-start justify-between mb-2 sm:mb-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <Avatar
               user={comment.author}
-              size="w-10 h-10"
+              size="w-8 h-8 sm:w-10 sm:h-10"
               baseUrl={baseUrl}
               artistic={false}
             />
-            <div>
-              <div className="flex items-center space-x-2">
-                <h5 className="font-semibold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-sm">
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                <h5 className="font-semibold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
                   {comment.author?.name || "Anonymous Devotee"}
                 </h5>
                 <UserBadge user={comment.author} size="sm" />
               </div>
-              <span className="text-blue-100/60 text-xs">
+              <span className="text-blue-100/60 text-[10px] sm:text-xs">
                 {formatTimeAgo(comment.createdAt)}
               </span>
             </div>
@@ -326,19 +326,19 @@ const CommentItem = ({
         </div>
 
         {/* Comment Content */}
-        <div className="mb-3">
+        <div className="mb-2 sm:mb-3">
           {isEditing ? (
             <div className="space-y-2">
               <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="w-full p-3 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none"
+                className="w-full p-2 sm:p-3 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none text-sm"
                 rows="3"
               />
               <div className="flex items-center space-x-2">
                 <motion.button
                   onClick={handleEdit}
-                  className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-lg font-medium hover:from-amber-500 hover:to-orange-600 transition-all duration-200"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-lg font-medium hover:from-amber-500 hover:to-orange-600 transition-all duration-200 text-sm"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -349,14 +349,16 @@ const CommentItem = ({
                     setIsEditing(false);
                     setEditContent(comment.content);
                   }}
-                  className="px-4 py-2 bg-white/10 text-amber-200 rounded-lg font-medium hover:bg-white/20 transition-all duration-200"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 text-amber-200 rounded-lg font-medium hover:bg-white/20 transition-all duration-200 text-sm"
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : (
-            <p className={`text-sm leading-relaxed ${comment.isDeleted ? "italic text-white/40" : "text-blue-100/80"}`}>
+            <p
+              className={`text-xs sm:text-sm leading-relaxed ${comment.isDeleted ? "italic text-white/40" : "text-blue-100/80"}`}
+            >
               {comment.content}
             </p>
           )}
@@ -364,27 +366,27 @@ const CommentItem = ({
 
         {/* Comment Actions */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 sm:space-x-4">
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleLike}
               disabled={!user}
-              className={`like-heart flex items-center space-x-1 text-sm transition-colors duration-200 ${
+              className={`like-heart flex items-center space-x-1 text-xs sm:text-sm transition-colors duration-200 ${
                 isLiked
                   ? "text-amber-400"
                   : "text-amber-200/50 hover:text-amber-300"
               } disabled:opacity-50`}
             >
-              {isLiked ? <FaThumbsUp size={14} /> : <FaRegThumbsUp size={14} />}
+              {isLiked ? <FaThumbsUp size={12} /> : <FaRegThumbsUp size={12} />}
               <span>{likesCount}</span>
             </motion.button>
 
             {canReply && user && (
               <button
                 onClick={() => setShowReplyForm(!showReplyForm)}
-                className="flex items-center space-x-1 text-sm text-cyan-300/50 hover:text-cyan-300 transition-colors duration-200"
+                className="flex items-center space-x-1 text-xs sm:text-sm text-cyan-300/50 hover:text-cyan-300 transition-colors duration-200"
               >
-                <FaReply size={12} />
+                <FaReply size={10} />
                 <span>Reply</span>
               </button>
             )}
@@ -396,12 +398,12 @@ const CommentItem = ({
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            className="mt-4 pt-4 border-t border-amber-400/20"
+            className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-amber-400/20"
           >
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
               <Avatar
                 user={user}
-                size="w-8 h-8"
+                size="w-7 h-7 sm:w-8 sm:h-8"
                 baseUrl={baseUrl}
                 artistic={false}
               />
@@ -410,24 +412,24 @@ const CommentItem = ({
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
                   placeholder="Share your divine thoughts..."
-                  className="w-full p-3 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none"
+                  className="w-full p-2 sm:p-3 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none text-sm"
                   rows="2"
                 />
                 <div className="flex items-center justify-end space-x-2 mt-2">
                   <button
                     onClick={() => setShowReplyForm(false)}
-                    className="px-4 py-2 text-amber-200/60 hover:text-amber-200 font-medium"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 text-amber-200/60 hover:text-amber-200 font-medium text-sm"
                   >
                     Cancel
                   </button>
                   <motion.button
                     onClick={handleReply}
                     disabled={!replyContent.trim()}
-                    className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-lg font-medium hover:from-amber-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-lg font-medium hover:from-amber-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-1 sm:space-x-2 text-sm"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <FaPaperPlane size={12} />
+                    <FaPaperPlane size={10} />
                     <span>Reply</span>
                   </motion.button>
                 </div>
@@ -470,7 +472,7 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
       gsap.fromTo(
         formRef.current,
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
       );
     }
   }, [user]);
@@ -507,12 +509,12 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit}
-      className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 p-6"
+      className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 p-4 sm:p-6"
     >
-      <div className="flex space-x-4">
+      <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
         <Avatar
           user={user}
-          size="w-12 h-12"
+          size="w-10 h-10 sm:w-12 sm:h-12"
           baseUrl={baseUrl}
           artistic={false}
         />
@@ -522,21 +524,22 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share your divine wisdom..."
             maxLength={500}
-            className="w-full p-4 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none"
-            rows="4"
+            className="w-full p-3 sm:p-4 backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl text-blue-100 placeholder-blue-100/50 focus:ring-2 focus:ring-amber-400/50 focus:border-transparent outline-none resize-none text-sm sm:text-base"
+            rows="3"
           />
-          <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center justify-between mt-3 sm:mt-4">
             <span
-              className={`text-sm ${
+              className={`text-xs sm:text-sm ${
                 content.length > 450 ? "text-amber-400" : "text-amber-200/60"
               }`}
             >
-              {content.length}/500 characters
+              {content.length}/500{" "}
+              <span className="hidden sm:inline">characters</span>
             </span>
             <motion.button
               type="submit"
               disabled={!content.trim() || isSubmitting || content.length > 500}
-              className="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-semibold hover:from-amber-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2 shadow-xl"
+              className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-semibold hover:from-amber-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-1 sm:space-x-2 shadow-xl text-sm sm:text-base"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -547,7 +550,7 @@ const CommentForm = ({ user, baseUrl, onSubmit }) => {
                   className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                 />
               ) : (
-                <FaPaperPlane size={14} />
+                <FaPaperPlane size={12} className="sm:w-[14px] sm:h-[14px]" />
               )}
               <span>{isSubmitting ? "Posting..." : "Post Comment"}</span>
             </motion.button>
@@ -579,7 +582,7 @@ const RelatedPost = ({ post, baseUrl, index }) => {
             start: "top bottom-=100",
             toggleActions: "play none none reverse",
           },
-        }
+        },
       );
     }
   }, [index]);
@@ -685,11 +688,11 @@ const BlogPost = () => {
       document.title = `${post.title} | Krishnova Community Blog`;
 
       const metaDescription = document.querySelector(
-        'meta[name="description"]'
+        'meta[name="description"]',
       );
       const description = `${post.content.substring(
         0,
-        150
+        150,
       )}... Read more spiritual wisdom from the Krishnova community.`;
 
       if (metaDescription) {
@@ -722,7 +725,7 @@ const BlogPost = () => {
 
       ogTags.forEach((tag) => {
         let element = document.querySelector(
-          `meta[property="${tag.property}"]`
+          `meta[property="${tag.property}"]`,
         );
         if (!element) {
           element = document.createElement("meta");
@@ -804,7 +807,7 @@ const BlogPost = () => {
             scale: 1,
             duration: 1,
             ease: "power3.out",
-          }
+          },
         );
 
         // Content fade in
@@ -817,7 +820,7 @@ const BlogPost = () => {
             duration: 0.8,
             delay: 0.3,
             ease: "power3.out",
-          }
+          },
         );
 
         // Stats counter animation
@@ -831,7 +834,7 @@ const BlogPost = () => {
               duration: 0.6,
               stagger: 0.1,
               ease: "back.out(1.7)",
-            }
+            },
           );
         }
 
@@ -903,7 +906,7 @@ const BlogPost = () => {
       // We still use the main list for related posts, but handle the new structure
       const res = await axios.get(`${API}/blog?limit=4`);
       const postsArray = res.data.posts || [];
-      
+
       const related = postsArray
         .filter((p) => p._id !== id)
         .sort(() => Math.random() - 0.5)
@@ -927,7 +930,7 @@ const BlogPost = () => {
         {},
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        },
       );
 
       setIsLiked(!isLiked);
@@ -943,7 +946,7 @@ const BlogPost = () => {
           ease: "back.out(2)",
           yoyo: true,
           repeat: 1,
-        }
+        },
       );
     } catch (error) {
       console.error("Error liking post:", error);
@@ -980,7 +983,7 @@ const BlogPost = () => {
               duration: 0.5,
             });
           },
-        }
+        },
       );
     }
   };
@@ -992,7 +995,7 @@ const BlogPost = () => {
         { postId: id, content },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        },
       );
       fetchComments();
     } catch (error) {
@@ -1007,7 +1010,7 @@ const BlogPost = () => {
         { postId: id, content, parentComment: parentCommentId },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        },
       );
       fetchComments();
     } catch (error) {
@@ -1024,7 +1027,7 @@ const BlogPost = () => {
         {},
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        },
       );
       fetchComments();
       return res.data;
@@ -1041,7 +1044,7 @@ const BlogPost = () => {
         { content },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        },
       );
       fetchComments();
     } catch (error) {
@@ -1156,12 +1159,12 @@ const BlogPost = () => {
         className="fixed top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-full blur-3xl -z-10"
       />
 
-      <div className="container max-w-4xl mx-auto px-6 pt-24 pb-16 relative z-10">
+      <div className="container max-w-4xl mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-12 sm:pb-16 relative z-10">
         {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="mb-8"
+          className="mb-4 sm:mb-8"
         >
           <Link
             to="/communityblog"
@@ -1197,28 +1200,32 @@ const BlogPost = () => {
 
           <div className="relative border border-white/20 rounded-3xl shadow-2xl backdrop-blur-sm overflow-hidden hover:border-amber-400/50 transition-all duration-300">
             {/* Post Header */}
-            <div className="p-8 pb-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
+            <div className="p-4 sm:p-8 pb-4 sm:pb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
+                <div className="flex items-center space-x-3 sm:space-x-4">
                   <Avatar
                     user={post.author}
                     baseUrl={baseUrl}
-                    size="w-16 h-16"
+                    size="w-12 h-12 sm:w-16 sm:h-16"
                     artistic={true}
                   />
-                  <div>
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h4 className="font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-lg">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1 sm:mb-2">
+                      <h4 className="font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent text-base sm:text-lg truncate max-w-[150px] sm:max-w-none">
                         {post.author?.name || "Divine Devotee"}
                       </h4>
-                      <UserBadge user={post.author} size="md" />
+                      <UserBadge user={post.author} size="sm" />
                     </div>
-                    <div className="flex items-center space-x-3 text-blue-100/60 text-sm">
-                      <FaCalendarAlt size={12} />
-                      <span>{formatTimeAgo(post.createdAt)}</span>
-                      <FaDotCircle size={4} />
-                      <FaGlobe size={12} />
-                      <span>Public Post</span>
+                    <div className="flex flex-wrap items-center gap-2 sm:space-x-3 text-blue-100/60 text-xs sm:text-sm">
+                      <div className="flex items-center space-x-1">
+                        <FaCalendarAlt size={10} />
+                        <span>{formatTimeAgo(post.createdAt)}</span>
+                      </div>
+                      <span className="hidden sm:inline">•</span>
+                      <div className="flex items-center space-x-1">
+                        <FaGlobe size={10} />
+                        <span>Public Post</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1231,9 +1238,9 @@ const BlogPost = () => {
                       rotate: [0, 5, -5, 0],
                     }}
                     transition={{ duration: 3, repeat: Infinity }}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-500 text-white text-sm font-bold rounded-full shadow-lg"
+                    className="flex items-center space-x-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-500 text-white text-xs sm:text-sm font-bold rounded-full shadow-lg self-start sm:self-auto"
                   >
-                    <FaSun size={12} />
+                    <FaSun size={10} />
                     <span>DIVINE TRENDING</span>
                   </motion.div>
                 )}
@@ -1244,52 +1251,62 @@ const BlogPost = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-6"
+                className="inline-flex items-center space-x-2 sm:space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-3 sm:px-5 py-2 sm:py-2.5 shadow-lg mb-4 sm:mb-6"
               >
-                <span className="text-amber-300 animate-pulse text-lg">✦</span>
-                <span className="text-amber-100 font-medium tracking-wide text-sm">
+                <span className="text-amber-300 animate-pulse text-base sm:text-lg">
+                  ✦
+                </span>
+                <span className="text-amber-100 font-medium tracking-wide text-xs sm:text-sm">
                   कृष्णं वन्दे जगद्गुरुम्
                 </span>
-                <span className="text-amber-300 animate-pulse text-lg">✦</span>
+                <span className="text-amber-300 animate-pulse text-base sm:text-lg">
+                  ✦
+                </span>
               </motion.div>
 
               {/* Post Title */}
-              <motion.h1 className="post-title text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6 leading-tight">
+              <motion.h1 className="post-title text-xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-4 sm:mb-6 leading-tight">
                 {post.title}
               </motion.h1>
 
               {/* Engagement Stats */}
-              <div ref={statsRef} className="flex items-center space-x-6 mb-6">
+              <div
+                ref={statsRef}
+                className="flex flex-wrap items-center gap-3 sm:gap-6 mb-4 sm:mb-6"
+              >
                 <div className="stat-item flex items-center space-x-2">
                   <div className="flex -space-x-1">
                     {[...Array(Math.min(3, likesCount))].map((_, i) => (
                       <div
                         key={i}
-                        className={`w-6 h-6 rounded-full border-2 border-white shadow-lg ${
+                        className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white shadow-lg ${
                           i === 0
                             ? "bg-gradient-to-r from-amber-400 to-orange-500"
                             : i === 1
-                            ? "bg-gradient-to-r from-purple-400 to-blue-500"
-                            : "bg-gradient-to-r from-cyan-400 to-teal-500"
+                              ? "bg-gradient-to-r from-purple-400 to-blue-500"
+                              : "bg-gradient-to-r from-cyan-400 to-teal-500"
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="text-sm font-semibold text-amber-200">
-                    {likesCount} divine likes
+                  <span className="text-xs sm:text-sm font-semibold text-amber-200">
+                    {likesCount}{" "}
+                    <span className="hidden sm:inline">divine</span> likes
                   </span>
                 </div>
 
                 <div className="stat-item flex items-center space-x-1 text-cyan-300">
-                  <FaEye size={14} />
-                  <span className="text-sm">
+                  <FaEye size={12} />
+                  <span className="text-xs sm:text-sm">
                     {Math.floor(Math.random() * 200) + 50} views
                   </span>
                 </div>
 
                 <div className="stat-item flex items-center space-x-1 text-purple-300">
-                  <FaComment size={14} />
-                  <span className="text-sm">{comments.length} comments</span>
+                  <FaComment size={12} />
+                  <span className="text-xs sm:text-sm">
+                    {comments.length} comments
+                  </span>
                 </div>
               </div>
             </div>
@@ -1300,7 +1317,7 @@ const BlogPost = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="relative mx-8 mb-8 overflow-hidden rounded-2xl shadow-2xl"
+                className="relative mx-4 sm:mx-8 mb-6 sm:mb-8 overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl"
               >
                 <img
                   src={
@@ -1316,10 +1333,10 @@ const BlogPost = () => {
             )}
 
             {/* Post Content */}
-            <div ref={contentRef} className="px-8 pb-8">
+            <div ref={contentRef} className="px-4 sm:px-8 pb-6 sm:pb-8">
               <motion.div className="post-content relative">
-                <FaQuoteLeft className="absolute -top-4 -left-4 text-amber-200/30 text-3xl" />
-                <div className="text-blue-100/80 text-lg leading-relaxed pl-8 pr-4">
+                <FaQuoteLeft className="absolute -top-2 sm:-top-4 -left-2 sm:-left-4 text-amber-200/30 text-xl sm:text-3xl" />
+                <div className="text-blue-100/80 text-base sm:text-lg leading-relaxed pl-6 sm:pl-8 pr-2 sm:pr-4">
                   <p className="whitespace-pre-wrap font-light">
                     {post.content}
                   </p>
@@ -1331,13 +1348,13 @@ const BlogPost = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="flex items-center justify-between mt-8 pt-6 border-t border-amber-400/20"
+                className="flex items-center justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-amber-400/20"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-1 sm:space-x-4">
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={handleLike}
-                    className={`like-button flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                    className={`like-button flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full transition-all duration-300 ${
                       isLiked
                         ? "text-amber-400 bg-amber-400/20 hover:bg-amber-400/30"
                         : "text-amber-200/60 hover:text-amber-300 hover:bg-amber-400/10"
@@ -1348,40 +1365,49 @@ const BlogPost = () => {
                       transition={{ duration: 0.3 }}
                     >
                       {isLiked ? (
-                        <FaHeart size={20} />
+                        <FaHeart size={16} className="sm:w-5 sm:h-5" />
                       ) : (
-                        <FaRegHeart size={20} />
+                        <FaRegHeart size={16} className="sm:w-5 sm:h-5" />
                       )}
                     </motion.div>
-                    <span className="font-semibold">{likesCount}</span>
+                    <span className="font-semibold text-sm sm:text-base">
+                      {likesCount}
+                    </span>
                   </motion.button>
 
-                  <button className="flex items-center space-x-2 px-4 py-2 rounded-full text-cyan-300/60 hover:text-cyan-300 hover:bg-cyan-400/10 transition-all duration-300">
-                    <FaComment size={18} />
-                    <span className="font-semibold">{comments.length}</span>
+                  <button className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full text-cyan-300/60 hover:text-cyan-300 hover:bg-cyan-400/10 transition-all duration-300">
+                    <FaComment size={14} className="sm:w-[18px] sm:h-[18px]" />
+                    <span className="font-semibold text-sm sm:text-base">
+                      {comments.length}
+                    </span>
                   </button>
 
                   <button
                     onClick={handleShare}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-full text-purple-300/60 hover:text-purple-300 hover:bg-purple-400/10 transition-all duration-300"
+                    className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-1.5 sm:py-2 rounded-full text-purple-300/60 hover:text-purple-300 hover:bg-purple-400/10 transition-all duration-300"
                   >
-                    <FaShareAlt size={16} />
-                    <span className="font-semibold">Share</span>
+                    <FaShareAlt size={14} className="sm:w-4 sm:h-4" />
+                    <span className="font-semibold text-sm sm:text-base hidden sm:inline">
+                      Share
+                    </span>
                   </button>
                 </div>
 
                 <button
                   onClick={() => setIsBookmarked(!isBookmarked)}
-                  className={`p-3 rounded-full transition-all duration-300 ${
+                  className={`p-2 sm:p-3 rounded-full transition-all duration-300 ${
                     isBookmarked
                       ? "text-yellow-400 bg-yellow-400/20 hover:bg-yellow-400/30"
                       : "text-yellow-300/60 hover:text-yellow-300 hover:bg-yellow-400/10"
                   }`}
                 >
                   {isBookmarked ? (
-                    <FaBookmark size={18} />
+                    <FaBookmark size={16} className="sm:w-[18px] sm:h-[18px]" />
                   ) : (
-                    <FaRegBookmark size={18} />
+                    <FaRegBookmark
+                      size={16}
+                      className="sm:w-[18px] sm:h-[18px]"
+                    />
                   )}
                 </button>
               </motion.div>
@@ -1401,15 +1427,15 @@ const BlogPost = () => {
           transition={{ delay: 0.6, duration: 0.8 }}
           className="mb-12"
         >
-          <div className="flex items-center space-x-3 mb-8">
+          <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-8">
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="w-8 h-8 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center"
+              className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0"
             >
-              <FaComment className="text-white text-sm" />
+              <FaComment className="text-white text-xs sm:text-sm" />
             </motion.div>
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
+            <h3 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
               Divine Discussion ({comments.length})
             </h3>
           </div>
@@ -1474,16 +1500,16 @@ const BlogPost = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="w-8 h-8 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full flex items-center justify-center"
+                className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0"
               >
-                <FaInfinity className="text-white text-sm" />
+                <FaInfinity className="text-white text-xs sm:text-sm" />
               </motion.div>
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-300 via-cyan-300 to-purple-300 bg-clip-text text-transparent">
+              <h3 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-purple-300 via-cyan-300 to-purple-300 bg-clip-text text-transparent">
                 Continue Your Spiritual Journey
               </h3>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               {relatedPosts.map((relatedPost, index) => (
                 <RelatedPost
                   key={relatedPost._id}
@@ -1501,18 +1527,19 @@ const BlogPost = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1 }}
-          className="text-center mt-16"
+          className="text-center mt-10 sm:mt-16"
         >
           <Link
             to="/communityblog"
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group"
+            className="inline-flex items-center px-5 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full font-bold text-sm sm:text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 group"
           >
-            <FaUserFriends className="mr-3 text-xl" />
-            <span>Explore More Divine Wisdom</span>
+            <FaUserFriends className="mr-2 sm:mr-3 text-lg sm:text-xl" />
+            <span className="hidden sm:inline">Explore More Divine Wisdom</span>
+            <span className="sm:hidden">Explore More</span>
             <motion.div
               animate={{ x: [0, 5, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="ml-3"
+              className="ml-2 sm:ml-3"
             >
               <FaArrowLeft className="rotate-180" />
             </motion.div>

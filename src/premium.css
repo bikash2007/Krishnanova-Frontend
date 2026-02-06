@@ -171,11 +171,11 @@ body {
 ========================================= */
 @media (max-width: 768px) {
 
-    /* Reduce heavy animations on mobile */
+    /* CRITICAL: Disable heavy animations on mobile completely */
     .animate-slow-spin,
     .animate-spin-very-slow,
     .animate-spin-reverse-slow {
-        animation-duration: 60s !important;
+        animation: none !important;
     }
 
     /* Disable cursor effects on touch devices */
@@ -184,27 +184,80 @@ body {
         display: none !important;
     }
 
-    /* Reduce parallax complexity */
+    /* Disable parallax on mobile - major performance gain */
     .parallax-bg {
         transform: none !important;
     }
 
-    /* Optimize backdrop blur for mobile performance */
-    .backdrop-blur-xl {
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+    /* CRITICAL: Reduce backdrop blur on mobile - very expensive on GPU */
+    .backdrop-blur-xl,
+    .backdrop-blur-lg,
+    .backdrop-blur-md {
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
     }
 
-    /* Reduce shadow complexity on mobile */
+    /* Simplify shadows on mobile */
     .shadow-2xl {
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
     }
 
-    /* Reduce floating elements on small screens */
+    /* Disable floating animations on mobile - saves battery and CPU */
     .animate-float-slow,
     .animate-float-slower {
-        animation-duration: 12s !important;
+        animation: none !important;
     }
+
+    /* Disable pulse animations on mobile */
+    .animate-pulse {
+        animation: none !important;
+    }
+
+    /* Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* Navigation glow hover effect - CSS only, no JS needed */
+.nav-glow-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(251, 191, 36, 0.15) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.nav-glow-hover:hover::before {
+    opacity: 1;
+}
+
+/* =========================================
+   GPU ACCELERATION HINTS
+========================================= */
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+/* Force GPU layer for smooth scrolling containers */
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 /* =========================================

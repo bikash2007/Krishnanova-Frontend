@@ -47,14 +47,7 @@ const Button = ({
     switch (variant) {
       case "krishna":
         return {
-          classes: `
-            text-white font-bold
-            bg-gradient-to-r from-[${colors.primary}] via-[${colors.deepTeal}] to-[${colors.primary}]
-            hover:from-[${colors.deepTeal}] hover:via-[${colors.primary}] hover:to-[${colors.deepTeal}]
-            hover:shadow-[0_0_30px_${colors.primary}60]
-            focus:ring-[${colors.primary}]/30
-            border border-[${colors.primary}]/20
-          `,
+          classes: `text-white font-bold border border-white/20`,
           style: {
             background: `linear-gradient(135deg, ${colors.primary}, ${colors.deepTeal}, ${colors.primary})`,
             boxShadow: `0 4px 15px ${colors.primary}40`,
@@ -66,18 +59,10 @@ const Button = ({
 
       case "secondary":
         return {
-          classes: `
-            text-[${colors.secondary}] font-bold
-            bg-gradient-to-r from-white to-[${colors.cream}]
-            border-2 border-[${colors.secondary}]/30
-            hover:bg-gradient-to-r hover:from-[${colors.cream}] hover:to-white
-            hover:border-[${colors.secondary}]/50
-            hover:shadow-[0_0_20px_${colors.secondary}30]
-            focus:ring-[${colors.secondary}]/20
-          `,
+          classes: `font-bold border-2`,
           style: {
             background: `linear-gradient(135deg, white, ${colors.cream})`,
-            borderColor: `${colors.secondary}30`,
+            borderColor: `${colors.secondary}50`,
             color: colors.secondary,
             boxShadow: `0 4px 15px ${colors.secondary}20`,
           },
@@ -85,14 +70,7 @@ const Button = ({
 
       case "accent":
         return {
-          classes: `
-            text-white font-bold
-            bg-gradient-to-r from-[${colors.accent}] via-[${colors.secondary}] to-[${colors.accent}]
-            hover:from-[${colors.secondary}] hover:via-[${colors.accent}] hover:to-[${colors.secondary}]
-            hover:shadow-[0_0_25px_${colors.accent}50]
-            focus:ring-[${colors.accent}]/30
-            border border-[${colors.accent}]/20
-          `,
+          classes: `text-white font-bold border border-white/20`,
           style: {
             background: `linear-gradient(135deg, ${colors.accent}, ${colors.secondary}, ${colors.accent})`,
             boxShadow: `0 4px 15px ${colors.accent}40`,
@@ -101,14 +79,7 @@ const Button = ({
 
       case "divine":
         return {
-          classes: `
-            text-white font-bold
-            bg-gradient-to-r from-[${colors.primary}] via-[${colors.accent}] to-[${colors.secondary}]
-            hover:from-[${colors.secondary}] hover:via-[${colors.primary}] hover:to-[${colors.accent}]
-            hover:shadow-[0_0_35px_${colors.primary}40]
-            focus:ring-[${colors.primary}]/30
-            border border-white/20
-          `,
+          classes: `text-white font-bold border border-white/20`,
           style: {
             background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent}, ${colors.secondary})`,
             boxShadow: `0 4px 15px ${colors.primary}30`,
@@ -117,14 +88,7 @@ const Button = ({
 
       case "danger":
         return {
-          classes: `
-            text-white font-bold
-            bg-gradient-to-r from-[${colors.warmRed}] to-[${colors.secondary}]
-            hover:from-[${colors.secondary}] hover:to-[${colors.warmRed}]
-            hover:shadow-[0_0_25px_${colors.warmRed}50]
-            focus:ring-[${colors.warmRed}]/30
-            border border-[${colors.warmRed}]/20
-          `,
+          classes: `text-white font-bold border border-white/20`,
           style: {
             background: `linear-gradient(135deg, ${colors.warmRed}, ${colors.secondary})`,
             boxShadow: `0 4px 15px ${colors.warmRed}40`,
@@ -133,15 +97,7 @@ const Button = ({
 
       case "ghost":
         return {
-          classes: `
-            text-[${colors.primary}] font-semibold
-            bg-transparent
-            border-2 border-[${colors.primary}]/30
-            hover:bg-[${colors.primary}]/10
-            hover:border-[${colors.primary}]/50
-            hover:shadow-[0_0_20px_${colors.primary}20]
-            focus:ring-[${colors.primary}]/20
-          `,
+          classes: `font-semibold border-2`,
           style: {
             backgroundColor: "transparent",
             borderColor: `${colors.primary}50`,

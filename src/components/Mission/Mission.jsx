@@ -1,10 +1,8 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const Mission = () => {
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   useEffect(() => {
     // Keep SEO Logic
@@ -61,12 +59,7 @@ const Mission = () => {
       <div className="relative z-10 container mx-auto px-6 md:px-12 h-full flex flex-col justify-center">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           {/* Main Content (Left) */}
-          <motion.div
-            className="lg:col-span-5 space-y-8 text-center lg:text-left"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-          >
+          <div className="lg:col-span-5 space-y-8 text-center lg:text-left">
             {/* Sacred Badge */}
             <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/10 to-orange-500/10 backdrop-blur-md border border-amber-400/20 rounded-full px-4 py-2 mx-auto lg:mx-0 shadow-[0_0_15px_rgba(251,191,36,0.1)]">
               <span className="text-amber-300 animate-pulse text-sm">✦</span>
@@ -104,15 +97,10 @@ const Mission = () => {
                 </div>
               </Link>
             </div>
-          </motion.div>
+          </div>
 
           {/* Visual Grid (Right) */}
-          <motion.div
-            className="lg:col-span-7"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
+          <div className="lg:col-span-7">
             <div className="grid grid-cols-2 gap-4 md:gap-8 relative">
               {/* Decorative Glow */}
               <div className="absolute inset-0 bg-amber-500/5 blur-3xl rounded-full -z-10" />
@@ -138,7 +126,7 @@ const Mission = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

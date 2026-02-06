@@ -51,20 +51,19 @@ const AchievementsTab = ({
       ].map((view) => {
         const Icon = view.icon;
         return (
-          <motion.button
+          <button
             key={view.id}
             onClick={() => setActiveView(view.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all active:scale-95 ${
               activeView === view.id
                 ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg"
                 : "bg-white/10 text-blue-100/70 hover:bg-white/20"
             }`}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            style={{ touchAction: 'manipulation' }}
           >
             <Icon className="text-lg" />
             {view.label}
-          </motion.button>
+          </button>
         );
       })}
     </div>
@@ -157,17 +156,17 @@ const AchievementsTab = ({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-4 md:p-6"
+          className="bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-4 md:p-6"
         >
           <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 md:mb-4">
             Unlocked Achievements
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {userStats.achievements.map((achievement, index) => (
-              <motion.div
+              <div
                 key={achievement.id || index}
-                className="text-center p-3 md:p-4 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-lg md:rounded-xl border border-amber-400/30"
-                whileHover={{ scale: 1.05 }}
+                className="text-center p-3 md:p-4 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-lg md:rounded-xl border border-amber-400/30 transition-transform hover:scale-105"
+                style={{ touchAction: 'manipulation' }}
               >
                 <div className="text-2xl md:text-3xl mb-1 md:mb-2">
                   {achievement.icon}
@@ -185,7 +184,7 @@ const AchievementsTab = ({
                     </span>
                   </div>
                 )}
-              </motion.div>
+              </div>
             ))}
           </div>
         </motion.div>

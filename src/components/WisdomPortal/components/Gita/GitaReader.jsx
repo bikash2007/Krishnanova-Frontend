@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  GiScrollUnfurled,
-  GiLotusFlower,
-  GiWhiteBook,
-} from "react-icons/gi";
+import { GiScrollUnfurled, GiLotusFlower, GiWhiteBook } from "react-icons/gi";
 import {
   IoArrowBack,
   IoArrowForward,
@@ -37,13 +33,13 @@ const GitaReader = ({ chapter, initialVerse = 1, onBack }) => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
       const data = await response.json();
       setVerseData(data);
       setCompleted(data.completed || false);
       setBookmarked(data.bookmarked || false);
-      
+
       // Get total verses for this chapter
       if (data.totalVerses) {
         setTotalVerses(data.totalVerses);
@@ -69,11 +65,29 @@ const GitaReader = ({ chapter, initialVerse = 1, onBack }) => {
             chapter,
             verse: currentVerse,
           }),
-        }
+        },
       );
 
-      if (response.ok) {
+      const data = await response.json();
+      if (response.ok && data.success) {
         setCompleted(true);
+
+        // Show toast with bhakti points if available
+        if (data.bhaktiPoints) {
+          // Dispatch custom event for parent component to show toast
+          window.dispatchEvent(
+            new CustomEvent("bhaktiPointsEarned", {
+              detail: {
+                pillar: data.bhaktiPoints.pillar,
+                points: data.bhaktiPoints.points,
+                description: data.bhaktiPoints.description,
+                xpAwarded: data.xpAwarded,
+                leveledUp: data.leveledUp,
+                newLevel: data.newLevel,
+              },
+            }),
+          );
+        }
       }
     } catch (error) {
       console.error("Failed to mark complete:", error);

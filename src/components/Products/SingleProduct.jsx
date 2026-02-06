@@ -570,7 +570,10 @@ export default function SingleProduct() {
   return (
     <div ref={mainRef} className="min-h-screen relative">
       {/* Hero Product Section */}
-      <section ref={heroRef} className="relative pt-20 pb-16 overflow-hidden">
+      <section
+        ref={heroRef}
+        className="relative pt-16 sm:pt-20 pb-8 sm:pb-16 overflow-hidden"
+      >
         {/* Background Patterns */}
         <div className="hero-bg-pattern absolute inset-0 pointer-events-none">
           {/* <div
@@ -594,7 +597,7 @@ export default function SingleProduct() {
 
         {/* Floating Orbs */}
         <motion.div
-          className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl pointer-events-none"
+          className="absolute top-20 left-10 w-20 sm:w-32 h-20 sm:h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 blur-3xl pointer-events-none hidden sm:block"
           animate={{
             x: [0, 50, 0],
             y: [0, -30, 0],
@@ -606,22 +609,22 @@ export default function SingleProduct() {
           }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
           {/* Back Button */}
           <motion.button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-amber-200 hover:text-amber-300 font-semibold mb-8 group"
+            className="flex items-center gap-2 text-amber-200 hover:text-amber-300 font-semibold mb-4 sm:mb-8 group text-sm sm:text-base"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             whileHover={{ x: -8 }}
           >
-            <span className="text-xl group-hover:-translate-x-2 transition-transform">
+            <span className="text-lg sm:text-xl group-hover:-translate-x-2 transition-transform">
               ←
             </span>
-            <span>Back to Divine Collection</span>
+            <span>Back to Collection</span>
           </motion.button>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-start">
             {/* Product Media */}
             <motion.div
               ref={imageRef}
@@ -631,19 +634,19 @@ export default function SingleProduct() {
             >
               {/* Sacred Badge */}
               <motion.div
-                className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20"
+                className="absolute -top-2 sm:-top-4 left-1/2 transform -translate-x-1/2 z-20"
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
               >
-                <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg">
-                  <span className="text-amber-300 animate-pulse text-lg">
+                <div className="inline-flex items-center space-x-1.5 sm:space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-3 sm:px-5 py-1.5 sm:py-2.5 shadow-lg">
+                  <span className="text-amber-300 animate-pulse text-sm sm:text-lg">
                     ✦
                   </span>
-                  <span className="text-amber-100 font-medium tracking-wide text-sm">
+                  <span className="text-amber-100 font-medium tracking-wide text-xs sm:text-sm whitespace-nowrap">
                     Blessed & Authentic
                   </span>
-                  <span className="text-amber-300 animate-pulse text-lg">
+                  <span className="text-amber-300 animate-pulse text-sm sm:text-lg">
                     ✦
                   </span>
                 </div>
@@ -651,7 +654,7 @@ export default function SingleProduct() {
 
               {/* Main Product Display */}
               <motion.div
-                className="aspect-square backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl overflow-hidden shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 flex items-center justify-center relative group cursor-zoom-in"
+                className="aspect-square backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 flex items-center justify-center relative group cursor-zoom-in"
                 whileHover={{ scale: 1.02 }}
                 onClick={() => setImageZoom(!imageZoom)}
               >
@@ -660,7 +663,7 @@ export default function SingleProduct() {
                     <motion.img
                       src={getMediaUrl(mediaList[activeMediaIndex].src)}
                       alt={product.title}
-                      className="w-full h-full object-contain p-8"
+                      className="w-full h-full object-contain p-4 sm:p-8"
                       animate={{
                         scale: imageZoom ? 1.5 : 1,
                       }}
@@ -670,23 +673,23 @@ export default function SingleProduct() {
                     <video
                       src={getMediaUrl(mediaList[activeMediaIndex].src)}
                       controls
-                      className="w-full h-full object-contain p-8"
+                      className="w-full h-full object-contain p-4 sm:p-8"
                     />
                   )
                 ) : (
                   <img
                     src={placeholderImg}
                     alt="placeholder"
-                    className="w-full h-full object-contain p-8 opacity-80"
+                    className="w-full h-full object-contain p-4 sm:p-8 opacity-80"
                   />
                 )}
 
                 {/* Divine Glow Effect */}
                 <div className="absolute inset-0 bg-gradient-to-t from-amber-400/10 via-transparent to-amber-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
-                {/* Floating Krishna Elements */}
+                {/* Floating Krishna Elements - Hidden on mobile */}
                 <motion.div
-                  className="absolute top-4 left-4 text-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  className="absolute top-4 left-4 text-2xl sm:text-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden sm:block"
                   animate={{ rotate: 360 }}
                   transition={{
                     duration: 10,
@@ -697,7 +700,7 @@ export default function SingleProduct() {
                   🦚
                 </motion.div>
                 <motion.div
-                  className="absolute bottom-4 right-4 text-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                  className="absolute bottom-4 right-4 text-2xl sm:text-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden sm:block"
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
@@ -706,13 +709,13 @@ export default function SingleProduct() {
               </motion.div>
 
               {/* Media Thumbnails */}
-              <div className="flex gap-3 mt-6 justify-center overflow-x-auto pb-2">
+              <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-6 justify-center overflow-x-auto pb-2 px-2">
                 {mediaList.map((media, index) => (
                   <motion.button
                     key={index}
-                    className={`w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all backdrop-blur-md ${
+                    className={`w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all backdrop-blur-md ${
                       activeMediaIndex === index
-                        ? "border-amber-400 scale-110 shadow-lg shadow-amber-400/30"
+                        ? "border-amber-400 scale-105 sm:scale-110 shadow-lg shadow-amber-400/30"
                         : "border-white/20 hover:border-amber-400/50 bg-white/5"
                     }`}
                     onClick={() => setActiveMediaIndex(index)}
@@ -738,63 +741,69 @@ export default function SingleProduct() {
             </motion.div>
 
             {/* Product Info */}
-            <div ref={infoRef} className="space-y-8">
+            <div
+              ref={infoRef}
+              className="space-y-4 sm:space-y-6 lg:space-y-8 mt-6 lg:mt-0"
+            >
               <div className="product-info-item">
                 <motion.span
-                  className="inline-block px-6 py-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-purple-400/30 text-purple-200 rounded-full text-sm font-semibold mb-6"
+                  className="inline-block px-4 sm:px-6 py-1.5 sm:py-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-purple-400/30 text-purple-200 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
                   🕉️ KRISHNOVA EXCLUSIVE
                 </motion.span>
 
-                <h1 className="product-title text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent leading-tight mb-4">
+                <h1 className="product-title text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent leading-tight mb-2 sm:mb-4">
                   {product.title}
                 </h1>
 
-                <p className="text-amber-200/80 text-sm italic mb-4">
-                  कृष्णं वन्दे जगद्गुरुम् • Handcrafted with devotion in Nepal
+                <p className="text-amber-200/80 text-xs sm:text-sm italic mb-3 sm:mb-4">
+                  कृष्णं वन्दे जगद्गुरुम् • Handcrafted in Nepal
                 </p>
 
-                <div className="flex flex-wrap items-center gap-4 mb-6">
-                  <StarRating rating={product.rating || 5} size="text-xl" />
-                  <span className="text-cyan-300 font-medium">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+                  <StarRating
+                    rating={product.rating || 5}
+                    size="text-base sm:text-xl"
+                  />
+                  <span className="text-cyan-300 font-medium text-xs sm:text-sm">
                     ({product.numReviews || product.reviews?.length || 0}{" "}
-                    verified reviews)
+                    reviews)
                   </span>
-                  <div className="h-6 w-px bg-amber-400/30"></div>
+                  <div className="h-4 sm:h-6 w-px bg-amber-400/30 hidden sm:block"></div>
                   {product.inStock ? (
-                    <span className="text-sm text-green-400 font-semibold flex items-center gap-2">
-                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                      In Stock • Ships from USA
+                    <span className="text-xs sm:text-sm text-green-400 font-semibold flex items-center gap-1.5 sm:gap-2">
+                      <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-400 rounded-full animate-pulse"></span>
+                      In Stock
                     </span>
                   ) : (
-                    <span className="text-sm text-red-400 font-semibold">
+                    <span className="text-xs sm:text-sm text-red-400 font-semibold">
                       Out of Stock
                     </span>
                   )}
                 </div>
 
-                <p className="text-lg text-blue-100/80 leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-blue-100/80 leading-relaxed">
                   {product.fullDescription || product.desc}
                 </p>
               </div>
 
               {/* Pricing */}
               <div className="product-info-item">
-                <div className="flex flex-wrap items-center gap-6 py-6 border-y border-amber-400/20">
-                  <div className="flex items-baseline gap-4">
-                    <span className="text-4xl font-bold text-amber-300">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-6 py-4 sm:py-6 border-y border-amber-400/20">
+                  <div className="flex flex-wrap items-baseline gap-2 sm:gap-4">
+                    <span className="text-3xl sm:text-4xl font-bold text-amber-300">
                       ${product.price}
                     </span>
                     {product.originalPrice > product.price && (
                       <>
-                        <span className="text-xl text-blue-100/50 line-through">
+                        <span className="text-base sm:text-xl text-blue-100/50 line-through">
                           ${product.originalPrice}
                         </span>
                         <motion.span
-                          className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold"
-                          animate={{ scale: [1, 1.1, 1] }}
+                          className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-2.5 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold"
+                          animate={{ scale: [1, 1.05, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
                         >
                           Save ${product.originalPrice - product.price}
@@ -807,13 +816,13 @@ export default function SingleProduct() {
                 {/* Free Shipping Badge */}
                 {product.price >= 99 && (
                   <motion.div
-                    className="mt-4 inline-flex items-center gap-2 text-cyan-300 text-sm font-semibold"
+                    className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 sm:gap-2 text-cyan-300 text-xs sm:text-sm font-semibold"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.8 }}
                   >
-                    <span className="text-lg">🚚</span>
-                    <span>FREE US SHIPPING on this item!</span>
+                    <span className="text-base sm:text-lg">🚚</span>
+                    <span>FREE US SHIPPING!</span>
                   </motion.div>
                 )}
               </div>
@@ -926,58 +935,60 @@ export default function SingleProduct() {
               </div> */}
 
               {/* Quantity and Actions */}
-              <div className="product-info-item space-y-6">
-                <div className="flex items-center gap-6">
-                  <span className="font-semibold text-amber-200">
-                    Quantity:
-                  </span>
-                  <div className="flex items-center backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl overflow-hidden">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-6 py-3 hover:bg-amber-400/10 transition-colors text-amber-200 font-bold text-xl"
-                    >
-                      −
-                    </button>
-                    <span className="px-8 py-3 font-bold border-x border-amber-400/30 text-amber-300 text-xl min-w-[80px] text-center">
-                      {quantity}
+              <div className="product-info-item space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                  <div className="flex items-center justify-between sm:justify-start gap-3 sm:gap-6">
+                    <span className="font-semibold text-amber-200 text-sm sm:text-base">
+                      Quantity:
                     </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="px-6 py-3 hover:bg-amber-400/10 transition-colors text-amber-200 font-bold text-xl"
-                    >
-                      +
-                    </button>
+                    <div className="flex items-center backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-lg sm:rounded-xl overflow-hidden">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="px-4 sm:px-6 py-2.5 sm:py-3 hover:bg-amber-400/10 active:bg-amber-400/20 transition-colors text-amber-200 font-bold text-lg sm:text-xl"
+                      >
+                        −
+                      </button>
+                      <span className="px-4 sm:px-8 py-2.5 sm:py-3 font-bold border-x border-amber-400/30 text-amber-300 text-lg sm:text-xl min-w-[50px] sm:min-w-[80px] text-center">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="px-4 sm:px-6 py-2.5 sm:py-3 hover:bg-amber-400/10 active:bg-amber-400/20 transition-colors text-amber-200 font-bold text-lg sm:text-xl"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                  <span className="text-lg text-cyan-300 font-semibold">
+                  <span className="text-base sm:text-lg text-cyan-300 font-semibold text-center sm:text-left">
                     Total: ${(product.price * quantity).toFixed(2)}
                   </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                   <motion.button
                     onClick={handleBuyNow}
-                    className="group relative flex-1 px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                    className="group relative flex-1 px-6 sm:px-8 py-3.5 sm:py-4 overflow-hidden rounded-xl sm:rounded-full shadow-2xl transform hover:-translate-y-1 active:scale-[0.98] transition-all duration-300"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                    <span className="relative text-white font-bold text-lg flex items-center justify-center gap-2">
+                    <span className="relative text-white font-bold text-base sm:text-lg flex items-center justify-center gap-2">
                       <span>🛒</span> Buy Now - $
                       {(product.price * quantity).toFixed(2)}
                     </span>
                   </motion.button>
                   <motion.button
                     onClick={handleAddToCart}
-                    className="flex-1 px-8 py-4 border-2 border-amber-400/50 text-amber-200 rounded-full font-bold text-lg backdrop-blur-md bg-white/5 hover:bg-amber-400/10 hover:border-amber-400 transition-all duration-300"
+                    className="flex-1 px-6 sm:px-8 py-3.5 sm:py-4 border-2 border-amber-400/50 text-amber-200 rounded-xl sm:rounded-full font-bold text-base sm:text-lg backdrop-blur-md bg-white/5 hover:bg-amber-400/10 active:bg-amber-400/20 hover:border-amber-400 transition-all duration-300"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    Add to Sacred Cart
+                    Add to Cart
                   </motion.button>
                 </div>
 
                 {/* Trust Badges */}
-                <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-amber-400/20">
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3 sm:gap-6 pt-4 sm:pt-6 border-t border-amber-400/20">
                   {[
                     {
                       icon: "✓",
@@ -998,12 +1009,12 @@ export default function SingleProduct() {
                   ].map((badge, index) => (
                     <motion.div
                       key={index}
-                      className={`flex items-center gap-2 ${badge.color} font-semibold text-sm`}
+                      className={`flex items-center gap-1.5 sm:gap-2 ${badge.color} font-semibold text-xs sm:text-sm`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 1 + index * 0.1 }}
                     >
-                      <span className="text-lg">{badge.icon}</span>
+                      <span className="text-base sm:text-lg">{badge.icon}</span>
                       <span>{badge.text}</span>
                     </motion.div>
                   ))}
@@ -1015,9 +1026,9 @@ export default function SingleProduct() {
       </section>
 
       {/* Features and Benefits Section */}
-      <section className="py-24 relative">
+      <section className="py-12 sm:py-16 lg:py-24 relative">
         <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
+          className="absolute inset-0 opacity-10 pointer-events-none hidden sm:block"
           style={{
             backgroundImage:
               "radial-gradient(circle at 50% 50%, #fbbf24 1px, transparent 1px)",
@@ -1025,25 +1036,24 @@ export default function SingleProduct() {
           }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 lg:mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
-              Sacred Features & Divine Benefits
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 sm:mb-6">
+              Features & Benefits
             </h2>
-            <p className="text-cyan-300 max-w-3xl mx-auto text-xl">
-              Discover the transformative power that makes this spiritual
-              companion truly special
+            <p className="text-cyan-300 max-w-3xl mx-auto text-sm sm:text-base lg:text-xl">
+              Discover what makes this spiritual item truly special
             </p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-amber-200 mb-8 flex items-center gap-3">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-start">
+            <div className="space-y-3 sm:space-y-4 lg:space-y-6">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-amber-200 mb-4 sm:mb-6 lg:mb-8 flex items-center gap-2 sm:gap-3">
                 <span>✨</span>
                 Divine Features:
               </h3>
@@ -1059,13 +1069,13 @@ export default function SingleProduct() {
                 <motion.div
                   key={index}
                   ref={(el) => (featuresRef.current[index] = el)}
-                  className="flex items-start gap-4 p-6 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300"
+                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 lg:p-6 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300"
                   whileHover={{ scale: 1.02, x: 10 }}
                 >
-                  <span className="text-green-400 text-2xl mt-1 flex-shrink-0">
+                  <span className="text-green-400 text-lg sm:text-xl lg:text-2xl mt-0.5 flex-shrink-0">
                     ✓
                   </span>
-                  <span className="text-blue-100/80 font-medium text-lg leading-relaxed">
+                  <span className="text-blue-100/80 font-medium text-sm sm:text-base lg:text-lg leading-relaxed">
                     {feature}
                   </span>
                 </motion.div>
@@ -1073,12 +1083,12 @@ export default function SingleProduct() {
             </div>
 
             <div className="relative">
-              <div className="backdrop-blur-md bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-3xl p-10 border border-amber-400/30 shadow-2xl">
-                <h3 className="text-2xl font-bold text-amber-200 mb-8 flex items-center gap-3">
+              <div className="backdrop-blur-md bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-10 border border-amber-400/30 shadow-2xl">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-amber-200 mb-4 sm:mb-6 lg:mb-8 flex items-center gap-2 sm:gap-3">
                   <span>🌟</span>
                   Spiritual Benefits:
                 </h3>
-                <ul className="space-y-6">
+                <ul className="space-y-3 sm:space-y-4 lg:space-y-6">
                   {(
                     product.benefits || [
                       "Enhances daily meditation and prayer practice",
@@ -1091,12 +1101,12 @@ export default function SingleProduct() {
                     <motion.li
                       key={index}
                       ref={(el) => (benefitsRef.current[index] = el)}
-                      className="flex items-start gap-4"
+                      className="flex items-start gap-3 sm:gap-4"
                     >
-                      <span className="text-cyan-400 mt-1 text-2xl flex-shrink-0">
+                      <span className="text-cyan-400 mt-0.5 text-lg sm:text-xl lg:text-2xl flex-shrink-0">
                         ✨
                       </span>
-                      <span className="leading-relaxed text-lg font-medium text-blue-100/80">
+                      <span className="leading-relaxed text-sm sm:text-base lg:text-lg font-medium text-blue-100/80">
                         {benefit}
                       </span>
                     </motion.li>
@@ -1109,50 +1119,49 @@ export default function SingleProduct() {
       </section>
 
       {/* How It Works Section */}
-      <section className="steps-section py-24 relative">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="steps-section py-12 sm:py-16 lg:py-24 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 lg:mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 sm:mb-6">
               Your Spiritual Journey
             </h2>
-            <p className="text-cyan-300 max-w-3xl mx-auto text-xl">
-              Experience the divine connection through authentic Himalayan
-              spirituality
+            <p className="text-cyan-300 max-w-3xl mx-auto text-sm sm:text-base lg:text-xl">
+              Experience authentic Himalayan spirituality
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {[
               {
                 step: "1",
-                title: "Order Your Sacred Item",
+                title: "Order",
                 desc: "Choose from our blessed collection",
                 icon: "🛒",
                 color: "from-amber-400 to-orange-500",
               },
               {
                 step: "2",
-                title: "Fast US Delivery",
-                desc: "Receive in 2-5 business days",
+                title: "Fast Delivery",
+                desc: "2-5 business days",
                 icon: "📦",
                 color: "from-orange-500 to-amber-500",
               },
               {
                 step: "3",
-                title: "Unbox with Reverence",
-                desc: "Each item carefully blessed & packed",
+                title: "Unbox",
+                desc: "Carefully blessed & packed",
                 icon: "🎁",
                 color: "from-amber-500 to-yellow-500",
               },
               {
                 step: "4",
-                title: "Experience Divine Energy",
-                desc: "Feel the sacred presence daily",
+                title: "Experience",
+                desc: "Feel the sacred presence",
                 icon: "✨",
                 color: "from-yellow-500 to-amber-400",
               },
@@ -1162,15 +1171,15 @@ export default function SingleProduct() {
                 ref={(el) => (stepsRef.current[index] = el)}
                 className="text-center relative"
               >
-                <div className="relative mb-8">
+                <div className="relative mb-3 sm:mb-6 lg:mb-8">
                   <motion.div
-                    className={`w-24 h-24 bg-gradient-to-br ${step.color} rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto shadow-xl border-4 border-white/20`}
+                    className={`w-14 h-14 sm:w-18 sm:h-18 lg:w-24 lg:h-24 bg-gradient-to-br ${step.color} rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl lg:text-2xl mx-auto shadow-xl border-2 sm:border-4 border-white/20`}
                     whileHover={{ scale: 1.1, rotate: 5 }}
                   >
                     {step.step}
                   </motion.div>
                   <motion.div
-                    className="absolute -top-3 -right-3 text-3xl"
+                    className="absolute -top-1 sm:-top-2 lg:-top-3 -right-1 sm:-right-2 lg:-right-3 text-xl sm:text-2xl lg:text-3xl"
                     animate={{
                       y: [0, -5, 0],
                       rotate: [0, 10, -10, 0],
@@ -1187,10 +1196,12 @@ export default function SingleProduct() {
                     <div className="hidden lg:block absolute top-12 left-full w-full h-1 bg-gradient-to-r from-amber-400/50 to-transparent"></div>
                   )}
                 </div>
-                <h3 className="font-bold text-amber-200 text-xl mb-3">
+                <h3 className="font-bold text-amber-200 text-sm sm:text-base lg:text-xl mb-1 sm:mb-2 lg:mb-3">
                   {step.title}
                 </h3>
-                <p className="text-blue-100/80 leading-relaxed">{step.desc}</p>
+                <p className="text-blue-100/80 leading-relaxed text-xs sm:text-sm lg:text-base">
+                  {step.desc}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -1198,9 +1209,9 @@ export default function SingleProduct() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 relative">
+      <section className="py-12 sm:py-16 lg:py-24 relative">
         <div
-          className="absolute inset-0 opacity-10 pointer-events-none"
+          className="absolute inset-0 opacity-10 pointer-events-none hidden sm:block"
           style={{
             backgroundImage:
               "radial-gradient(circle at 25% 25%, #fbbf24 1px, transparent 1px)",
@@ -1208,46 +1219,51 @@ export default function SingleProduct() {
           }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8 sm:mb-12 lg:mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6">
-              Sacred Testimonials
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 sm:mb-6">
+              Customer Reviews
             </h2>
-            <p className="text-cyan-300 max-w-3xl mx-auto text-xl">
-              Hear from our blessed community members across America
+            <p className="text-cyan-300 max-w-3xl mx-auto text-sm sm:text-base lg:text-xl">
+              Hear from our blessed community
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
-                className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300"
+                className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.2 }}
                 whileHover={{ scale: 1.02, y: -5 }}
               >
-                <div className="flex items-center gap-2 mb-4">
-                  <StarRating rating={testimonial.rating} size="text-lg" />
+                <div className="flex items-center gap-2 mb-2 sm:mb-4">
+                  <StarRating
+                    rating={testimonial.rating}
+                    size="text-base sm:text-lg"
+                  />
                   {testimonial.verified && (
-                    <span className="text-green-400 text-sm font-semibold">
+                    <span className="text-green-400 text-xs sm:text-sm font-semibold">
                       ✓ Verified
                     </span>
                   )}
                 </div>
-                <p className="text-blue-100/80 leading-relaxed mb-6 text-lg italic">
+                <p className="text-blue-100/80 leading-relaxed mb-3 sm:mb-6 text-sm sm:text-base lg:text-lg italic">
                   "{testimonial.comment}"
                 </p>
-                <div className="border-t border-amber-400/20 pt-4">
-                  <p className="font-bold text-amber-200">{testimonial.name}</p>
-                  <p className="text-cyan-300 text-sm">
+                <div className="border-t border-amber-400/20 pt-3 sm:pt-4">
+                  <p className="font-bold text-amber-200 text-sm sm:text-base">
+                    {testimonial.name}
+                  </p>
+                  <p className="text-cyan-300 text-xs sm:text-sm">
                     {testimonial.location}
                   </p>
                 </div>
@@ -1258,42 +1274,45 @@ export default function SingleProduct() {
       </section>
 
       {/* Reviews Section */}
-      <section className="py-20 relative">
-        <div className="max-w-4xl mx-auto px-6">
-          <h3 className="text-3xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-12 text-center">
+      <section className="py-12 sm:py-16 lg:py-20 relative">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-6 sm:mb-8 lg:mb-12 text-center">
             Community Reviews
           </h3>
 
           {/* List reviews */}
           {product.reviews && product.reviews.length > 0 ? (
-            <div className="space-y-6 mb-16">
+            <div className="space-y-4 sm:space-y-6 mb-8 sm:mb-12 lg:mb-16">
               {product.reviews.map((review, idx) => (
                 <motion.div
                   key={idx}
-                  className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-lg p-8 border border-white/20"
+                  className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-white/20"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
-                    <span className="font-bold text-amber-200 text-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
+                    <span className="font-bold text-amber-200 text-base sm:text-lg">
                       {review.name}
                     </span>
-                    <StarRating rating={review.rating} size="text-lg" />
-                    <span className="text-blue-100/60 text-sm sm:ml-auto">
+                    <StarRating
+                      rating={review.rating}
+                      size="text-base sm:text-lg"
+                    />
+                    <span className="text-blue-100/60 text-xs sm:text-sm sm:ml-auto">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-blue-100/80 leading-relaxed text-lg">
+                  <p className="text-blue-100/80 leading-relaxed text-sm sm:text-base lg:text-lg">
                     {review.comment}
                   </p>
                 </motion.div>
               ))}
             </div>
           ) : (
-            <div className="text-blue-100/60 text-center mb-16 text-lg backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20">
-              No reviews yet. Be the first to share your divine experience!
+            <div className="text-blue-100/60 text-center mb-8 sm:mb-12 lg:mb-16 text-sm sm:text-base lg:text-lg backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20">
+              No reviews yet. Be the first to share your experience!
             </div>
           )}
 
@@ -1301,49 +1320,49 @@ export default function SingleProduct() {
           {user ? (
             <motion.form
               onSubmit={handleReviewSubmit}
-              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20"
+              className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h4 className="text-2xl font-bold mb-6 text-amber-200 flex items-center gap-3">
+              <h4 className="text-lg sm:text-xl lg:text-2xl font-bold mb-4 sm:mb-6 text-amber-200 flex items-center gap-2 sm:gap-3">
                 <span>✍️</span>
-                Share Your Sacred Experience
+                Share Your Experience
               </h4>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-6">
-                <span className="font-semibold text-amber-200 text-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mb-4 sm:mb-6">
+                <span className="font-semibold text-amber-200 text-sm sm:text-base lg:text-lg">
                   Your Rating:
                 </span>
                 <StarRating
                   rating={reviewRating}
                   setRating={setReviewRating}
                   editable
-                  size="text-2xl"
+                  size="text-xl sm:text-2xl"
                 />
               </div>
               <textarea
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}
-                className="w-full backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-xl p-4 mb-6 text-blue-100 placeholder-blue-100/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all resize-none"
-                placeholder="Share your thoughts about this sacred item..."
-                rows="4"
+                className="w-full backdrop-blur-md bg-white/5 border border-amber-400/30 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 text-blue-100 placeholder-blue-100/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all resize-none text-sm sm:text-base"
+                placeholder="Share your thoughts about this item..."
+                rows="3"
                 required
               />
               <motion.button
                 type="submit"
-                className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl disabled:opacity-50"
+                className="w-full sm:w-auto group relative px-6 sm:px-8 py-3 sm:py-4 overflow-hidden rounded-xl sm:rounded-full shadow-2xl disabled:opacity-50"
                 disabled={reviewSubmitting || !reviewRating}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                <span className="relative text-white font-bold">
+                <span className="relative text-white font-bold text-sm sm:text-base">
                   {reviewSubmitting ? "Sharing..." : "Share Review"}
                 </span>
               </motion.button>
               {reviewError && (
                 <motion.div
-                  className="mt-4 text-red-400 font-semibold bg-red-400/10 border border-red-400/30 rounded-lg p-4"
+                  className="mt-3 sm:mt-4 text-red-400 font-semibold bg-red-400/10 border border-red-400/30 rounded-lg p-3 sm:p-4 text-sm sm:text-base"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
@@ -1352,30 +1371,28 @@ export default function SingleProduct() {
               )}
               {reviewSuccess && (
                 <motion.div
-                  className="mt-4 text-green-400 font-semibold bg-green-400/10 border border-green-400/30 rounded-lg p-4"
+                  className="mt-3 sm:mt-4 text-green-400 font-semibold bg-green-400/10 border border-green-400/30 rounded-lg p-3 sm:p-4 text-sm sm:text-base"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  Thank you! Your review has been shared with our divine
-                  community.
+                  Thank you! Your review has been shared.
                 </motion.div>
               )}
             </motion.form>
           ) : (
             <div className="text-center">
-              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-8 border border-white/20">
-                <p className="text-blue-100/80 text-lg mb-4">
-                  Please login to share your divine experience with our
-                  community
+              <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20">
+                <p className="text-blue-100/80 text-sm sm:text-base lg:text-lg mb-4">
+                  Please login to share your experience
                 </p>
                 <motion.button
                   onClick={() => navigate("/login")}
-                  className="group relative px-8 py-3 overflow-hidden rounded-full shadow-2xl"
+                  className="w-full sm:w-auto group relative px-6 sm:px-8 py-3 overflow-hidden rounded-xl sm:rounded-full shadow-2xl"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                  <span className="relative text-white font-semibold">
+                  <span className="relative text-white font-semibold text-sm sm:text-base">
                     Login to Review
                   </span>
                 </motion.button>
@@ -1389,21 +1406,21 @@ export default function SingleProduct() {
       <AnimatePresence>
         {showSuccess && (
           <motion.div
-            className="success-notification fixed top-24 right-6 backdrop-blur-md bg-gradient-to-br from-green-500/90 to-green-600/90 text-white px-8 py-4 rounded-xl shadow-2xl z-50 border border-green-400/50 max-w-sm"
+            className="success-notification fixed top-20 sm:top-24 right-3 sm:right-6 backdrop-blur-md bg-gradient-to-br from-green-500/90 to-green-600/90 text-white px-4 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl shadow-2xl z-50 border border-green-400/50 max-w-[calc(100vw-24px)] sm:max-w-sm"
             initial={{ opacity: 0, x: 100, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 100, scale: 0.8 }}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <motion.span
-                className="text-2xl"
+                className="text-xl sm:text-2xl"
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 0.5 }}
               >
                 ✓
               </motion.span>
-              <span className="font-semibold">
-                Added to sacred cart successfully!
+              <span className="font-semibold text-sm sm:text-base">
+                Added to cart!
               </span>
             </div>
           </motion.div>

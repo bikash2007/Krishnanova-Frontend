@@ -45,10 +45,10 @@ const YogaPracticeCards = ({ practices, isMobile }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
       {yogaTypes.map((yoga) => (
-        <motion.div
+        <div
           key={yoga.key}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
-          whileHover={{ scale: 1.05 }}
+          className="bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
+          style={{ touchAction: 'manipulation' }}
         >
           <div
             className={`w-12 h-12 md:w-16 md:h-16 mx-auto rounded-full bg-gradient-to-br ${yoga.color} flex items-center justify-center mb-2 md:mb-3`}
@@ -65,7 +65,7 @@ const YogaPracticeCards = ({ practices, isMobile }) => {
             {practices[yoga.key] || 0}
           </div>
           <p className="text-xs text-blue-100/60 mt-1">Practices</p>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

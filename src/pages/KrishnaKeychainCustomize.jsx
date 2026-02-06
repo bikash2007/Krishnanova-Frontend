@@ -187,7 +187,7 @@ const ParticleSystem = ({ type = "divine", intensity = 20 }) => {
         delay: Math.random() * 5,
         duration: Math.random() * 10 + 10,
       })),
-    [intensity]
+    [intensity],
   );
 
   const getParticleSymbol = () => {
@@ -369,7 +369,7 @@ const useAudioManager = () => {
         sound.play().catch(console.error);
       }
     },
-    [isSoundEnabled]
+    [isSoundEnabled],
   );
 
   const playAmbientSound = useCallback(
@@ -391,7 +391,7 @@ const useAudioManager = () => {
         setCurrentAmbient(soundKey);
       }
     },
-    [isSoundEnabled]
+    [isSoundEnabled],
   );
 
   const stopAmbientSound = useCallback(() => {
@@ -476,7 +476,7 @@ export default function KrishnaKeychainCustomize() {
       "blessing",
       "celebration",
     ],
-    []
+    [],
   );
 
   // Enhanced ceremony step effect with ambient sounds
@@ -522,7 +522,7 @@ export default function KrishnaKeychainCustomize() {
 
       window.speechSynthesis.speak(utterance);
     },
-    [isSoundEnabled]
+    [isSoundEnabled],
   );
 
   // Auth context effect
@@ -544,7 +544,7 @@ export default function KrishnaKeychainCustomize() {
       playSound("bellSound");
       setCurrentStep("welcome");
     },
-    [playSound]
+    [playSound],
   );
 
   const handleGoogleLoginError = useCallback((error) => {
@@ -601,7 +601,7 @@ export default function KrishnaKeychainCustomize() {
           payload,
           authMode === "signup"
             ? { headers: { "Content-Type": "multipart/form-data" } }
-            : {}
+            : {},
         );
 
         const { token, ...userData } = response.data;
@@ -621,7 +621,7 @@ export default function KrishnaKeychainCustomize() {
         setLoading(false);
       }
     },
-    [authMode, authData, validateAuth, setUser, playSound]
+    [authMode, authData, validateAuth, setUser, playSound],
   );
 
   // Ceremony control functions
@@ -662,7 +662,7 @@ export default function KrishnaKeychainCustomize() {
       playSound("bellSound", { volume: 0.4 });
       setTimeout(() => setShowNameMeaning(null), 3000);
     },
-    [playSound]
+    [playSound],
   );
 
   const handleCustomNameChange = useCallback((e) => {
@@ -690,42 +690,94 @@ export default function KrishnaKeychainCustomize() {
         setTimeout(() => setShowMantra(false), 10000);
       }
     },
-    [playSound, speakMantra]
+    [playSound, speakMantra],
   );
 
   const completeNamakaran = useCallback(async () => {
     if (!finalKrishnaName) return;
 
     setLoading(true);
+    setErrors({});
+
     try {
-      const response = await axios.post(
-        import.meta.env.VITE_API_URL + "/api/user/save-keychain-name",
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setErrors({ general: "Please login to complete the ceremony" });
+        setLoading(false);
+        return;
+      }
+
+      // Save the Krishna name to user's keychain
+      await axios.post(
+        import.meta.env.VITE_API_URL + "/api/auth/user/save-keychain-name",
         { krishnaName: finalKrishnaName },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
 
+      // Also update the wisdom portal Krishna name
+      try {
+        await axios.post(
+          import.meta.env.VITE_API_URL + "/api/krishna/wisdom-portal/names",
+          {
+            krishnaName: finalKrishnaName,
+            spiritualName: user?.name || "Devotee",
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+      } catch (portalError) {
+        // Ignore wisdom portal update errors - keychain name is saved
+        console.log("Wisdom portal name update optional:", portalError.message);
+      }
+
       playSound("celebration");
-      stopAllSounds();
+
+      // Update local user state if needed
+      if (user) {
+        const updatedUser = {
+          ...user,
+          krishnaKeychain: { name: finalKrishnaName, createdAt: new Date() },
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
 
       clearAuthContext();
+      stopAllSounds();
+
+      // Navigate to wisdom portal after celebration
       setTimeout(() => {
         navigate("/wishdomportal", {
           state: {
             product: "Krishna Keychain",
             customization: { name: finalKrishnaName },
+            ceremonyCompleted: true,
           },
         });
       }, 2000);
     } catch (error) {
+      console.error("Ceremony completion error:", error);
       setErrors({
-        general: error.response?.data?.message || "Failed to complete ceremony",
+        general:
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Failed to complete ceremony. Please try again.",
       });
     } finally {
       setLoading(false);
     }
-  }, [finalKrishnaName, playSound, clearAuthContext, navigate, stopAllSounds]);
+  }, [
+    finalKrishnaName,
+    playSound,
+    clearAuthContext,
+    navigate,
+    stopAllSounds,
+    user,
+    setUser,
+  ]);
 
   // Ceremony step renderer with enhanced audio
   const renderCeremonyStep = () => {
@@ -756,7 +808,7 @@ export default function KrishnaKeychainCustomize() {
               🕉️
             </motion.div>
 
-            <h2 className="text-5xl font-bold text-orange-200 drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-200 drop-shadow-lg">
               Sacred Preparation
             </h2>
 
@@ -834,7 +886,7 @@ export default function KrishnaKeychainCustomize() {
             exit="exit"
             className="text-center space-y-8"
           >
-            <h2 className="text-5xl font-bold text-orange-200 drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-200 drop-shadow-lg">
               Divine Invocation
             </h2>
 
@@ -921,18 +973,18 @@ export default function KrishnaKeychainCustomize() {
               </AnimatePresence>
             </div>
 
-            <div className="flex space-x-4 justify-center">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
               <motion.button
                 onClick={prevCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-black/40 backdrop-blur-sm text-orange-200 px-6 py-3 rounded-xl border border-orange-800/30"
+                className="w-full sm:w-auto bg-black/40 backdrop-blur-sm text-orange-200 px-6 py-3 rounded-xl border border-orange-800/30"
               >
                 ← Back
               </motion.button>
               <motion.button
                 onClick={nextCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-red-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
               >
                 Accept Blessings →
               </motion.button>
@@ -949,7 +1001,7 @@ export default function KrishnaKeychainCustomize() {
             exit="exit"
             className="text-center space-y-8"
           >
-            <h2 className="text-5xl font-bold text-blue-200 drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-200 drop-shadow-lg">
               Sacred Purification
             </h2>
 
@@ -1045,18 +1097,18 @@ export default function KrishnaKeychainCustomize() {
               </AnimatePresence>
             </div>
 
-            <div className="flex space-x-4 justify-center">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
               <motion.button
                 onClick={prevCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-black/40 backdrop-blur-sm text-blue-200 px-6 py-3 rounded-xl border border-blue-800/30"
+                className="w-full sm:w-auto bg-black/40 backdrop-blur-sm text-blue-200 px-6 py-3 rounded-xl border border-blue-800/30"
               >
                 ← Back
               </motion.button>
               <motion.button
                 onClick={nextCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
               >
                 Complete Purification →
               </motion.button>
@@ -1073,7 +1125,7 @@ export default function KrishnaKeychainCustomize() {
             exit="exit"
             className="text-center space-y-8"
           >
-            <h2 className="text-5xl font-bold text-purple-200 drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-purple-200 drop-shadow-lg">
               Divine Transfer Ceremony
             </h2>
 
@@ -1121,18 +1173,18 @@ export default function KrishnaKeychainCustomize() {
               </div>
             </div>
 
-            <div className="flex space-x-4 justify-center">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
               <motion.button
                 onClick={prevCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-black/40 backdrop-blur-sm text-purple-200 px-6 py-3 rounded-xl border border-purple-800/30"
+                className="w-full sm:w-auto bg-black/40 backdrop-blur-sm text-purple-200 px-6 py-3 rounded-xl border border-purple-800/30"
               >
                 ← Back
               </motion.button>
               <motion.button
                 onClick={nextCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
               >
                 Receive Your Krishna →
               </motion.button>
@@ -1153,7 +1205,7 @@ export default function KrishnaKeychainCustomize() {
               <div className="text-6xl mb-4 filter drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]">
                 📜
               </div>
-              <h2 className="text-5xl font-bold text-indigo-200 drop-shadow-lg">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-indigo-200 drop-shadow-lg">
                 Choose the Sacred Name
               </h2>
               <p className="text-xl text-indigo-100 max-w-3xl mx-auto backdrop-blur-sm bg-black/30 p-6 rounded-2xl border border-indigo-900/30">
@@ -1167,7 +1219,7 @@ export default function KrishnaKeychainCustomize() {
                 <motion.button
                   onClick={() => playMantra("nameSelection")}
                   whileHover={{ scale: 1.05 }}
-                  className="mx-auto block bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-3"
+                  className="mx-auto bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-3"
                 >
                   <span className="text-2xl">🎵</span>
                   <span>Chant Name Selection Mantra</span>
@@ -1233,7 +1285,7 @@ export default function KrishnaKeychainCustomize() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {krishnaNames.map((item) => (
                 <motion.button
                   key={item.name}
@@ -1282,21 +1334,21 @@ export default function KrishnaKeychainCustomize() {
                     <p className="text-indigo-300 mb-2">
                       {
                         krishnaNames.find(
-                          (item) => item.name === showNameMeaning
+                          (item) => item.name === showNameMeaning,
                         )?.sanskrit
                       }
                     </p>
                     <p className="text-indigo-200 mb-3">
                       {
                         krishnaNames.find(
-                          (item) => item.name === showNameMeaning
+                          (item) => item.name === showNameMeaning,
                         )?.meaning
                       }
                     </p>
                     <p className="text-indigo-400 text-sm italic">
                       {
                         krishnaNames.find(
-                          (item) => item.name === showNameMeaning
+                          (item) => item.name === showNameMeaning,
                         )?.story
                       }
                     </p>
@@ -1305,11 +1357,11 @@ export default function KrishnaKeychainCustomize() {
               )}
             </AnimatePresence>
 
-            <div className="flex space-x-4 justify-center">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
               <motion.button
                 onClick={prevCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-black/40 backdrop-blur-sm text-indigo-200 px-6 py-3 rounded-xl border border-indigo-800/30"
+                className="w-full sm:w-auto bg-black/40 backdrop-blur-sm text-indigo-200 px-6 py-3 rounded-xl border border-indigo-800/30"
               >
                 ← Back
               </motion.button>
@@ -1317,7 +1369,7 @@ export default function KrishnaKeychainCustomize() {
                 <motion.button
                   onClick={confirmName}
                   whileHover={{ scale: 1.05 }}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
+                  className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
                 >
                   Confirm Sacred Name →
                 </motion.button>
@@ -1338,7 +1390,7 @@ export default function KrishnaKeychainCustomize() {
             <div className="text-6xl mb-4 filter drop-shadow-[0_0_20px_rgba(34,197,94,0.5)]">
               👂🏽
             </div>
-            <h2 className="text-5xl font-bold text-green-200 drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-200 drop-shadow-lg">
               Whispering the Sacred Name
             </h2>
 
@@ -1407,18 +1459,18 @@ export default function KrishnaKeychainCustomize() {
               </AnimatePresence>
             </div>
 
-            <div className="flex space-x-4 justify-center">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
               <motion.button
                 onClick={prevCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-black/40 backdrop-blur-sm text-green-200 px-6 py-3 rounded-xl border border-green-800/30"
+                className="w-full sm:w-auto bg-black/40 backdrop-blur-sm text-green-200 px-6 py-3 rounded-xl border border-green-800/30"
               >
                 ← Back
               </motion.button>
               <motion.button
                 onClick={nextCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
               >
                 Complete Whispering →
               </motion.button>
@@ -1438,7 +1490,7 @@ export default function KrishnaKeychainCustomize() {
             <div className="text-6xl mb-4 filter drop-shadow-[0_0_20px_rgba(251,146,60,0.5)]">
               🙏
             </div>
-            <h2 className="text-5xl font-bold text-amber-200 drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-amber-200 drop-shadow-lg">
               Divine Blessings
             </h2>
 
@@ -1527,18 +1579,18 @@ export default function KrishnaKeychainCustomize() {
               </AnimatePresence>
             </div>
 
-            <div className="flex space-x-4 justify-center">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 justify-center">
               <motion.button
                 onClick={prevCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-black/40 backdrop-blur-sm text-amber-200 px-6 py-3 rounded-xl border border-amber-800/30"
+                className="w-full sm:w-auto bg-black/40 backdrop-blur-sm text-amber-200 px-6 py-3 rounded-xl border border-amber-800/30"
               >
                 ← Back
               </motion.button>
               <motion.button
                 onClick={nextCeremonyStep}
                 whileHover={{ scale: 1.05 }}
-                className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-orange-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg"
               >
                 Accept Blessings →
               </motion.button>
@@ -1563,7 +1615,7 @@ export default function KrishnaKeychainCustomize() {
               🎉
             </motion.div>
 
-            <h2 className="text-5xl font-bold text-pink-200 drop-shadow-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-pink-200 drop-shadow-lg">
               Namakaran Complete!
             </h2>
 
@@ -1598,12 +1650,29 @@ export default function KrishnaKeychainCustomize() {
               </p>
             </div>
 
+            {/* Error display */}
+            {errors.general && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-900/50 border border-red-700/50 text-red-200 px-4 py-3 rounded-xl text-center max-w-md mx-auto backdrop-blur-sm"
+              >
+                <p className="font-medium">{errors.general}</p>
+                <button
+                  onClick={() => setErrors({})}
+                  className="text-red-300 hover:text-red-100 text-sm mt-2 underline"
+                >
+                  Dismiss
+                </button>
+              </motion.div>
+            )}
+
             <motion.button
               onClick={completeNamakaran}
               disabled={loading}
               whileHover={{ scale: loading ? 1 : 1.05 }}
               whileTap={{ scale: loading ? 1 : 0.95 }}
-              className="w-full max-w-md mx-auto block bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-5 rounded-2xl font-bold text-xl shadow-xl disabled:opacity-50"
+              className="w-full max-w-md mx-auto block bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-5 rounded-2xl font-bold text-lg sm:text-xl shadow-xl disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -1859,7 +1928,7 @@ export default function KrishnaKeychainCustomize() {
                         type="button"
                         onClick={() => {
                           setAuthMode(
-                            authMode === "login" ? "signup" : "login"
+                            authMode === "login" ? "signup" : "login",
                           );
                           playSound("bellSound", { volume: 0.3 });
                         }}
@@ -1891,11 +1960,11 @@ export default function KrishnaKeychainCustomize() {
                   🏺
                 </motion.div>
 
-                <h1 className="text-5xl font-bold text-orange-200 drop-shadow-lg mb-6">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-200 drop-shadow-lg mb-6">
                   Welcome to the Sacred Namakaran
                 </h1>
 
-                <p className="text-xl text-orange-100 leading-relaxed backdrop-blur-sm bg-black/30 p-6 rounded-2xl border border-orange-900/30">
+                <p className="text-base sm:text-lg md:text-xl text-orange-100 leading-relaxed backdrop-blur-sm bg-black/30 p-4 sm:p-6 rounded-2xl border border-orange-900/30">
                   Namaste,{" "}
                   <span className="text-orange-300 font-semibold">
                     {user?.name}
@@ -1950,7 +2019,7 @@ export default function KrishnaKeychainCustomize() {
                   onClick={startCeremony}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-12 py-6 rounded-2xl font-bold text-xl shadow-xl hover:shadow-orange-500/30"
+                  className="w-full sm:w-auto bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 sm:px-12 py-4 sm:py-6 rounded-2xl font-bold text-lg sm:text-xl shadow-xl hover:shadow-orange-500/30"
                 >
                   Begin Sacred Namakaran Ceremony →
                 </motion.button>
@@ -1993,7 +2062,7 @@ export default function KrishnaKeychainCustomize() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="backdrop-blur-xl bg-black/40 rounded-2xl shadow-xl border border-orange-800/30 p-8 md:p-12"
+                  className="backdrop-blur-xl bg-black/40 rounded-2xl shadow-xl border border-orange-800/30 p-4 sm:p-8 md:p-12"
                 >
                   {renderCeremonyStep()}
                 </motion.div>

@@ -2,9 +2,10 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useAuth } from "../../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useApi } from "../../Context/baseUrl";
-import Navigation from "../Navigation/Navigation";
+import Navigation from "../Navigation/NavigationGSAP";
 import axios from "axios";
-import { motion, AnimatePresence } from "framer-motion";
+import { gsap } from "gsap";
+import Modal from "../UI/Modal";
 import {
   FaHeart,
   FaRegHeart,
@@ -260,172 +261,165 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-2xl border border-amber-400/30 shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Header */}
-          <div className="p-4 sm:p-6 border-b border-white/10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center">
-                  <FaPen className="text-indigo-900" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-amber-300">
-                    Share Your Lila
-                  </h2>
-                  <p className="text-sm text-blue-100/60">
-                    Share your divine story with the sanga
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
-              >
-                <FaTimes className="text-blue-100/60" />
-              </button>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      {/* Mobile drag handle */}
+      <div className="sm:hidden flex justify-center pt-2 pb-1">
+        <div className="w-12 h-1.5 bg-white/30 rounded-full" />
+      </div>
+
+      {/* Header - Sticky */}
+      <div className="sticky top-0 z-10 bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 border-b border-white/10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <FaPen className="text-indigo-900" />
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-xl font-bold text-amber-300 truncate">
+                Share Your Lila
+              </h2>
+              <p className="text-xs sm:text-sm text-blue-100/60">
+                Share your divine story
+              </p>
             </div>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-white/10 rounded-full transition-colors flex-shrink-0"
+          >
+            <FaTimes className="text-blue-100/60 text-lg" />
+          </button>
+        </div>
+      </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
-            {error && (
-              <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
-                {error}
-              </div>
-            )}
+      {/* Form - Scrollable */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 overflow-y-auto p-4 space-y-4"
+      >
+        {error && (
+          <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
+            {error}
+          </div>
+        )}
 
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Title of Your Lila
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., The Day Krishna Answered My Prayer..."
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/20"
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-2">
+            Title of Your Lila
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g., The Day Krishna Answered My Prayer..."
+            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/20"
+          />
+        </div>
+
+        {/* Content */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-2">
+            Your Divine Story
+          </label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Share your experience of Krishna's grace in your life..."
+            rows={4}
+            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm resize-none"
+          />
+        </div>
+
+        {/* Rasa Selection */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-2">
+            Spiritual Rasa (up to 3)
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {RASAS.map((rasa) => (
+              <button
+                key={rasa.id}
+                type="button"
+                onClick={() => handleRasaToggle(rasa.id)}
+                className={`px-2 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
+                  selectedRasas.includes(rasa.id)
+                    ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
+                    : "bg-white/10 text-blue-100/70 active:bg-white/20"
+                }`}
+              >
+                <span className="text-sm">{rasa.emoji}</span>
+                <span>{rasa.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-2">
+            Add Image (optional)
+          </label>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            accept="image/*"
+            className="hidden"
+          />
+          {imagePreview ? (
+            <div className="relative">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-full h-32 object-cover rounded-xl"
               />
+              <button
+                type="button"
+                onClick={() => {
+                  setImage(null);
+                  setImagePreview(null);
+                }}
+                className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full"
+              >
+                <FaTimes className="text-white" size={10} />
+              </button>
             </div>
-
-            {/* Content */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Your Divine Story
-              </label>
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Share your experience of Krishna's grace in your life..."
-                rows={6}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/20 resize-none"
-              />
-            </div>
-
-            {/* Rasa Selection */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Spiritual Rasa (select up to 3)
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {RASAS.map((rasa) => (
-                  <button
-                    key={rasa.id}
-                    type="button"
-                    onClick={() => handleRasaToggle(rasa.id)}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 ${
-                      selectedRasas.includes(rasa.id)
-                        ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
-                        : "bg-white/10 text-blue-100/70 hover:bg-white/20"
-                    }`}
-                  >
-                    <span>{rasa.emoji}</span>
-                    <span>{rasa.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Add an Image (optional)
-              </label>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/*"
-                className="hidden"
-              />
-              {imagePreview ? (
-                <div className="relative">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded-xl"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setImage(null);
-                      setImagePreview(null);
-                    }}
-                    className="absolute top-2 right-2 p-2 bg-red-500/80 rounded-full hover:bg-red-500"
-                  >
-                    <FaTimes className="text-white" size={12} />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-8 border-2 border-dashed border-white/20 rounded-xl hover:border-amber-400/40 transition-colors flex flex-col items-center gap-2"
-                >
-                  <FaImage className="text-3xl text-blue-100/40" />
-                  <span className="text-blue-100/60 text-sm">
-                    Click to upload image
-                  </span>
-                </button>
-              )}
-            </div>
-
-            {/* Submit Button */}
+          ) : (
             <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-amber-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full py-4 border-2 border-dashed border-white/20 rounded-xl active:border-amber-400/40 transition-colors flex items-center justify-center gap-2"
             >
-              {isSubmitting ? (
-                <>
-                  <FaSpinner className="animate-spin" />
-                  Sharing...
-                </>
-              ) : (
-                <>
-                  <FaFeatherAlt />
-                  Share Lila
-                </>
-              )}
+              <FaImage className="text-xl text-blue-100/40" />
+              <span className="text-blue-100/60 text-sm">Upload image</span>
             </button>
-          </form>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+          )}
+        </div>
+      </form>
+
+      {/* Submit Button - Sticky at bottom */}
+      <div className="sticky bottom-0 p-4 bg-gradient-to-t from-indigo-900 via-indigo-900/95 to-transparent pt-6">
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-xl font-bold text-base shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isSubmitting ? (
+            <>
+              <FaSpinner className="animate-spin" />
+              Sharing...
+            </>
+          ) : (
+            <>
+              <FaFeatherAlt />
+              Share Lila
+            </>
+          )}
+        </button>
+      </div>
+    </Modal>
   );
 };
 
@@ -532,255 +526,250 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-2xl border border-amber-400/30 shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Header */}
-          <div className="p-4 sm:p-6 border-b border-white/10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center">
-                  <FaCalendarAlt className="text-indigo-900" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-amber-300">
-                    Create Sacred Event
-                  </h2>
-                  <p className="text-sm text-blue-100/60">
-                    Organize a spiritual gathering
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
-              >
-                <FaTimes className="text-blue-100/60" />
-              </button>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      {/* Mobile drag handle */}
+      <div className="sm:hidden flex justify-center pt-2 pb-1">
+        <div className="w-12 h-1.5 bg-white/30 rounded-full" />
+      </div>
+
+      {/* Header - Sticky */}
+      <div className="sticky top-0 z-10 bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 border-b border-white/10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+              <FaCalendarAlt className="text-indigo-900" />
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-xl font-bold text-amber-300 truncate">
+                Create Event
+              </h2>
+              <p className="text-xs sm:text-sm text-blue-100/60">
+                Organize a gathering
+              </p>
             </div>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-white/10 rounded-full transition-colors flex-shrink-0"
+          >
+            <FaTimes className="text-blue-100/60 text-lg" />
+          </button>
+        </div>
+      </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
-            {error && (
-              <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
-                {error}
-              </div>
-            )}
+      {/* Form - Scrollable */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 overflow-y-auto p-4 space-y-3"
+      >
+        {error && (
+          <div className="p-2.5 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
+            {error}
+          </div>
+        )}
 
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Event Title
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="e.g., Sunday Kirtan Mela"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50"
-              />
-            </div>
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            Event Title *
+          </label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="e.g., Sunday Kirtan Mela"
+            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+          />
+        </div>
 
-            {/* Event Type */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Event Type
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {EVENT_TYPES.map((type) => (
-                  <button
-                    key={type.id}
-                    type="button"
-                    onClick={() =>
-                      setFormData((prev) => ({ ...prev, eventType: type.id }))
-                    }
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
-                      formData.eventType === type.id
-                        ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
-                        : "bg-white/10 text-blue-100/70 hover:bg-white/20"
-                    }`}
-                  >
-                    <span>{type.emoji}</span>
-                    <span className="truncate">{type.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+        {/* Event Type */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            Event Type
+          </label>
+          <div className="grid grid-cols-4 gap-1.5">
+            {EVENT_TYPES.map((type) => (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, eventType: type.id }))
+                }
+                className={`px-1.5 py-2 rounded-lg text-xs font-medium transition-all flex flex-col items-center gap-0.5 ${
+                  formData.eventType === type.id
+                    ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
+                    : "bg-white/10 text-blue-100/70 active:bg-white/20"
+                }`}
+              >
+                <span className="text-base">{type.emoji}</span>
+                <span className="truncate w-full text-center text-[10px]">
+                  {type.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Description
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Describe your event..."
-                rows={4}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 resize-none"
-              />
-            </div>
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            Description *
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Describe your event..."
+            rows={2}
+            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 resize-none text-sm"
+          />
+        </div>
 
-            {/* Date & Time */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-amber-300 mb-2">
-                  Date & Time
-                </label>
-                <input
-                  type="datetime-local"
-                  name="dateTime"
-                  value={formData.dateTime}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-amber-400/50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-amber-300 mb-2">
-                  Duration (minutes)
-                </label>
-                <select
-                  name="duration"
-                  value={formData.duration}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-amber-400/50"
-                >
-                  <option value="30">30 minutes</option>
-                  <option value="60">1 hour</option>
-                  <option value="90">1.5 hours</option>
-                  <option value="120">2 hours</option>
-                  <option value="180">3 hours</option>
-                  <option value="240">4+ hours</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Location */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-amber-300 mb-2">
-                  City
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  placeholder="e.g., Mumbai, New York"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-amber-300 mb-2">
-                  Max Participants (optional)
-                </label>
-                <input
-                  type="number"
-                  name="maxParticipants"
-                  value={formData.maxParticipants}
-                  onChange={handleChange}
-                  placeholder="Leave empty for unlimited"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50"
-                />
-              </div>
-            </div>
-
-            {/* Address */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Full Address (optional)
-              </label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Full venue address or 'Online'"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50"
-              />
-            </div>
-
-            {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-amber-300 mb-2">
-                Event Image (optional)
-              </label>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/*"
-                className="hidden"
-              />
-              {imagePreview ? (
-                <div className="relative">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-40 object-cover rounded-xl"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setImage(null);
-                      setImagePreview(null);
-                    }}
-                    className="absolute top-2 right-2 p-2 bg-red-500/80 rounded-full hover:bg-red-500"
-                  >
-                    <FaTimes className="text-white" size={12} />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-6 border-2 border-dashed border-white/20 rounded-xl hover:border-amber-400/40 transition-colors flex flex-col items-center gap-2"
-                >
-                  <FaImage className="text-2xl text-blue-100/40" />
-                  <span className="text-blue-100/60 text-sm">
-                    Click to upload image
-                  </span>
-                </button>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-amber-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        {/* Date & Duration - Side by side */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+              Date & Time *
+            </label>
+            <input
+              type="datetime-local"
+              name="dateTime"
+              value={formData.dateTime}
+              onChange={handleChange}
+              className="w-full px-2 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-amber-400/50 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+              Duration
+            </label>
+            <select
+              name="duration"
+              value={formData.duration}
+              onChange={handleChange}
+              className="w-full px-2 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-amber-400/50 text-sm"
             >
-              {isSubmitting ? (
-                <>
-                  <FaSpinner className="animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <FaCalendarAlt />
-                  Create Event
-                </>
-              )}
+              <option value="30">30 min</option>
+              <option value="60">1 hour</option>
+              <option value="90">1.5 hrs</option>
+              <option value="120">2 hours</option>
+              <option value="180">3 hours</option>
+              <option value="240">4+ hours</option>
+            </select>
+          </div>
+        </div>
+
+        {/* City & Max Participants */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+              City
+            </label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              placeholder="Mumbai, NYC..."
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+              Max People
+            </label>
+            <input
+              type="number"
+              name="maxParticipants"
+              value={formData.maxParticipants}
+              onChange={handleChange}
+              placeholder="Unlimited"
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+            />
+          </div>
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            Address (optional)
+          </label>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Full venue address or 'Online'"
+            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+          />
+        </div>
+
+        {/* Image Upload - Compact */}
+        <div>
+          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            Image (optional)
+          </label>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            accept="image/*"
+            className="hidden"
+          />
+          {imagePreview ? (
+            <div className="relative">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-full h-24 object-cover rounded-xl"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setImage(null);
+                  setImagePreview(null);
+                }}
+                className="absolute top-1.5 right-1.5 p-1.5 bg-red-500/80 rounded-full"
+              >
+                <FaTimes className="text-white" size={10} />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full py-3 border-2 border-dashed border-white/20 rounded-xl active:border-amber-400/40 transition-colors flex items-center justify-center gap-2"
+            >
+              <FaImage className="text-lg text-blue-100/40" />
+              <span className="text-blue-100/60 text-sm">Upload image</span>
             </button>
-          </form>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+          )}
+        </div>
+      </form>
+
+      {/* Submit Button - Sticky at bottom */}
+      <div className="sticky bottom-0 p-4 bg-gradient-to-t from-indigo-900 via-indigo-900/95 to-transparent pt-6">
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-xl font-bold text-base shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isSubmitting ? (
+            <>
+              <FaSpinner className="animate-spin" />
+              Creating...
+            </>
+          ) : (
+            <>
+              <FaCalendarAlt />
+              Create Event
+            </>
+          )}
+        </button>
+      </div>
+    </Modal>
   );
 };
 
@@ -791,38 +780,30 @@ const FloatingCreateButton = ({
   onCreateEvent,
   isLoggedIn,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   if (!isLoggedIn) return null;
 
   // Show specific button based on active tab
   if (activeTab === "lilas") {
     return (
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+      <button
         onClick={onCreateLila}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-lg shadow-amber-500/30 flex items-center justify-center z-40 hover:shadow-xl"
+        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-6 w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-xl shadow-amber-500/40 flex items-center justify-center z-[90] active:scale-90 transition-transform duration-150"
+        style={{ touchAction: "manipulation" }}
       >
         <FaPen className="text-indigo-900 text-xl" />
-      </motion.button>
+      </button>
     );
   }
 
   if (activeTab === "events") {
     return (
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
+      <button
         onClick={onCreateEvent}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-lg shadow-amber-500/30 flex items-center justify-center z-40 hover:shadow-xl"
+        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-6 w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-xl shadow-amber-500/40 flex items-center justify-center z-[90] active:scale-90 transition-transform duration-150"
+        style={{ touchAction: "manipulation" }}
       >
         <FaPlus className="text-indigo-900 text-xl" />
-      </motion.button>
+      </button>
     );
   }
 
@@ -844,11 +825,9 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:border-amber-400/30 transition-all duration-300"
+    <div
+      className="animate-fadeInUp backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:border-amber-400/30 transition-all duration-300"
+      style={{ animationDelay: `${index * 0.1}s` }}
     >
       {/* Header */}
       <div className="p-4 sm:p-6">
@@ -931,7 +910,7 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -999,11 +978,9 @@ const EventCard = ({ event, user, baseUrl, index }) => {
   const btnConfig = getButtonConfig();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:border-amber-400/30 transition-all duration-300"
+    <div
+      className="animate-fadeInUp backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:border-amber-400/30 transition-all duration-300"
+      style={{ animationDelay: `${index * 0.1}s` }}
     >
       <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between mb-4">
@@ -1065,7 +1042,7 @@ const EventCard = ({ event, user, baseUrl, index }) => {
           {btnConfig.text}
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -1216,16 +1193,11 @@ function CommunityContent() {
 
         {/* Content */}
         <div className="px-4">
-          <AnimatePresence mode="wait">
+          {/* Tab content with CSS transitions */}
+          <div className="transition-opacity duration-300">
             {/* LILAS TAB - Modern Divine Stories */}
             {activeTab === "lilas" && (
-              <motion.div
-                key="lilas"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-6"
-              >
+              <div className="space-y-6 animate-fadeIn">
                 {/* Rasa Filter */}
                 <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 p-4">
                   <h3 className="text-sm font-semibold text-amber-300 mb-3 flex items-center gap-2">
@@ -1274,20 +1246,14 @@ function CommunityContent() {
                     </p>
                   </div>
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* EVENTS TAB - Devotee Level Based */}
             {activeTab === "events" && (
-              <motion.div
-                key="events"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-6"
-              >
+              <div className="space-y-6 animate-fadeIn">
                 {events.length > 0 ? (
-                  <div className="grid gap-6 md:grid-cols-2">
+                  <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
                     {events.map((event, index) => (
                       <DevoteeEventCard
                         key={event._id}
@@ -1308,38 +1274,28 @@ function CommunityContent() {
                     </p>
                   </div>
                 )}
-              </motion.div>
+              </div>
             )}
 
             {/* SANGA TAB - Vibration Matching */}
             {activeTab === "sanga" && (
-              <motion.div
-                key="sanga"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
+              <div className="animate-fadeIn">
                 <VibrationMatcher
                   onConnect={(devotee) => {
                     console.log("Connect with:", devotee);
                     // Would navigate to chat or connection page
                   }}
                 />
-              </motion.div>
+              </div>
             )}
 
             {/* HOTSPOTS TAB - Sacred Locations Map */}
             {activeTab === "hotspots" && (
-              <motion.div
-                key="hotspots"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
+              <div className="animate-fadeIn">
                 <SpiritualHotspotMap compact={false} />
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </div>
         </div>
       </div>
 

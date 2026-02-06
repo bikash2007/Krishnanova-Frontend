@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { useAuth } from "../Context/AuthContext";
 import Navigation from "../components/Navigation/Navigation";
 import {
@@ -226,52 +225,26 @@ export default function Signup() {
         }}
       />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-lg mx-auto mt-20 relative z-10"
-      >
+      <div className="w-full max-w-lg mx-auto mt-20 relative z-10">
         <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-8 text-center">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="text-5xl mb-4"
-            >
-              🕉️
-            </motion.div>
-            <motion.h2
-              className="text-3xl font-bold text-indigo-900 mb-2"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
+            <div className="text-5xl mb-4">🕉️</div>
+            <h2 className="text-3xl font-bold text-indigo-900 mb-2">
               Join Krishnova
-            </motion.h2>
-            <motion.p
-              className="text-indigo-800"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
+            </h2>
+            <p className="text-indigo-800">
               Begin your spiritual journey today
-            </motion.p>
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             {/* General Error */}
             {errors.general && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl flex items-center gap-2"
-              >
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl flex items-center gap-2">
                 <FaTimes />
                 {errors.general}
-              </motion.div>
+              </div>
             )}
 
             {/* Profile Photo Upload */}
@@ -339,14 +312,10 @@ export default function Signup() {
               </div>
 
               {errors.avatar && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-sm flex items-center gap-2"
-                >
+                <div className="text-red-400 text-sm flex items-center gap-2">
                   <FaTimes className="text-xs" />
                   {errors.avatar}
-                </motion.div>
+                </div>
               )}
             </div>
 
@@ -369,14 +338,10 @@ export default function Signup() {
                 />
               </div>
               {errors.name && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-sm flex items-center gap-1"
-                >
+                <div className="text-red-400 text-sm flex items-center gap-1">
                   <FaTimes className="text-xs" />
                   {errors.name}
-                </motion.div>
+                </div>
               )}
             </div>
 
@@ -401,14 +366,10 @@ export default function Signup() {
                 />
               </div>
               {errors.username && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-sm flex items-center gap-1"
-                >
+                <div className="text-red-400 text-sm flex items-center gap-1">
                   <FaTimes className="text-xs" />
                   {errors.username}
-                </motion.div>
+                </div>
               )}
             </div>
 
@@ -431,14 +392,10 @@ export default function Signup() {
                 />
               </div>
               {errors.email && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-sm flex items-center gap-1"
-                >
+                <div className="text-red-400 text-sm flex items-center gap-1">
                   <FaTimes className="text-xs" />
                   {errors.email}
-                </motion.div>
+                </div>
               )}
             </div>
 
@@ -478,7 +435,7 @@ export default function Signup() {
                         className={`h-2 flex-1 rounded-full transition-all ${
                           passwordStrength(formData.password) >= level
                             ? getPasswordStrengthColor(
-                                passwordStrength(formData.password)
+                                passwordStrength(formData.password),
                               )
                             : "bg-white/10"
                         }`}
@@ -489,7 +446,7 @@ export default function Signup() {
                     Password strength:{" "}
                     <span className="font-medium text-amber-300">
                       {getPasswordStrengthText(
-                        passwordStrength(formData.password)
+                        passwordStrength(formData.password),
                       )}
                     </span>
                   </p>
@@ -497,14 +454,10 @@ export default function Signup() {
               )}
 
               {errors.password && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-sm flex items-center gap-1"
-                >
+                <div className="text-red-400 text-sm flex items-center gap-1">
                   <FaTimes className="text-xs" />
                   {errors.password}
-                </motion.div>
+                </div>
               )}
             </div>
 
@@ -546,24 +499,18 @@ export default function Signup() {
                 )}
               </div>
               {errors.confirmPassword && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-sm flex items-center gap-1"
-                >
+                <div className="text-red-400 text-sm flex items-center gap-1">
                   <FaTimes className="text-xs" />
                   {errors.confirmPassword}
-                </motion.div>
+                </div>
               )}
             </div>
 
             {/* Submit Button */}
-            <motion.button
+            <button
               type="submit"
               disabled={loading}
-              className="group relative w-full px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50"
-              whileHover={{ scale: loading ? 1 : 1.02 }}
-              whileTap={{ scale: loading ? 1 : 0.98 }}
+              className="group relative w-full px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -578,15 +525,10 @@ export default function Signup() {
                   "Join Krishnova"
                 )}
               </span>
-            </motion.button>
+            </button>
 
             {/* Sign In Link */}
-            <motion.p
-              className="text-center text-blue-100/80"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
+            <p className="text-center text-blue-100/80">
               Already a devotee?{" "}
               <Link
                 to="/login"
@@ -594,7 +536,7 @@ export default function Signup() {
               >
                 Sign In
               </Link>
-            </motion.p>
+            </p>
 
             {/* Sacred Quote */}
             <div className="text-center pt-4 border-t border-white/10">
@@ -607,7 +549,7 @@ export default function Signup() {
             </div>
           </form>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

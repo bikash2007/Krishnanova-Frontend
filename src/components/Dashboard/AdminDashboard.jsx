@@ -22,10 +22,12 @@ ChartJS.register(
   LineElement,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
-const API_URL = import.meta.env.VITE_API_URL || "https://krishnanova-backend.onrender.com/api";
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://krishnanova-backend.onrender.com/api";
 
 // Animated Counter Component
 const AnimatedCounter = ({
@@ -496,7 +498,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes fadeInDown {
           from {
             opacity: 0;

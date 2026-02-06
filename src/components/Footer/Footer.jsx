@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import {
   FaInstagram,
   FaTwitter,
@@ -159,12 +158,7 @@ const Footer = () => {
 
       <div className="relative z-10  px-2 lg:scale-90 sm:px-6">
         {/* Main Footer Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="backdrop-blur-md bg-gradient-to-br w-full from-white/10 to-white/5 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12"
-        >
+        <div className="backdrop-blur-md bg-gradient-to-br w-full from-white/10 to-white/5 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl p-6 sm:p-8 md:p-10 lg:p-12">
           {/* Header - Simplified for mobile */}
           <div className="text-center mb-6 sm:mb-10 md:mb-12">
             <div className="inline-flex items-center justify-center mb-3 sm:mb-4">
@@ -237,17 +231,15 @@ const Footer = () => {
                   {social.map((s) => {
                     const Icon = s.icon;
                     return (
-                      <motion.a
+                      <a
                         key={s.name}
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full backdrop-blur-md bg-white/10 border border-amber-400/30 flex items-center justify-center text-amber-300 hover:bg-amber-400/20 hover:border-amber-400/50 transition-all duration-300"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full backdrop-blur-md bg-white/10 border border-amber-400/30 flex items-center justify-center text-amber-300 hover:bg-amber-400/20 hover:border-amber-400/50 hover:scale-110 hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
                       >
                         <Icon size={isMobile ? 16 : 20} />
-                      </motion.a>
+                      </a>
                     );
                   })}
                 </div>
@@ -267,9 +259,7 @@ const Footer = () => {
 
               {/* Status Message - Simplified */}
               {emailStatus && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                <div
                   className={`p-3 sm:p-4 rounded-xl backdrop-blur-md border flex items-center gap-2 sm:gap-3 ${
                     emailStatus === "success"
                       ? "bg-green-400/10 border-green-400/30"
@@ -290,7 +280,7 @@ const Footer = () => {
                   >
                     {statusMessage}
                   </p>
-                </motion.div>
+                </div>
               )}
 
               {/* Form */}
@@ -334,12 +324,10 @@ const Footer = () => {
                 </div>
 
                 {/* Send Button */}
-                <motion.button
-                  whileHover={!isLoading ? { scale: 1.02 } : {}}
-                  whileTap={!isLoading ? { scale: 0.98 } : {}}
+                <button
                   onClick={handleSendMessage}
                   disabled={isLoading}
-                  className="group relative w-full px-4 sm:px-6 py-2.5 sm:py-3 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                  className="group relative w-full px-4 sm:px-6 py-2.5 sm:py-3 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -356,7 +344,7 @@ const Footer = () => {
                       </>
                     )}
                   </span>
-                </motion.button>
+                </button>
               </div>
             </div>
           </div>
@@ -369,15 +357,13 @@ const Footer = () => {
                 { label: "📚 Wisdom Portal", id: "wisdom" },
                 { label: "🤝 Join Community", id: "community" },
               ].map((cta) => (
-                <motion.button
+                <button
                   key={cta.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   onClick={() => scrollToSection(cta.id)}
-                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full backdrop-blur-md bg-white/10 border border-amber-400/30 text-amber-200 hover:bg-amber-400/20 hover:border-amber-400/50 transition-all duration-300 text-xs sm:text-sm"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full backdrop-blur-md bg-white/10 border border-amber-400/30 text-amber-200 hover:bg-amber-400/20 hover:border-amber-400/50 hover:scale-105 active:scale-95 transition-all duration-300 text-xs sm:text-sm"
                 >
                   {cta.label}
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
@@ -401,11 +387,11 @@ const Footer = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Custom CSS */}
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes float {
           0% {
             transform: translate(0, 0);

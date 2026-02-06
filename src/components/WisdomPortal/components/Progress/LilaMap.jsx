@@ -212,42 +212,34 @@ const LocationNode = ({
 
   return (
     <motion.div
-      className="absolute cursor-pointer group"
+      className="absolute cursor-pointer group active:scale-95"
       style={{
         left: `${location.position.x}%`,
         top: `${location.position.y}%`,
         transform: "translate(-50%, -50%)",
+        touchAction: 'manipulation',
       }}
-      whileHover={{ scale: isUnlocked ? 1.15 : 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={() => onClick(location)}
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.1 * LILA_LOCATIONS.indexOf(location) }}
     >
-      {/* Glow effect for current location */}
+      {/* Static glow effect for current location - no infinite animation for iOS */}
       {isCurrent && (
-        <motion.div
+        <div
           className="absolute inset-0 rounded-full"
-          animate={{
-            boxShadow: [
-              "0 0 20px rgba(251, 191, 36, 0.5)",
-              "0 0 40px rgba(251, 191, 36, 0.8)",
-              "0 0 20px rgba(251, 191, 36, 0.5)",
-            ],
+          style={{
+            boxShadow: "0 0 30px rgba(251, 191, 36, 0.6)",
+            width: "100%",
+            height: "100%",
           }}
-          transition={{ duration: 2, repeat: Infinity }}
-          style={{ width: "100%", height: "100%" }}
         />
       )}
 
-      {/* Next location pulse */}
+      {/* Next location indicator - static border instead of rotating animation */}
       {isNext && !isUnlocked && (
-        <motion.div
-          className="absolute -inset-2 rounded-full border-2 border-dashed border-amber-400/50"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-        />
+        <div className="absolute -inset-2 rounded-full border-2 border-dashed border-amber-400/50" />
       )}
 
       {/* Main node */}
@@ -268,15 +260,11 @@ const LocationNode = ({
           />
         )}
 
-        {/* Current indicator */}
+        {/* Current indicator - static instead of pulsing for iOS */}
         {isCurrent && (
-          <motion.div
-            className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center"
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center shadow-lg">
             <IoStar className="text-xs text-white" />
-          </motion.div>
+          </div>
         )}
 
         {/* Completed checkmark */}
@@ -350,23 +338,7 @@ const PathLine = ({ from, to, isUnlocked, isMobile }) => {
         animate={{ pathLength: 1 }}
         transition={{ duration: 1.5, ease: "easeInOut" }}
       />
-      {isUnlocked && (
-        <motion.circle
-          r={isMobile ? 3 : 4}
-          fill="#fbbf24"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: [0, 1, 0],
-            cx: [`${fromLoc.position.x}%`, `${toLoc.position.x}%`],
-            cy: [`${fromLoc.position.y}%`, `${toLoc.position.y}%`],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      )}
+      {/* Removed infinite moving circle animation for iOS performance */}
     </svg>
   );
 };
@@ -391,7 +363,7 @@ const LocationDetailModal = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
       onClick={onClose}
     >
       <motion.div
@@ -530,33 +502,38 @@ const LilaMap = ({ totalProgress = 0, onLocationClick, isMobile = false }) => {
 
   return (
     <div className="relative">
-      {/* Map Container */}
+      {/* Map Container - removed backdrop-blur for iOS performance */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className={`relative ${isMobile ? "h-64" : "h-96"} backdrop-blur-md bg-gradient-to-br from-indigo-900/50 via-purple-900/50 to-blue-900/50 rounded-2xl border border-white/20 overflow-hidden`}
+        className={`relative ${isMobile ? "h-64" : "h-96"} bg-gradient-to-br from-indigo-900/80 via-purple-900/80 to-blue-900/80 rounded-2xl border border-white/20 overflow-hidden`}
       >
-        {/* Background stars/decorations */}
-        <div className="absolute inset-0 overflow-hidden opacity-30">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-white rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                opacity: [0.2, 1, 0.2],
-                scale: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 2 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
+        {/* Static background decoration - no animations for iOS performance */}
+        <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "10%", top: "20%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "25%", top: "70%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "45%", top: "15%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "60%", top: "80%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "80%", top: "40%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "90%", top: "60%" }}
+          />
         </div>
 
         {/* Path lines */}
@@ -603,11 +580,11 @@ const LilaMap = ({ totalProgress = 0, onLocationClick, isMobile = false }) => {
         </div>
       </motion.div>
 
-      {/* Current location info card */}
+      {/* Current location info card - removed backdrop-blur for iOS */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-4 p-4 backdrop-blur-md bg-gradient-to-r from-amber-400/10 to-orange-500/10 rounded-xl border border-amber-400/30"
+        className="mt-4 p-4 bg-gradient-to-r from-amber-400/15 to-orange-500/15 rounded-xl border border-amber-400/30"
       >
         <div className="flex items-center gap-3">
           <div
@@ -720,33 +697,38 @@ const LilaMapConnected = ({ onLocationClick, isMobile = false }) => {
 
   return (
     <div className="relative">
-      {/* Map Container */}
+      {/* Map Container - removed backdrop-blur for iOS performance */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className={`relative ${isMobile ? "h-64" : "h-96"} backdrop-blur-md bg-gradient-to-br from-indigo-900/50 via-purple-900/50 to-blue-900/50 rounded-2xl border border-white/20 overflow-hidden`}
+        className={`relative ${isMobile ? "h-64" : "h-96"} bg-gradient-to-br from-indigo-900/80 via-purple-900/80 to-blue-900/80 rounded-2xl border border-white/20 overflow-hidden`}
       >
-        {/* Background stars/decorations */}
-        <div className="absolute inset-0 overflow-hidden opacity-30">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-white rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                opacity: [0.2, 1, 0.2],
-                scale: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 2 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
+        {/* Static background decoration - no animations for iOS performance */}
+        <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "10%", top: "20%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "25%", top: "70%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "45%", top: "15%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "60%", top: "80%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "80%", top: "40%" }}
+          />
+          <div
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{ left: "90%", top: "60%" }}
+          />
         </div>
 
         {/* Path lines */}
@@ -794,11 +776,11 @@ const LilaMapConnected = ({ onLocationClick, isMobile = false }) => {
         </div>
       </motion.div>
 
-      {/* Current location info card */}
+      {/* Current location info card - removed backdrop-blur for iOS */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-4 p-4 backdrop-blur-md bg-gradient-to-r from-amber-400/10 to-orange-500/10 rounded-xl border border-amber-400/30"
+        className="mt-4 p-4 bg-gradient-to-r from-amber-400/15 to-orange-500/15 rounded-xl border border-amber-400/30"
       >
         <div className="flex items-center gap-3">
           <div

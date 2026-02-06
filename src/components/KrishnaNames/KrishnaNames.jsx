@@ -506,11 +506,7 @@ const KrishnaNames = () => {
 
       <div className="relative z-10 container mx-auto px-3 sm:px-6 py-4 sm:py-8">
         {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-4 sm:mb-8 md:mb-12"
-        >
+        <div className="text-center mb-4 sm:mb-8 md:mb-12">
           {/* Sacred Badge */}
           <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 shadow-lg mb-3 sm:mb-5">
             <span className="text-amber-300 animate-pulse text-xs sm:text-sm">
@@ -541,15 +537,10 @@ const KrishnaNames = () => {
             </span>
             <span className="italic sm:hidden">Vishnu Sahasranama</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Search Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="max-w-md mx-auto mb-4 sm:mb-6"
-        >
+        <div className="max-w-md mx-auto mb-4 sm:mb-6">
           <div className="relative">
             <input
               type="text"
@@ -570,15 +561,10 @@ const KrishnaNames = () => {
               </button>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Category Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6"
-        >
+        <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6">
           {categories.map((category) => (
             <button
               key={category.id}
@@ -601,7 +587,7 @@ const KrishnaNames = () => {
               <span className="hidden sm:inline">{category.label}</span>
             </button>
           ))}
-        </motion.div>
+        </div>
 
         {/* View Mode Toggle - Responsive Design */}
         <div className="flex justify-center gap-1.5 sm:gap-2 md:gap-3 mb-4 sm:mb-6 md:mb-8">
@@ -632,11 +618,7 @@ const KrishnaNames = () => {
         </div>
 
         {/* Stats bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex justify-center items-center gap-3 sm:gap-6 mb-3 sm:mb-5 text-[10px] sm:text-xs"
-        >
+        <div className="flex justify-center items-center gap-3 sm:gap-6 mb-3 sm:mb-5 text-[10px] sm:text-xs">
           <div className="flex items-center gap-1.5 text-amber-200/60">
             <span className="text-amber-400 text-sm">📿</span>
             <span>{krishnaNames.length} Total Names</span>
@@ -647,17 +629,12 @@ const KrishnaNames = () => {
               <span>{filteredNames.length} Showing</span>
             </div>
           ) : null}
-        </motion.div>
+        </div>
 
         {/* Names Display */}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {viewMode === "grid" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5"
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
               {filteredNames.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <span className="text-4xl mb-4 block">🔍</span>
@@ -671,11 +648,8 @@ const KrishnaNames = () => {
                     ? filteredNames
                     : filteredNames.slice(0, isMobile ? 4 : 8)
                   ).map((item, index) => (
-                    <motion.div
+                    <div
                       key={item.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
                       className="group relative backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-5 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 cursor-pointer overflow-hidden will-change-transform hover:scale-[1.02] hover:-translate-y-1"
                       style={{ transform: "translate3d(0, 0, 0)" }}
                       onClick={() => setSelectedName(item)}
@@ -724,17 +698,13 @@ const KrishnaNames = () => {
                           </p>
                         </div>
                       )}
-                    </motion.div>
+                    </div>
                   ))}
 
                   {/* View All Names Button for Grid */}
                   {filteredNames.length > (isMobile ? 4 : 8) &&
                     !showAllNames && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="col-span-full flex justify-center mt-2"
-                      >
+                      <div className="col-span-full flex justify-center mt-2">
                         <button
                           onClick={() => setShowAllNames(true)}
                           className="px-8 py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/40 rounded-xl text-amber-200 font-medium text-sm flex items-center gap-2 hover:border-amber-400/60 hover:scale-105 transition-all duration-300"
@@ -745,17 +715,13 @@ const KrishnaNames = () => {
                           </span>
                           <span>↓</span>
                         </button>
-                      </motion.div>
+                      </div>
                     )}
 
                   {/* Collapse button for Grid */}
                   {showAllNames &&
                     filteredNames.length > (isMobile ? 4 : 8) && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="col-span-full flex justify-center mt-2"
-                      >
+                      <div className="col-span-full flex justify-center mt-2">
                         <button
                           onClick={() => setShowAllNames(false)}
                           className="px-8 py-3 bg-gradient-to-r from-purple-500/20 to-indigo-500/20 backdrop-blur-md border border-purple-400/40 rounded-xl text-purple-200 font-medium text-sm flex items-center gap-2 hover:border-purple-400/60 hover:scale-105 transition-all duration-300"
@@ -763,11 +729,11 @@ const KrishnaNames = () => {
                           <span>↑</span>
                           <span>Show Less</span>
                         </button>
-                      </motion.div>
+                      </div>
                     )}
                 </>
               )}
-            </motion.div>
+            </div>
           )}
 
           {viewMode === "circle" && (
@@ -1064,7 +1030,7 @@ const KrishnaNames = () => {
       </div>
 
       {/* Custom CSS for animations */}
-      <style jsx>{`
+      <style jsx="true">{`
         @keyframes float {
           0% {
             transform: translate(0, 0);

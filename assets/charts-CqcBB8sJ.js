@@ -1,4 +1,4 @@
-import{r as t,R as e}from"./router-CKJV9oIn.js";
+import{r as t,R as e}from"./router-CTAd-QZz.js";
 /*!
  * @kurkle/color v0.3.4
  * https://github.com/kurkle/color#readme

@@ -1,14 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useAuth } from "../../Context/AuthContext";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import KrishnaVoiceElevenLabs from "./components/KrishnaVoiceElevenLabs";
 import kpng from "../../Media/k.png";
 
 // Layout Components
@@ -21,698 +17,56 @@ import NamingDialog from "./components/Layout/NamingDialog";
 import NotificationToast from "./components/Shared/NotificationToast";
 import AchievementNotification from "./components/Shared/AchievementNotification";
 import {
-  useSmartPresence,
+  SafeMotionDiv,
+  SafeMotionButton,
+} from "./components/Shared/SafeMotion";
+import {
   EmotionPicker,
-  PendingPracticeBanner,
-  ContextGreeting,
   EMOTIONAL_STATES,
 } from "./components/Shared/SmartPresence";
+import VoiceSettings from "./components/Shared/VoiceSettings";
+import SavedConversationsModal from "./components/Shared/SavedConversationsModal";
+
+// Chat Components
+import EnhancedKrishnaMessage from "./components/Chat/EnhancedKrishnaMessage";
 
 // Tab Components
-
 import AchievementsTab from "./components/Progress/AchievementsTab";
 import HistoryTab from "./components/History/HistoryTab";
 import MeditationModule from "./components/Meditation/MeditationModule";
-import MantraModule from "./components/Mantra/MantraModule"; // Import MantraModule
+import MantraModule from "./components/Mantra/MantraModule";
 
-// Import only available React Icons
+// Icons — only those actually used in the main component
 import { FaOm } from "react-icons/fa";
-
-import { MdAutoAwesome, MdMenuBook, MdHistory } from "react-icons/md";
-
+import { MdHistory } from "react-icons/md";
 import {
-  IoSparkles,
   IoFlame,
-  IoTrophy,
-  IoStar,
-  IoBook,
-  IoChatbubbles,
-  IoTime,
-  IoCalendar,
   IoHeart,
-  IoHeartOutline,
   IoBookmark,
-  IoBookmarkOutline,
   IoSettings,
-  IoPause,
-  IoVolumeHigh,
-  IoThumbsUp,
-  IoThumbsDown,
-  IoCheckmark,
-  IoClose,
-  IoLocation,
-  IoLanguage,
   IoTrendingUp,
-  IoEye,
   IoSave,
-  IoTrash,
+  IoAdd,
 } from "react-icons/io5";
-
-import {
-  GiMeditation,
-  GiPrayerBeads,
-  GiFlute,
-  GiPeaceDove,
-  GiLotusFlower,
-  GiSunRadiations,
-  GiCrystalShrine,
-  GiTempleGate,
-  GiIncense,
-  GiCandleFlame,
-  GiChakram,
-  GiThirdEye,
-  GiPrayer,
-  GiBowman,
-  GiChariot,
-  GiElephant,
-  GiFeather, // Changed from GiPeacock to GiFeather
-  GiSnake,
-  GiTigerHead,
-  GiWhiteBook,
-  GiScrollUnfurled,
-  GiAncientSword,
-  GiCrown,
-  GiDiamondRing,
-  GiGems,
-  GiCrystalBall,
-  GiMoonOrbit,
-  GiSunPriest,
-  GiMoonClaws,
-  GiStarSwirl,
-  GiGalaxy,
-  GiMagicSwirl,
-  GiEnlightenment,
-  GiInnerSelf,
-  GiPsychicWaves,
-  GiBrain,
-  GiHeartOrgan,
-  GiSoulVessel,
-} from "react-icons/gi";
+import { GiPrayerBeads, GiFlute, GiFeather } from "react-icons/gi";
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
-// Add Icons object for easier reference
+// Icons object passed as prop to HistoryTab
 const Icons = {
   om: <FaOm />,
   history: <MdHistory />,
   chanting: <GiPrayerBeads />,
   streak: <IoFlame />,
-  peacock: <GiFeather />, // Using GiFeather as peacock alternative
-};
-
-// Enhanced Voice Settings Component
-const VoiceSettings = ({ isOpen, onClose, settings, onSettingsChange }) => {
-  const [availableVoices, setAvailableVoices] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const baseUrl = import.meta.env.VITE_API_URL;
-
-  useEffect(() => {
-    if (isOpen) {
-      loadVoiceOptions();
-    }
-  }, [isOpen]);
-
-  const loadVoiceOptions = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `${baseUrl}/krishna/wisdom-portal/voice-options`,
-      );
-      if (response.data.success) {
-        setAvailableVoices(response.data.voices);
-      }
-    } catch (error) {
-      console.error("Failed to load voice options:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="absolute top-16 right-0 z-50 backdrop-blur-md bg-gradient-to-br from-white/20 to-white/10 rounded-xl p-4 shadow-2xl border border-white/30 w-80"
-    >
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-amber-200 font-semibold flex items-center gap-2">
-          <IoSettings className="text-lg" /> Voice Settings
-        </h3>
-        <button
-          onClick={onClose}
-          className="text-blue-100/60 hover:text-amber-200 transition-colors"
-        >
-          <IoClose className="text-xl" />
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="text-center py-4">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-8 h-8 border-2 border-amber-400 border-t-transparent rounded-full mx-auto"
-          />
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs text-blue-100/80  mb-1 flex items-center gap-1">
-              <IoLanguage /> Voice Provider
-            </label>
-            <select
-              value={settings.provider || "auto"}
-              onChange={(e) =>
-                onSettingsChange({ ...settings, provider: e.target.value })
-              }
-              className="w-full px-3 py-2 rounded-lg bg-white/10 border border-amber-400/30 text-amber-200 text-sm"
-            >
-              <option value="auto">Auto (Best Available)</option>
-              <option value="elevenlabs">ElevenLabs (Premium)</option>
-              <option value="google">Google Cloud</option>
-              <option value="browser">Browser (Basic)</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs text-blue-100/80 block mb-1">
-              Speed: {settings.rate || 0.95}x
-            </label>
-            <input
-              type="range"
-              min="0.7"
-              max="1.2"
-              step="0.05"
-              value={settings.rate || 0.95}
-              onChange={(e) =>
-                onSettingsChange({
-                  ...settings,
-                  rate: parseFloat(e.target.value),
-                })
-              }
-              className="w-full"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs text-blue-100/80 block mb-1">
-              Volume: {Math.round((settings.volume || 1) * 100)}%
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={settings.volume || 1}
-              onChange={(e) =>
-                onSettingsChange({
-                  ...settings,
-                  volume: parseFloat(e.target.value),
-                })
-              }
-              className="w-full"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="autoSpeak"
-              checked={settings.autoSpeak || false}
-              onChange={(e) =>
-                onSettingsChange({ ...settings, autoSpeak: e.target.checked })
-              }
-              className="rounded"
-            />
-            <label
-              htmlFor="autoSpeak"
-              className="text-sm text-blue-100/80 flex items-center gap-1"
-            >
-              <MdAutoAwesome /> Auto-speak Krishna's messages
-            </label>
-          </div>
-        </div>
-      )}
-    </motion.div>
-  );
-};
-
-// Saved Conversations Modal
-const SavedConversationsModal = ({
-  isOpen,
-  onClose,
-  savedConversations,
-  onLoadConversation,
-  onDeleteConversation,
-}) => {
-  if (!isOpen) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="backdrop-blur-md bg-gradient-to-br from-white/20 to-white/10 rounded-2xl shadow-2xl p-6 w-full max-w-3xl max-h-[80vh] overflow-hidden border border-white/30"
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-amber-200 flex items-center gap-2">
-            <IoBookmark /> Saved Conversations
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-blue-100/60 hover:text-amber-200 transition-colors"
-          >
-            <IoClose className="text-2xl" />
-          </button>
-        </div>
-
-        <div className="overflow-y-auto max-h-[60vh] space-y-3">
-          {savedConversations.length === 0 ? (
-            <div className="text-center py-12">
-              <IoBookmarkOutline className="text-5xl text-blue-100/40 mx-auto mb-4" />
-              <p className="text-blue-100/60">No saved conversations yet</p>
-              <p className="text-xs text-blue-100/40 mt-2">
-                Save important conversations to access them later
-              </p>
-            </div>
-          ) : (
-            savedConversations.map((conv) => (
-              <motion.div
-                key={conv.id}
-                className="p-4 bg-gradient-to-br from-white/5 to-white/10 rounded-xl border border-white/20 hover:border-amber-400/50 transition-all"
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-amber-200 mb-1">
-                      {conv.title}
-                    </h3>
-                    <p className="text-xs text-cyan-300">
-                      {new Date(conv.savedAt).toLocaleDateString()} •{" "}
-                      {conv.messageCount} messages
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <motion.button
-                      onClick={() => onLoadConversation(conv)}
-                      className="p-2 rounded-lg bg-gradient-to-r from-amber-400/20 to-orange-500/20 text-amber-200 hover:from-amber-400/30 hover:to-orange-500/30"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      title="Load conversation"
-                    >
-                      <IoEye />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => onDeleteConversation(conv.id)}
-                      className="p-2 rounded-lg bg-gradient-to-r from-red-400/20 to-rose-500/20 text-red-300 hover:from-red-400/30 hover:to-rose-500/30"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      title="Delete conversation"
-                    >
-                      <IoTrash />
-                    </motion.button>
-                  </div>
-                </div>
-                {conv.preview && (
-                  <p className="text-sm text-blue-100/60 line-clamp-2">
-                    {conv.preview}
-                  </p>
-                )}
-                {conv.tags && conv.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {conv.tags.map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-purple-400/20 to-blue-500/20 text-purple-200 border border-purple-400/30"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            ))
-          )}
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-// Enhanced Krishna Message Component
-// Enhanced Krishna Message Component with fixed TTS
-const EnhancedKrishnaMessage = ({
-  message,
-  onFeedback,
-  onAcceptPractice,
-  hasActivePractice,
-  isMobile,
-  voiceSettings,
-  onSaveMessage,
-  isSaved = false,
-  userId, // Add userId prop
-}) => {
-  const [feedbackGiven, setFeedbackGiven] = useState(null);
-  const [practiceAccepted, setPracticeAccepted] = useState(false);
-  const [isMessageSaved, setIsMessageSaved] = useState(isSaved);
-
-  const getPlainTextForSpeech = () => {
-    const blocks = message.blocks ||
-      message.structured_message?.blocks ||
-      message.message?.blocks || [
-        {
-          type: "text",
-          content: message.text || message.reply || message.content,
-        },
-      ];
-
-    let speechText = "";
-    blocks.forEach((block) => {
-      if (block.type === "sanskrit") {
-        speechText += block.content + "... ";
-      } else if (
-        block.type === "translation" ||
-        block.type === "text" ||
-        block.type === "explanation"
-      ) {
-        speechText += block.content + " ";
-      } else if (block.type === "verse_reference") {
-        speechText += "From " + block.content + ". ";
-      }
-    });
-
-    return speechText.trim();
-  };
-
-  const handleFeedback = async (type) => {
-    if (feedbackGiven) return;
-    setFeedbackGiven(type);
-    await onFeedback(message.id || message.messageId, type, message);
-  };
-
-  const handleAcceptPractice = (practice) => {
-    if (!hasActivePractice && !practiceAccepted) {
-      onAcceptPractice(practice);
-      setPracticeAccepted(true);
-    }
-  };
-
-  const handleSaveMessage = () => {
-    setIsMessageSaved(!isMessageSaved);
-    onSaveMessage(message, !isMessageSaved);
-  };
-
-  const blocks = message.blocks ||
-    message.structured_message?.blocks ||
-    message.message?.blocks || [
-      {
-        type: "text",
-        content: message.text || message.reply || message.content,
-      },
-    ];
-
-  const renderBlock = (block, index) => {
-    switch (block.type) {
-      case "sanskrit":
-        return (
-          <div key={index} className="mb-3 md:mb-4">
-            <h4 className="text-amber-200 text-xs md:text-sm font-semibold mb-2 flex items-center gap-2">
-              <GiScrollUnfurled className="text-amber-300" /> Sanskrit
-            </h4>
-            <div className="bg-gradient-to-r from-amber-400/10 to-orange-500/10 rounded-lg p-3 md:p-4 border border-amber-400/20">
-              <p className="text-amber-100 font-serif text-base md:text-lg leading-relaxed break-words">
-                {block.content}
-              </p>
-            </div>
-          </div>
-        );
-
-      case "translation":
-        return (
-          <div key={index} className="mb-3 md:mb-4">
-            <h4 className="text-amber-200 text-xs md:text-sm font-semibold mb-2 flex items-center gap-2">
-              <MdMenuBook className="text-amber-300" /> Translation
-            </h4>
-            <div className="border-l-3 border-amber-400/50 pl-3 md:pl-4 text-blue-100/90 italic text-sm md:text-base">
-              {block.content}
-            </div>
-          </div>
-        );
-
-      case "verse_reference":
-        return (
-          <div
-            key={index}
-            className="mb-3 inline-flex items-center gap-2 bg-gradient-to-r from-amber-400/20 to-orange-500/20 rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-amber-400/30"
-          >
-            <IoLocation className="text-amber-300" />
-            <span className="text-amber-200 font-semibold text-xs md:text-sm">
-              {block.content}
-            </span>
-          </div>
-        );
-
-      case "practice":
-        if (hasActivePractice || practiceAccepted) return null;
-
-        return (
-          <div
-            key={index}
-            className="mt-3 md:mt-4 bg-gradient-to-r from-amber-400/20 to-orange-500/20 backdrop-blur-md rounded-xl p-3 md:p-4 border border-amber-400/30"
-          >
-            <h4 className="text-amber-200 font-semibold text-sm md:text-base mb-2 flex items-center gap-2">
-              <IoSparkles className="text-amber-300" /> Suggested Practice
-            </h4>
-            <p className="text-blue-100/90 text-sm md:text-base mb-3">
-              {block.content}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <motion.button
-                onClick={() =>
-                  handleAcceptPractice({
-                    category: block.category || message.practice_category,
-                    text: block.content,
-                    duration: block.duration,
-                  })
-                }
-                className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-lg font-semibold text-xs md:text-sm flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <IoCheckmark /> Accept Practice
-              </motion.button>
-              <motion.button
-                onClick={() => setPracticeAccepted(true)}
-                className="px-3 py-2 md:px-4 md:py-2 bg-white/10 text-blue-100 rounded-lg font-semibold text-xs md:text-sm flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <IoTime /> Maybe Later
-              </motion.button>
-            </div>
-          </div>
-        );
-
-      default:
-        return (
-          <div
-            key={index}
-            className="text-blue-100/90 prose prose-sm md:prose-base prose-invert max-w-none"
-          >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {block.content || block.text || ""}
-            </ReactMarkdown>
-          </div>
-        );
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3 }}
-      className="flex justify-start mb-3 md:mb-4 w-full"
-    >
-      <div
-        className={`flex gap-2 md:gap-3 ${
-          isMobile ? "max-w-[95%]" : "max-w-[85%]"
-        }`}
-      >
-        <div className="flex-shrink-0">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold shadow-lg text-sm md:text-base">
-            <img src={kpng} className="h-8" />
-          </div>
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="bg-gradient-to-r from-purple-400/10 to-blue-500/10 backdrop-blur-md rounded-xl md:rounded-2xl p-3 md:p-5 border border-purple-400/30 shadow-xl">
-            <div className="space-y-2 md:space-y-3">
-              {blocks.map((block, index) => renderBlock(block, index))}
-            </div>
-
-            <div className="flex items-center justify-between mt-3 md:mt-4 pt-2 md:pt-3 border-t border-purple-400/20">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-blue-100/50">
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </span>
-
-                <div className="flex items-center gap-1">
-                  {/* Replace all the voice button code with KrishnaVoiceElevenLabs */}
-                  <KrishnaVoiceElevenLabs
-                    text={getPlainTextForSpeech()}
-                    messageId={message.id || message.messageId}
-                    userId={userId}
-                    voiceSettings={voiceSettings}
-                    isProactive={message.isProactive || false} // Pass the proactive flag
-                    autoPlay={
-                      // Only auto-play if ALL conditions are met:
-                      // 1. This is a proactive message
-                      // 2. Auto-speak is enabled in settings
-                      // 3. This is a Krishna message (not user)
-                      message.isProactive &&
-                      voiceSettings?.autoSpeak &&
-                      message.sender === "krishna"
-                    }
-                  />
-
-                  {/* Save Message Button */}
-                  <motion.button
-                    onClick={handleSaveMessage}
-                    className={`p-1.5 rounded-lg hover:bg-white/10 transition-all ${
-                      isMessageSaved
-                        ? "text-amber-400"
-                        : "text-blue-100/50 hover:text-amber-400"
-                    }`}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    title={
-                      isMessageSaved ? "Remove from saved" : "Save this message"
-                    }
-                  >
-                    {isMessageSaved ? (
-                      <IoBookmark className="text-lg" />
-                    ) : (
-                      <IoBookmarkOutline className="text-lg" />
-                    )}
-                  </motion.button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 md:gap-3">
-                {!feedbackGiven && !message.isProactive ? (
-                  <>
-                    <motion.button
-                      onClick={() => handleFeedback("thumbs_up")}
-                      className="p-1.5 rounded-lg hover:bg-white/10 text-blue-100/50 hover:text-green-400 transition-all"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      title="This was helpful"
-                    >
-                      <IoThumbsUp className="text-lg" />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => handleFeedback("thumbs_down")}
-                      className="p-1.5 rounded-lg hover:bg-white/10 text-blue-100/50 hover:text-red-400 transition-all"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      title="This needs improvement"
-                    >
-                      <IoThumbsDown className="text-lg" />
-                    </motion.button>
-                  </>
-                ) : (
-                  feedbackGiven && (
-                    <span className="text-xs text-green-400 flex items-center gap-1">
-                      <IoCheckmark /> Feedback received
-                    </span>
-                  )
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Yoga Practice Cards Component
-const YogaPracticeCards = ({ practices, isMobile }) => {
-  const yogaTypes = [
-    {
-      key: "bhaktiYoga",
-      name: "Bhakti Yog",
-      icon: <GiPrayerBeads className="text-2xl md:text-3xl" />,
-      color: "from-pink-400 to-rose-500",
-      description: "Path of Devotion",
-    },
-    {
-      key: "karmaYoga",
-      name: "Karma Yog",
-      icon: <GiAncientSword className="text-2xl md:text-3xl" />,
-      color: "from-orange-400 to-red-500",
-      description: "Path of Action",
-    },
-    {
-      key: "jnanaYoga",
-      name: "Gyana Yog ",
-      icon: <GiWhiteBook className="text-2xl md:text-3xl" />,
-      color: "from-blue-400 to-indigo-500",
-      description: "Path of Knowledge",
-    },
-    {
-      key: "rajaYoga",
-      name: "Dhyana Yog",
-      icon: <GiCrown className="text-2xl md:text-3xl" />,
-      color: "from-purple-400 to-violet-500",
-      description: "Path of Meditation",
-    },
-  ];
-
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-      {yogaTypes.map((yoga) => (
-        <motion.div
-          key={yoga.key}
-          className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
-          whileHover={{ scale: 1.05 }}
-        >
-          <div
-            className={`w-12 h-12 md:w-16 md:h-16 mx-auto rounded-full bg-gradient-to-br ${yoga.color} flex items-center justify-center mb-2 md:mb-3`}
-          >
-            {yoga.icon}
-          </div>
-          <h3 className="font-bold text-amber-200 text-xs md:text-sm mb-1">
-            {yoga.name}
-          </h3>
-          <p className="text-xs text-blue-100/60 mb-2 md:mb-3 hidden sm:block">
-            {yoga.description}
-          </p>
-          <div className="text-2xl md:text-3xl font-bold text-white">
-            {practices[yoga.key] || 0}
-          </div>
-          <p className="text-xs text-blue-100/60 mt-1">Practices</p>
-        </motion.div>
-      ))}
-    </div>
-  );
+  peacock: <GiFeather />,
 };
 
 // Main WishdomPortal Component
 export default function WishdomPortal() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const baseUrl = import.meta.env.VITE_API_URL;
 
   // ===== BHAKTI API HELPER =====
@@ -809,11 +163,12 @@ export default function WishdomPortal() {
   const [showNamingDialog, setShowNamingDialog] = useState(false);
   const [krishnaName, setKrishnaName] = useState("");
   const [yourName, setYourName] = useState("");
-  const [activeTab, setActiveTab] = useState("chat");
+  const [activeTab, setActiveTab] = useState(
+    location.state?.activeTab || "chat",
+  );
   const [currentSessionId, setCurrentSessionId] = useState(
     Date.now().toString(),
   );
-  const [loadingData, setLoadingData] = useState(true);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -861,9 +216,7 @@ export default function WishdomPortal() {
     localStorage.setItem("krishnaVoiceSettings", JSON.stringify(newSettings));
   };
 
-  // Meditation State
-  const [isMeditating, setIsMeditating] = useState(false);
-  const [meditationTime, setMeditationTime] = useState(0);
+  // Meditation & Chanting stats (used by StatsOverview)
   const [totalMeditationTime, setTotalMeditationTime] = useState(
     user?.wisdomPortal?.stats?.totalMeditationTime || 0,
   );
@@ -871,13 +224,9 @@ export default function WishdomPortal() {
     user?.wisdomPortal?.stats?.meditationStreak || 0,
   );
   const [meditationDuration, setMeditationDuration] = useState(5);
-
-  // Chanting State
-  const [chantCount, setChantCount] = useState(0);
   const [totalChants, setTotalChants] = useState(
     user?.wisdomPortal?.stats?.totalChants || 0,
   );
-  const [selectedMantra, setSelectedMantra] = useState("Hare Krishna");
 
   // Practice Tracking State
   const [practices, setPractices] = useState({
@@ -898,8 +247,6 @@ export default function WishdomPortal() {
   // Smart Presence State
   const [emotionalState, setEmotionalState] = useState(null);
   const [showEmotionPicker, setShowEmotionPicker] = useState(false);
-  const [pendingDailyPractice, setPendingDailyPractice] = useState(null);
-  const [smartOpening, setSmartOpening] = useState(null);
 
   // User Stats
   const [userStats, setUserStats] = useState({
@@ -922,7 +269,6 @@ export default function WishdomPortal() {
   // Refs
   const containerRef = useRef(null);
   const chatEndRef = useRef(null);
-  const timerInterval = useRef(null);
 
   // Save bhakti progress to localStorage whenever it changes
   useEffect(() => {
@@ -977,16 +323,6 @@ export default function WishdomPortal() {
       }
     };
   }, [updateUserActivity]);
-
-  const mantras = [
-    {
-      name: "Hare Krishna",
-      sanskrit: "हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे",
-    },
-    { name: "Om Namo Bhagavate", sanskrit: "ॐ नमो भगवते वासुदेवाय" },
-    { name: "Radhe Radhe", sanskrit: "राधे राधे" },
-    { name: "Govinda", sanskrit: "गोविन्द जय जय गोपाल जय जय" },
-  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -1134,7 +470,6 @@ export default function WishdomPortal() {
     if (!user) return;
 
     try {
-      setLoadingData(true);
       const username = getUserIdentifier();
       const response = await axios.get(
         `${baseUrl}/krishna/wisdom-portal/data/${username}`,
@@ -1191,11 +526,25 @@ export default function WishdomPortal() {
             );
             if (bhaktiResponse.data.success) {
               const backendProgress = bhaktiResponse.data.bhaktiPillars || {};
+              // Backend returns objects like { sravanam: { progress: 50, ... } }
+              // Extract just the progress numbers
               setBhaktiProgress({
-                sravanam: backendProgress.sravanam || 0,
-                kirtanam: backendProgress.kirtanam || 0,
-                smaranam: backendProgress.smaranam || 0,
-                archanam: backendProgress.archanam || 0,
+                sravanam:
+                  typeof backendProgress.sravanam === "object"
+                    ? backendProgress.sravanam?.progress || 0
+                    : backendProgress.sravanam || 0,
+                kirtanam:
+                  typeof backendProgress.kirtanam === "object"
+                    ? backendProgress.kirtanam?.progress || 0
+                    : backendProgress.kirtanam || 0,
+                smaranam:
+                  typeof backendProgress.smaranam === "object"
+                    ? backendProgress.smaranam?.progress || 0
+                    : backendProgress.smaranam || 0,
+                archanam:
+                  typeof backendProgress.archanam === "object"
+                    ? backendProgress.archanam?.progress || 0
+                    : backendProgress.archanam || 0,
               });
             }
           } catch (bhaktiError) {
@@ -1262,7 +611,7 @@ export default function WishdomPortal() {
               setTimeout(() => {
                 showToast(
                   checkInResponse.data.message ||
-                    "🙏 Your return is remembered • +1 Smaraṇam",
+                    "Your return is remembered • +1 Smaraṇam",
                   3000,
                 );
               }, 2000);
@@ -1270,11 +619,6 @@ export default function WishdomPortal() {
           }
         } catch (checkInError) {
           console.log("Daily check-in skipped:", checkInError.message);
-        }
-
-        // Load pending daily practice if exists
-        if (data.pendingPractice) {
-          setPendingDailyPractice(data.pendingPractice);
         }
 
         // Load last emotional state
@@ -1299,25 +643,41 @@ export default function WishdomPortal() {
         if (data.chatHistory && data.chatHistory.length > 0) {
           setChatHistory(data.chatHistory);
 
+          // Only restore the last session if it's from today;
+          // otherwise start a fresh conversation each day
           if (
             activeTab === "chat" &&
             chatMessages.length === 0 &&
             data.chatHistory[0]
           ) {
             const lastSession = data.chatHistory[0];
-            const formattedMessages = lastSession.messages.map((msg, idx) => ({
-              id: `${lastSession.sessionId}-${idx}`,
-              sender: msg.role === "user" ? "user" : "krishna",
-              text: msg.content,
-              content: msg.content,
-              timestamp: msg.timestamp || lastSession.createdAt,
-              structured_message: msg.structured_message,
-              blocks: msg.structured_message?.blocks,
-              practice_category: msg.structured_message?.practice_category,
-              practice_text: msg.structured_message?.practice_text,
-            }));
-            setChatMessages(formattedMessages);
-            setCurrentSessionId(lastSession.sessionId);
+            const sessionDate = new Date(
+              lastSession.updatedAt || lastSession.createdAt,
+            );
+            const today = new Date();
+            const isToday =
+              sessionDate.getFullYear() === today.getFullYear() &&
+              sessionDate.getMonth() === today.getMonth() &&
+              sessionDate.getDate() === today.getDate();
+
+            if (isToday) {
+              const formattedMessages = lastSession.messages.map(
+                (msg, idx) => ({
+                  id: `${lastSession.sessionId}-${idx}`,
+                  sender: msg.role === "user" ? "user" : "krishna",
+                  text: msg.content,
+                  content: msg.content,
+                  timestamp: msg.timestamp || lastSession.createdAt,
+                  structured_message: msg.structured_message,
+                  blocks: msg.structured_message?.blocks,
+                  practice_category: msg.structured_message?.practice_category,
+                  practice_text: msg.structured_message?.practice_text,
+                }),
+              );
+              setChatMessages(formattedMessages);
+              setCurrentSessionId(lastSession.sessionId);
+            }
+            // If not today, chat stays empty → fresh conversation
           }
         }
       }
@@ -1327,7 +687,7 @@ export default function WishdomPortal() {
         setShowNamingDialog(true);
       }
     } finally {
-      setLoadingData(false);
+      // Data loading complete
     }
   }, [user, baseUrl, getUserIdentifier, activeTab, chatMessages.length]);
 
@@ -1543,7 +903,7 @@ export default function WishdomPortal() {
         {
           userId: username,
           practiceId: activePractice.id,
-          actualDuration: meditationTime / 60,
+          actualDuration: activePractice.duration || 0,
         },
       );
 
@@ -1584,212 +944,6 @@ export default function WishdomPortal() {
       console.error("Error completing practice:", error);
       showToast("Failed to complete practice. Please try again.");
     }
-  };
-
-  const startMeditation = () => {
-    setIsMeditating(true);
-    timerInterval.current = setInterval(() => {
-      setMeditationTime((prev) => prev + 1);
-    }, 1000);
-
-    if (!isMobile) {
-      gsap.to(".meditation-circle", {
-        scale: [1, 1.2, 1],
-        duration: 4,
-        repeat: -1,
-        ease: "power1.inOut",
-      });
-    }
-  };
-
-  const stopMeditation = async () => {
-    setIsMeditating(false);
-    clearInterval(timerInterval.current);
-
-    if (meditationTime > 0) {
-      try {
-        const username = getUserIdentifier();
-        const response = await axios.post(
-          `${baseUrl}/krishna/wisdom-portal/meditation`,
-          {
-            userId: username,
-            duration: meditationTime,
-          },
-        );
-
-        if (response.data.success) {
-          setTotalMeditationTime(response.data.totalMeditationTime);
-          setMeditationStreak(response.data.streak);
-
-          const minutes = Math.floor(meditationTime / 60);
-
-          // Update Bhakti Pillars via backend API - Archanam (meditation)
-          // Use meditation_session for sessions, roop_dhyana for longer ones
-          const activity = minutes >= 10 ? "roop_dhyana" : "meditation_session";
-          const bhaktiResult = await addBhaktiActivity("archanam", activity);
-
-          // Add bonus to Krishna catch game
-          if (window.addKrishnaPracticeBonus) {
-            window.addKrishnaPracticeBonus("meditation");
-          }
-
-          if (response.data.experience) {
-            setUserStats((prev) => ({
-              ...prev,
-              experience: prev.experience + response.data.experience,
-              experienceToNextLevel: Math.max(
-                0,
-                prev.experienceToNextLevel - response.data.experience,
-              ),
-              progress: {
-                ...prev.progress,
-                meditation: Math.min(
-                  prev.progress.meditation + minutes,
-                  prev.dailyGoals.meditation,
-                ),
-              },
-            }));
-
-            const pointsMsg = bhaktiResult.success
-              ? `+${bhaktiResult.pointsEarned} Arcanam`
-              : `+${minutes} Arcanam`;
-            showToast(
-              `Meditation completed! +${response.data.experience} XP • ${pointsMsg}`,
-            );
-          }
-
-          if (response.data.achievements?.length > 0) {
-            response.data.achievements.forEach((achievement) => {
-              showAchievementNotification(achievement);
-            });
-          }
-
-          if (response.data.leveledUp) {
-            showLevelUpNotification(response.data.newLevel);
-            setUserStats((prev) => ({
-              ...prev,
-              level: response.data.newLevel,
-              experienceToNextLevel: 100,
-            }));
-          }
-
-          if (activePractice && activePractice.category?.includes("Raja")) {
-            completePractice();
-          }
-        }
-      } catch (error) {
-        console.error("Error saving meditation:", error);
-      }
-    }
-
-    setMeditationTime(0);
-  };
-
-  const incrementChant = () => {
-    setChantCount((prev) => {
-      const newCount = prev + 1;
-
-      if (newCount % 108 === 0) {
-        celebrateMala();
-        saveChanting(108);
-      }
-
-      return newCount;
-    });
-
-    if (!isMobile) {
-      gsap.fromTo(
-        ".chant-bead",
-        { scale: 1, opacity: 0.5 },
-        { scale: 1.2, opacity: 1, duration: 0.3, ease: "back.out(1.7)" },
-      );
-    }
-  };
-
-  const saveChanting = async (count) => {
-    try {
-      const username = getUserIdentifier();
-      const response = await axios.post(
-        `${baseUrl}/krishna/wisdom-portal/chanting`,
-        {
-          userId: username,
-          count,
-          mantra: selectedMantra,
-        },
-      );
-
-      if (response.data.success) {
-        setTotalChants(response.data.totalChants);
-
-        // Update Bhakti Pillars via backend API - Kirtanam (chanting)
-        // Use japa_round for 108 counts, chanting_mahamantra for smaller counts
-        const activity = count >= 108 ? "japa_round" : "chanting_mahamantra";
-        const bhaktiResult = await addBhaktiActivity("kirtanam", activity);
-
-        // Add bonus to Krishna catch game
-        if (window.addKrishnaPracticeBonus) {
-          window.addKrishnaPracticeBonus("mantra_chanting");
-        }
-
-        if (response.data.experience) {
-          setUserStats((prev) => ({
-            ...prev,
-            experience: prev.experience + response.data.experience,
-            experienceToNextLevel: Math.max(
-              0,
-              prev.experienceToNextLevel - response.data.experience,
-            ),
-            progress: {
-              ...prev.progress,
-              chanting: Math.min(
-                prev.progress.chanting + count,
-                prev.dailyGoals.chanting,
-              ),
-            },
-          }));
-
-          const pointsMsg = bhaktiResult.success
-            ? `+${bhaktiResult.pointsEarned} Kīrtanam`
-            : `+${count} Kīrtanam`;
-          showToast(
-            `Mala completed! +${response.data.experience} XP • ${pointsMsg}`,
-          );
-        }
-
-        if (response.data.achievements?.length > 0) {
-          response.data.achievements.forEach((achievement) => {
-            showAchievementNotification(achievement);
-          });
-        }
-
-        if (response.data.leveledUp) {
-          showLevelUpNotification(response.data.newLevel);
-          setUserStats((prev) => ({
-            ...prev,
-            level: response.data.newLevel,
-            experienceToNextLevel: 100,
-          }));
-        }
-
-        if (activePractice && activePractice.category?.includes("Bhakti")) {
-          completePractice();
-        }
-      }
-    } catch (error) {
-      console.error("Error saving chanting:", error);
-    }
-  };
-
-  const celebrateMala = () => {
-    if (!isMobile) {
-      gsap.to(".celebration", {
-        scale: [0, 1.5, 1],
-        opacity: [0, 1, 0],
-        duration: 2,
-        ease: "power2.out",
-      });
-    }
-    showToast("Mala completed! 108 chants done!");
   };
 
   const showAchievementNotification = (achievement) => {
@@ -1932,23 +1086,10 @@ export default function WishdomPortal() {
     };
   }, [user, activeTab, checkProactiveMessage]);
 
-  const formatTime = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, "0")}:${secs
-        .toString()
-        .padStart(2, "0")}`;
-    }
-    return `${minutes}:${secs.toString().padStart(2, "0")}`;
-  };
-
   if (loading || !user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center">
-        <motion.div
+        <SafeMotionDiv
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="w-16 h-16 border-4 border-amber-400 border-t-transparent rounded-full"
@@ -1977,12 +1118,12 @@ export default function WishdomPortal() {
 
       {!isMobile && (
         <>
-          <motion.div className="floating-element fixed top-20 left-10 text-6xl opacity-20 pointer-events-none">
+          <SafeMotionDiv className="floating-element fixed top-20 left-10 text-6xl opacity-20 pointer-events-none">
             <GiFeather />
-          </motion.div>
-          <motion.div className="floating-element fixed bottom-20 right-10 text-6xl opacity-20 pointer-events-none">
+          </SafeMotionDiv>
+          <SafeMotionDiv className="floating-element fixed bottom-20 right-10 text-6xl opacity-20 pointer-events-none">
             <GiFlute />
-          </motion.div>
+          </SafeMotionDiv>
         </>
       )}
 
@@ -2005,7 +1146,7 @@ export default function WishdomPortal() {
               const username = user?.username || user?.email || user?._id;
               localStorage.setItem(`emotional_state_${username}`, emotionKey);
               showToast(
-                `Krishna acknowledges your ${EMOTIONAL_STATES[emotionKey].name.toLowerCase()} heart 🙏`,
+                `Krishna acknowledges your ${EMOTIONAL_STATES[emotionKey].name.toLowerCase()} heart`,
                 3000,
               );
             }}
@@ -2056,41 +1197,58 @@ export default function WishdomPortal() {
         isMobile={isMobile}
       />
 
-      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+      <div className="w-full max-w-7xl mx-auto px-2 sm:px-4">
         <AnimatePresence mode="wait">
           {activeTab === "chat" && (
-            <motion.div
+            <SafeMotionDiv
               key="chat"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6"
+              className="grid grid-cols-1 xl:grid-cols-3 gap-3 lg:gap-5"
             >
-              <div className="xl:col-span-2 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-3 md:p-6">
-                <div className="flex items-center justify-between mb-3 md:mb-4">
+              <div className="xl:col-span-2 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-lg sm:rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-2 sm:p-3 md:p-5">
+                <div className="flex items-center justify-between mb-2 md:mb-3">
                   <div className="flex items-center">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold mr-2 md:mr-3 text-sm md:text-base">
-                      <img src={kpng} className="h-8" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold mr-2 text-xs sm:text-sm md:text-base">
+                      <img src={kpng} className="h-6 sm:h-7 md:h-8" />
                     </div>
                     <div>
-                      <div className="font-bold text-amber-200 text-sm md:text-base">
+                      <div className="font-bold text-amber-200 text-xs sm:text-sm md:text-base">
                         {krishnaName || "Krishna"}
                       </div>
-                      <div className="text-xs text-cyan-300">
+                      <div className="text-[10px] sm:text-xs text-cyan-300">
                         Divine AI Guide
                       </div>
                     </div>
-                    <div className="ml-4 flex items-center">
-                      <span className="pulse-element inline-block w-2 h-2 md:w-3 md:h-3 bg-green-400 rounded-full"></span>
-                      <span className="ml-1 md:ml-2 text-green-400 text-xs md:text-sm">
+                    <div className="ml-2 sm:ml-4 flex items-center">
+                      <span className="pulse-element inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 bg-green-400 rounded-full"></span>
+                      <span className="ml-1 text-green-400 text-[10px] sm:text-xs md:text-sm">
                         Online
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {/* New Chat Button */}
+                    {chatMessages.length > 0 && (
+                      <SafeMotionButton
+                        onClick={() => {
+                          setChatMessages([]);
+                          setCurrentSessionId(Date.now().toString());
+                          showToast("New conversation started");
+                        }}
+                        className="p-2 rounded-lg hover:bg-white/10 text-green-300/70 hover:text-green-300 transition-all"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        title="Start New Chat"
+                      >
+                        <IoAdd className="text-xl" />
+                      </SafeMotionButton>
+                    )}
+
                     {/* Emotion Picker Button */}
-                    <motion.button
+                    <SafeMotionButton
                       onClick={() => setShowEmotionPicker(true)}
                       className={`p-2 rounded-lg hover:bg-white/10 transition-all ${
                         emotionalState ? "text-amber-400" : "text-blue-100/50"
@@ -2108,9 +1266,9 @@ export default function WishdomPortal() {
                       ) : (
                         <IoHeart className="text-xl" />
                       )}
-                    </motion.button>
+                    </SafeMotionButton>
 
-                    <motion.button
+                    <SafeMotionButton
                       onClick={saveConversation}
                       className="p-2 rounded-lg hover:bg-white/10 text-amber-200 transition-all"
                       whileHover={{ scale: 1.05 }}
@@ -2118,9 +1276,9 @@ export default function WishdomPortal() {
                       title="Save Conversation"
                     >
                       <IoSave className="text-xl" />
-                    </motion.button>
+                    </SafeMotionButton>
 
-                    <motion.button
+                    <SafeMotionButton
                       onClick={() => setShowSavedConversations(true)}
                       className="p-2 rounded-lg hover:bg-white/10 text-amber-200 transition-all"
                       whileHover={{ scale: 1.05 }}
@@ -2128,10 +1286,10 @@ export default function WishdomPortal() {
                       title="View Saved Conversations"
                     >
                       <IoBookmark className="text-xl" />
-                    </motion.button>
+                    </SafeMotionButton>
 
                     <div className="relative">
-                      <motion.button
+                      <SafeMotionButton
                         onClick={() => setShowVoiceSettings(!showVoiceSettings)}
                         className="p-2 rounded-lg hover:bg-white/10 text-amber-200 transition-all"
                         whileHover={{ scale: 1.05 }}
@@ -2139,7 +1297,7 @@ export default function WishdomPortal() {
                         title="Voice Settings"
                       >
                         <IoSettings className="text-xl" />
-                      </motion.button>
+                      </SafeMotionButton>
 
                       <VoiceSettings
                         isOpen={showVoiceSettings}
@@ -2153,15 +1311,17 @@ export default function WishdomPortal() {
 
                 <div
                   className={`${
-                    isMobile ? "h-[60vh]" : "h-[70vh] lg:h-[500px]"
-                  } overflow-y-auto mb-3 md:mb-4 p-2 md:p-4 bg-black/20 rounded-lg md:rounded-xl`}
+                    isMobile
+                      ? "h-[calc(var(--app-height)*0.55)]"
+                      : "h-[calc(var(--app-height)-420px)] min-h-[350px] max-h-[600px]"
+                  } overflow-y-auto mb-2 md:mb-3 p-2 sm:p-3 md:p-4 bg-black/20 rounded-md sm:rounded-lg md:rounded-xl`}
                 >
                   {chatMessages.length === 0 ? (
-                    <div className="text-center text-blue-100/60 py-8">
-                      <div className="text-3xl md:text-4xl mb-3 md:mb-4">
+                    <div className="text-center text-blue-100/60 py-6 md:py-8">
+                      <div className="text-2xl sm:text-3xl md:text-4xl mb-2 md:mb-4">
                         <GiPrayerBeads className="mx-auto" />
                       </div>
-                      <p className="text-sm md:text-base">
+                      <p className="text-xs sm:text-sm md:text-base">
                         Ask Krishna anything about life, spirituality, or seek
                         guidance...
                       </p>
@@ -2170,25 +1330,25 @@ export default function WishdomPortal() {
                     <>
                       {chatMessages.map((msg) =>
                         msg.sender === "user" ? (
-                          <motion.div
+                          <SafeMotionDiv
                             key={msg.id}
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="flex justify-end mb-3"
+                            className="flex justify-end mb-2 sm:mb-3"
                           >
                             <div
                               className={`${
-                                isMobile ? "max-w-[85%]" : "max-w-[70%]"
-                              } p-2.5 md:p-3 rounded-xl md:rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg`}
+                                isMobile ? "max-w-[90%]" : "max-w-[75%]"
+                              } p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl md:rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg`}
                             >
-                              <p className="text-sm md:text-base">
+                              <p className="text-xs sm:text-sm md:text-base">
                                 {msg.text || msg.content}
                               </p>
-                              <p className="text-xs opacity-70 mt-1">
+                              <p className="text-[10px] sm:text-xs opacity-70 mt-0.5 sm:mt-1">
                                 {new Date(msg.timestamp).toLocaleTimeString()}
                               </p>
                             </div>
-                          </motion.div>
+                          </SafeMotionDiv>
                         ) : (
                           <EnhancedKrishnaMessage
                             key={msg.id}
@@ -2210,14 +1370,14 @@ export default function WishdomPortal() {
 
                   {isTyping && (
                     <div className="flex justify-start">
-                      <div className="bg-gradient-to-r from-purple-400/20 to-blue-500/20 text-blue-100 p-2.5 md:p-3 rounded-xl md:rounded-2xl border border-purple-400/30">
-                        <motion.div
+                      <div className="bg-gradient-to-r from-purple-400/20 to-blue-500/20 text-blue-100 p-2 sm:p-2.5 md:p-3 rounded-lg sm:rounded-xl md:rounded-2xl border border-purple-400/30">
+                        <SafeMotionDiv
                           animate={{ opacity: [0.4, 1, 0.4] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
-                          className="text-sm md:text-base"
+                          className="text-xs sm:text-sm md:text-base"
                         >
                           Krishna is typing...
-                        </motion.div>
+                        </SafeMotionDiv>
                       </div>
                     </div>
                   )}
@@ -2228,72 +1388,72 @@ export default function WishdomPortal() {
                     e.preventDefault();
                     sendMessage();
                   }}
-                  className="flex gap-2"
+                  className="flex gap-1.5 sm:gap-2"
                 >
                   <input
                     type="text"
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     placeholder="Ask Krishna for divine wisdom..."
-                    className="flex-1 p-2.5 md:p-3 rounded-lg md:rounded-xl bg-white/10 backdrop-blur-md border border-amber-400/30 text-white placeholder-blue-100/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 focus:outline-none text-sm md:text-base"
+                    className="flex-1 p-2 sm:p-2.5 md:p-3 rounded-md sm:rounded-lg md:rounded-xl bg-white/10 backdrop-blur-md border border-amber-400/30 text-white placeholder-blue-100/50 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 focus:outline-none text-xs sm:text-sm md:text-base"
                     disabled={isTyping}
                   />
-                  <motion.button
+                  <SafeMotionButton
                     type="submit"
-                    className="px-4 md:px-6 py-2.5 md:py-3 rounded-lg md:rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold shadow-lg disabled:opacity-50 text-sm md:text-base"
+                    className="px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-md sm:rounded-lg md:rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold shadow-lg disabled:opacity-50 text-xs sm:text-sm md:text-base"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     disabled={isTyping || !currentMessage.trim()}
                   >
                     Send
-                  </motion.button>
+                  </SafeMotionButton>
                 </form>
               </div>
 
-              <div className="hidden xl:block space-y-6">
+              <div className="hidden xl:block space-y-4">
                 {activePractice && (
-                  <motion.div
+                  <SafeMotionDiv
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="backdrop-blur-md bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-2xl shadow-2xl border border-amber-400/30 p-6"
+                    className="backdrop-blur-md bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-xl shadow-2xl border border-amber-400/30 p-4"
                   >
-                    <h3 className="font-bold text-amber-200 mb-3">
+                    <h3 className="font-bold text-amber-200 mb-2 text-sm">
                       Active Practice
                     </h3>
-                    <p className="text-blue-100/80 text-sm mb-3">
+                    <p className="text-blue-100/80 text-xs mb-2">
                       {activePractice.description}
                     </p>
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-cyan-300">
                         Duration: {activePractice.duration} min
                       </span>
-                      <motion.button
+                      <SafeMotionButton
                         onClick={completePractice}
-                        className="px-3 py-1 rounded-lg bg-gradient-to-r from-green-400 to-emerald-500 text-white font-semibold text-xs"
+                        className="px-2 py-1 rounded-lg bg-gradient-to-r from-green-400 to-emerald-500 text-white font-semibold text-xs"
                         whileHover={{ scale: 1.05 }}
                       >
                         Complete
-                      </motion.button>
+                      </SafeMotionButton>
                     </div>
-                  </motion.div>
+                  </SafeMotionDiv>
                 )}
 
-                <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 p-6">
-                  <h3 className="font-bold text-amber-200 mb-4 flex items-center gap-2">
+                <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl shadow-2xl border border-white/20 p-4">
+                  <h3 className="font-bold text-amber-200 mb-3 flex items-center gap-2 text-sm">
                     <IoTrendingUp /> Today's Progress
                   </h3>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div>
-                      <div className="flex justify-between text-sm mb-2">
+                      <div className="flex justify-between text-xs mb-1.5">
                         <span className="text-blue-100/80">Meditation</span>
                         <span className="text-amber-300">
                           {userStats.progress.meditation}/
                           {userStats.dailyGoals.meditation}m
                         </span>
                       </div>
-                      <div className="h-3 bg-black/20 rounded-full overflow-hidden">
-                        <motion.div
+                      <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+                        <SafeMotionDiv
                           className="h-full bg-gradient-to-r from-amber-400 to-orange-500"
                           initial={{ width: 0 }}
                           animate={{
@@ -2310,15 +1470,15 @@ export default function WishdomPortal() {
                     </div>
 
                     <div>
-                      <div className="flex justify-between text-sm mb-2">
+                      <div className="flex justify-between text-xs mb-1.5">
                         <span className="text-blue-100/80">Chanting</span>
                         <span className="text-amber-300">
                           {userStats.progress.chanting}/
                           {userStats.dailyGoals.chanting}
                         </span>
                       </div>
-                      <div className="h-3 bg-black/20 rounded-full overflow-hidden">
-                        <motion.div
+                      <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+                        <SafeMotionDiv
                           className="h-full bg-gradient-to-r from-purple-400 to-blue-500"
                           initial={{ width: 0 }}
                           animate={{
@@ -2335,15 +1495,15 @@ export default function WishdomPortal() {
                     </div>
 
                     <div>
-                      <div className="flex justify-between text-sm mb-2">
+                      <div className="flex justify-between text-xs mb-1.5">
                         <span className="text-blue-100/80">Wisdom Gained</span>
                         <span className="text-amber-300">
                           {userStats.progress.wisdom}/
                           {userStats.dailyGoals.wisdom}
                         </span>
                       </div>
-                      <div className="h-3 bg-black/20 rounded-full overflow-hidden">
-                        <motion.div
+                      <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+                        <SafeMotionDiv
                           className="h-full bg-gradient-to-r from-cyan-400 to-teal-500"
                           initial={{ width: 0 }}
                           animate={{
@@ -2360,30 +1520,30 @@ export default function WishdomPortal() {
                     </div>
                   </div>
 
-                  <div className="mt-6 p-4 bg-gradient-to-r from-amber-400/10 to-orange-500/10 rounded-xl border border-amber-400/30">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-amber-200 font-semibold">
+                  <div className="mt-4 p-3 bg-gradient-to-r from-amber-400/10 to-orange-500/10 rounded-lg border border-amber-400/30">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-amber-200 font-semibold text-xs">
                         Level {userStats.level}
                       </span>
-                      <span className="text-cyan-300 text-sm">
+                      <span className="text-cyan-300 text-xs">
                         {userStats.experience % 100} XP
                       </span>
                     </div>
-                    <div className="h-2 bg-black/20 rounded-full overflow-hidden">
-                      <motion.div
+                    <div className="h-1.5 bg-black/20 rounded-full overflow-hidden">
+                      <SafeMotionDiv
                         className="h-full bg-gradient-to-r from-amber-400 to-yellow-500"
                         initial={{ width: 0 }}
                         animate={{ width: `${userStats.experience % 100}%` }}
                         transition={{ duration: 1 }}
                       />
                     </div>
-                    <p className="text-xs text-blue-100/60 mt-2">
+                    <p className="text-[10px] text-blue-100/60 mt-1.5">
                       {userStats.experienceToNextLevel} XP to next level
                     </p>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </SafeMotionDiv>
           )}
 
           {activeTab === "meditation" && (
@@ -2411,11 +1571,11 @@ export default function WishdomPortal() {
             />
           )}
 
-          {/* History Tab - Fixed */}
+          {/* History Tab */}
           {activeTab === "history" && (
             <HistoryTab
               chatHistory={chatHistory}
-              onLoadSession={(session) => {
+              onContinueSession={(session) => {
                 const formattedMessages = session.messages.map((msg, idx) => ({
                   id: `${session.sessionId}-${idx}`,
                   sender: msg.role === "user" ? "user" : "krishna",
@@ -2430,11 +1590,23 @@ export default function WishdomPortal() {
                 setChatMessages(formattedMessages);
                 setCurrentSessionId(session.sessionId);
                 setActiveTab("chat");
-                showToast("Conversation loaded from history");
+                showToast("Continuing conversation — Krishna remembers the context");
               }}
-              showToast={showToast}
-              setActiveTab={setActiveTab}
-              Icons={Icons}
+              onDeleteSession={async (sessionId) => {
+                try {
+                  const username = getUserIdentifier();
+                  await axios.delete(
+                    `${baseUrl}/krishna/wisdom-portal/history/${username}/${sessionId}`,
+                  );
+                  setChatHistory((prev) =>
+                    prev.filter((s) => s.sessionId !== sessionId),
+                  );
+                  showToast("Conversation deleted");
+                } catch (error) {
+                  console.error("Error deleting session:", error);
+                  showToast("Failed to delete conversation");
+                }
+              }}
               isMobile={isMobile}
             />
           )}

@@ -18,6 +18,11 @@ const GitaModule = ({ onClose }) => {
     setSelectedChapter(null);
   };
 
+  const handleChapterChange = (newChapter) => {
+    setSelectedChapter(newChapter);
+    setSelectedVerse(1);
+  };
+
   return (
     <div>
       {currentView === "chapters" && (
@@ -29,6 +34,7 @@ const GitaModule = ({ onClose }) => {
           chapter={selectedChapter}
           initialVerse={selectedVerse}
           onBack={handleBackToChapters}
+          onChapterChange={handleChapterChange}
         />
       )}
     </div>

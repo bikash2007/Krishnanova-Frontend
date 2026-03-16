@@ -61,13 +61,13 @@ const Modal = memo(({ isOpen, onClose, children, className = "" }) => {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/70"
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm"
       style={{ display: isOpen ? "flex" : "none" }}
       onClick={handleOverlayClick}
     >
       <div
         ref={contentRef}
-        className={`w-full sm:max-w-2xl h-[90vh] sm:h-auto sm:max-h-[85vh] flex flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-t-3xl sm:rounded-2xl border-t sm:border border-amber-400/30 shadow-2xl overflow-hidden ${className}`}
+        className={`w-full sm:max-w-2xl lg:max-w-3xl h-[94vh] sm:h-auto sm:max-h-[90vh] flex flex-col bg-gradient-to-br from-[#5b21b6] via-[#4c1d95] to-[#170726] rounded-t-3xl sm:rounded-2xl border-t sm:border border-fuchsia-400/30 shadow-2xl overflow-hidden ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

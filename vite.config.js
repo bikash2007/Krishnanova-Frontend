@@ -4,6 +4,12 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
 
+  resolve: {
+    alias: {
+      "framer-motion": "/src/utils/framerMotionShim.jsx",
+    },
+  },
+
   // 🎯 ADD THIS FOR /test DEPLOYMENT
   base: "/test/", // Critical: trailing slash required
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import Navigation from "../components/Navigation/Navigation";
 import {
   FaUser,
   FaEnvelope,
@@ -12,6 +11,7 @@ import {
   FaCheck,
   FaTimes,
   FaUpload,
+  FaOm,
 } from "react-icons/fa";
 
 export default function Signup() {
@@ -203,8 +203,6 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center p-4 md:p-8">
-      <Navigation />
-
       {/* Background Patterns */}
       <div
         className="fixed inset-0 opacity-20 pointer-events-none"
@@ -229,7 +227,9 @@ export default function Signup() {
         <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-8 text-center">
-            <div className="text-5xl mb-4">🕉️</div>
+            <div className="text-5xl mb-4 flex justify-center text-white">
+              <FaOm />
+            </div>
             <h2 className="text-3xl font-bold text-indigo-900 mb-2">
               Join Krishnova
             </h2>

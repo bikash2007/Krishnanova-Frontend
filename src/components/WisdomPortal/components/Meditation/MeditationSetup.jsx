@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GiLotusFlower, GiFlute } from "react-icons/gi";
+import { GiLotusFlower, GiFlute, GiMeditation, GiLotus } from "react-icons/gi";
+import { FaOm, FaHeart, FaPray } from "react-icons/fa";
+import { IoSparkles } from "react-icons/io5";
 import {
   IoEye,
   IoEyeOff,
@@ -29,34 +31,34 @@ const MeditationSetup = ({ onStart, onBack }) => {
     background: [
       {
         id: "1",
-        name: "🎵 Peaceful Flute",
+        name: "Peaceful Flute",
         url: "/test/audio/meditation/calm-flute.mp3",
       },
       {
         id: "2",
-        name: "🎸 Sitar Serenity",
+        name: "Sitar Serenity",
         url: "/test/audio/meditation/sitar-calm.mp3",
       },
       {
         id: "3",
-        name: "🍃 Nature Tabla",
+        name: "Nature Tabla",
         url: "/test/audio/meditation/nature-tabla.mp3",
       },
     ],
     chanting: [
       {
         id: "4",
-        name: "🕉️ Om Chant",
+        name: "Om Chant",
         url: "/test/audio/meditation/om-chant.mp3",
       },
       {
         id: "5",
-        name: "🙏 Hare Krishna",
+        name: "Hare Krishna",
         url: "/test/audio/meditation/hare-krishna.mp3",
       },
       {
         id: "6",
-        name: "✨ Gayatri Mantra",
+        name: "Gayatri Mantra",
         url: "/test/audio/meditation/gayatri.mp3",
       },
     ],
@@ -65,37 +67,37 @@ const MeditationSetup = ({ onStart, onBack }) => {
   const meditationImages = [
     {
       id: "1",
-      emoji: "🪈",
+      icon: <GiFlute />,
       name: "Krishna Flute",
       url: "/test/images/meditation/krishna-flute.png",
     },
     {
       id: "2",
-      emoji: "💕",
+      icon: <FaHeart />,
       name: "Radha Krishna",
       url: "/test/images/meditation/radha-krishna.png",
     },
     {
       id: "3",
-      emoji: "🧘",
+      icon: <GiMeditation />,
       name: "Meditation",
       url: "/test/images/meditation/krishna-meditation.png",
     },
     {
       id: "4",
-      emoji: "🪷",
+      icon: <GiLotus />,
       name: "Sacred Lotus",
       url: "/test/images/meditation/lotus.png",
     },
     {
       id: "5",
-      emoji: "🕉️",
+      icon: <FaOm />,
       name: "Om Symbol",
       url: "/test/images/meditation/om-symbol.png",
     },
     {
       id: "6",
-      emoji: "✡️",
+      emoji: "✡",
       name: "Sri Yantra",
       url: "/test/images/meditation/sri-yantra.png",
     },
@@ -139,7 +141,7 @@ const MeditationSetup = ({ onStart, onBack }) => {
   const stepTitles = ["Meditation Style", "Choose Music", "Visualization"];
 
   return (
-    <div className="min-h-[60vh] max-h-[90vh] bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex flex-col overflow-hidden">
+    <div className="min-h-[calc(var(--app-height)*0.6)] max-h-[calc(var(--app-height)*0.9)] bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex-shrink-0 px-4 pt-3 pb-2">
         <div className="flex items-center justify-between mb-2">
@@ -369,9 +371,9 @@ const MeditationSetup = ({ onStart, onBack }) => {
                         e.target.nextSibling.style.display = "flex";
                       }}
                     />
-                    {/* Fallback with emoji */}
+                    {/* Fallback with icon */}
                     <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 items-center justify-center hidden">
-                      <span className="text-5xl">{img.emoji}</span>
+                      <span className="text-5xl">{img.icon || img.emoji}</span>
                     </div>
                     {/* Overlay with name */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-2">

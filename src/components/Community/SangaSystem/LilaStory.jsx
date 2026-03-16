@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { EMOTIONAL_RASAS } from "./SangaContext";
 import {
   FaHeart,
@@ -12,8 +13,21 @@ import {
   FaBook,
   FaStar,
   FaFilter,
+  FaMoon,
+  FaWalking,
+  FaLightbulb,
+  FaEdit,
+  FaTrash,
+  FaTimes,
+  FaImage,
+  FaCheck,
+  FaSpinner,
 } from "react-icons/fa";
+import { GiCandleLight } from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 import { DevoteeInlineBadge } from "./DevoteeLevelBadge";
+
+const API = import.meta.env.VITE_API_URL;
 
 // Rasa Tag Component
 export const RasaTag = ({
@@ -103,23 +117,35 @@ export const RasaFilterBar = ({
 const StoryTypeIcon = ({ type }) => {
   const config = {
     experience: {
-      icon: "✨",
+      icon: <IoSparkles />,
       label: "Personal Experience",
       color: "text-amber-400",
     },
     teaching: {
-      icon: "📚",
+      icon: <FaBook />,
       label: "Spiritual Teaching",
       color: "text-cyan-400",
     },
-    dream: { icon: "🌙", label: "Divine Dream", color: "text-purple-400" },
-    miracle: { icon: "🪔", label: "Miracle Story", color: "text-yellow-400" },
+    dream: {
+      icon: <FaMoon />,
+      label: "Divine Dream",
+      color: "text-purple-400",
+    },
+    miracle: {
+      icon: <GiCandleLight />,
+      label: "Miracle Story",
+      color: "text-yellow-400",
+    },
     journey: {
-      icon: "🚶",
+      icon: <FaWalking />,
       label: "Spiritual Journey",
       color: "text-green-400",
     },
-    realization: { icon: "💡", label: "Realization", color: "text-pink-400" },
+    realization: {
+      icon: <FaLightbulb />,
+      label: "Realization",
+      color: "text-pink-400",
+    },
   };
 
   const typeConfig = config[type] || config.experience;
@@ -138,12 +164,26 @@ export const LilaStoryCard = ({
   baseUrl,
   onLike,
   onBookmark,
+  onDelete,
+  onEdit,
   user,
   index = 0,
 }) => {
   const [showFullContent, setShowFullContent] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editTitle, setEditTitle] = useState(story.title);
+  const [editContent, setEditContent] = useState(story.content);
+  const [editImage, setEditImage] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState(story.image || null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef(null);
 
+  const isOwner = user && (
+    story.author?._id === user._id ||
+    story.author?.id === user._id ||
+    story.author === user._id
+  );
   const isLiked = user && story.likes?.includes(user._id);
   const storyRasas = story.rasas || ["shanta"]; // Default rasa if none set
   const storyType = story.storyType || "experience";
@@ -160,6 +200,50 @@ export const LilaStoryCard = ({
   const handleBookmark = () => {
     setIsBookmarked(!isBookmarked);
     onBookmark?.(story._id);
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this story?")) return;
+    try {
+      await axios.delete(`${API}/blog/${story._id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      onDelete?.(story._id);
+    } catch (error) {
+      console.error("Error deleting story:", error);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setEditImage(file);
+    setEditImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editTitle.trim() || !editContent.trim()) return;
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", editTitle);
+      formData.append("content", editContent);
+      if (editImage) formData.append("image", editImage);
+
+      const res = await axios.put(`${API}/blog/${story._id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      onEdit?.(story._id, res.data);
+      setShowEditForm(false);
+    } catch (error) {
+      console.error("Error editing story:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -213,21 +297,117 @@ export const LilaStoryCard = ({
           </div>
 
           {/* Story Rasas */}
-          <div className="flex flex-wrap gap-1 justify-end">
+          <div className="flex flex-wrap gap-1 justify-end items-center">
             {storyRasas.slice(0, 2).map((rasa) => (
               <RasaTag key={rasa} rasaId={rasa} size="xs" />
             ))}
+            {/* Owner actions */}
+            {isOwner && (
+              <div className="flex items-center gap-1 ml-1">
+                <button
+                  onClick={() => setShowEditForm(!showEditForm)}
+                  title="Edit story"
+                  className="p-1.5 rounded-lg text-amber-300/60 hover:text-amber-300 hover:bg-amber-400/10 transition-colors"
+                >
+                  <FaEdit size={12} />
+                </button>
+                <button
+                  onClick={handleDelete}
+                  title="Delete story"
+                  className="p-1.5 rounded-lg text-red-400/60 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                >
+                  <FaTrash size={12} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
+        {/* Inline Edit Form */}
+        {showEditForm && (
+          <motion.form
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            onSubmit={handleEditSubmit}
+            className="mt-4 p-4 bg-white/[0.06] rounded-xl border border-amber-400/20 space-y-3"
+          >
+            <input
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              className="w-full px-3 py-2 bg-white/[0.08] border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-amber-400/50 text-sm"
+              placeholder="Title"
+              maxLength={200}
+            />
+            <textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              className="w-full px-3 py-2 bg-white/[0.08] border border-white/20 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-amber-400/50 text-sm resize-none"
+              rows={4}
+              placeholder="Share your story..."
+              maxLength={2000}
+            />
+            {/* Image preview / change */}
+            <div>
+              {editImagePreview ? (
+                <div className="relative">
+                  <img
+                    src={editImagePreview}
+                    alt="Preview"
+                    className="w-full max-h-48 object-contain rounded-lg bg-black/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => { setEditImage(null); setEditImagePreview(null); }}
+                    className="absolute top-2 right-2 p-1 bg-red-500/80 rounded-full hover:bg-red-500 transition-colors"
+                  >
+                    <FaTimes className="text-white" size={10} />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-2 px-3 py-2 bg-white/[0.06] border border-white/20 rounded-lg text-slate-400 hover:text-amber-300 hover:border-amber-400/30 transition-colors text-sm"
+                >
+                  <FaImage size={12} />
+                  <span>Change image</span>
+                </button>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+            </div>
+            <div className="flex items-center gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => { setShowEditForm(false); setEditTitle(story.title); setEditContent(story.content); setEditImage(null); setEditImagePreview(story.image || null); }}
+                className="px-3 py-1.5 bg-white/10 text-slate-300 rounded-lg text-sm hover:bg-white/20 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || !editTitle.trim() || !editContent.trim()}
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-amber-400 to-orange-400 text-indigo-900 font-semibold rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                {isSubmitting ? <FaSpinner className="animate-spin" size={12} /> : <FaCheck size={12} />}
+                <span>{isSubmitting ? "Saving..." : "Save"}</span>
+              </button>
+            </div>
+          </motion.form>
+        )}
+
         {/* Title */}
-        <Link to={`/blog/${story._id}`}>
-          <h2 className="text-lg sm:text-xl font-bold text-blue-100 mt-4 mb-2 hover:text-amber-300 transition-colors cursor-pointer">
-            {story.title}
-          </h2>
-        </Link>
+        {!showEditForm && (
+          <Link to={`/blog/${story._id}`}>
+            <h2 className="text-lg sm:text-xl font-bold text-blue-100 mt-4 mb-2 hover:text-amber-300 transition-colors cursor-pointer">
+              {story.title}
+            </h2>
+          </Link>
+        )}
 
         {/* Content */}
+        {!showEditForm && (
         <div className="text-blue-100/80 text-sm sm:text-base leading-relaxed">
           {showFullContent || story.content?.length <= 200
             ? story.content
@@ -241,9 +421,10 @@ export const LilaStoryCard = ({
             </button>
           )}
         </div>
+        )}
 
         {/* Image */}
-        {story.image && (
+        {story.image && !showEditForm && (
           <Link to={`/blog/${story._id}`}>
             <div className="mt-4 -mx-4 sm:-mx-6 relative overflow-hidden group/image">
               <img
@@ -253,7 +434,7 @@ export const LilaStoryCard = ({
                     : baseUrl + story.image
                 }
                 alt={story.title}
-                className="w-full h-48 sm:h-64 object-cover group-hover/image:scale-105 transition-transform duration-500"
+                className="w-full max-h-[500px] object-contain bg-black/20 group-hover/image:brightness-95 transition-all duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/60 via-transparent to-transparent" />
 
@@ -273,7 +454,7 @@ export const LilaStoryCard = ({
         {story.divineInsight && (
           <div className="mt-4 p-3 bg-gradient-to-r from-amber-400/10 to-orange-400/10 rounded-xl border border-amber-400/20">
             <div className="flex items-center gap-2 text-amber-300 text-xs font-semibold mb-1">
-              <span>🪔</span>
+              <GiCandleLight />
               Divine Insight
             </div>
             <p className="text-sm text-amber-100/80 italic">
@@ -420,7 +601,7 @@ const LilaStoriesFeed = ({ stories, baseUrl, user, onLike }) => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">🪔</div>
+          <GiCandleLight className="text-6xl mb-4 mx-auto text-amber-300/40" />
           <p className="text-amber-300 text-lg">No Lilas found</p>
           <p className="text-blue-100/60 mt-2">
             {selectedRasas.length > 0

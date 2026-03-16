@@ -1,31 +1,20 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaOm, FaHeart, FaStar } from "react-icons/fa";
+import { GiPrayerBeads } from "react-icons/gi";
 
 const Meditation = () => {
   const sectionRef = useRef(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     // SEO Logic
     document.title = "Daily Krishna Meditation Guide | Krishnova";
-
-    // Simple mock of background logic
-    const handleMouseMove = (e) => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-      }
-    };
-    if (sectionRef.current)
-      sectionRef.current.addEventListener("mousemove", handleMouseMove);
-    return () =>
-      sectionRef.current?.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   const benefits = [
-    { icon: "🕉️", title: "Inner Peace", desc: "Find tranquility" },
-    { icon: "💝", title: "Connection", desc: "Bond with Krishna" },
-    { icon: "🌟", title: "Growth", desc: "Sacred journey" },
+    { icon: <FaOm />, title: "Inner Peace", desc: "Find tranquility" },
+    { icon: <FaHeart />, title: "Connection", desc: "Bond with Krishna" },
+    { icon: <FaStar />, title: "Growth", desc: "Sacred journey" },
   ];
 
   return (
@@ -43,10 +32,9 @@ const Meditation = () => {
         }}
       />
       <div
-        className="pointer-events-none absolute w-[600px] h-[600px]"
+        className="pointer-events-none absolute w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         style={{
           background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.12) 0%, transparent 50%)`,
-          transform: `translate3d(${mousePosition.x - 300}px, ${mousePosition.y - 300}px, 0)`,
         }}
       />
 
@@ -63,11 +51,11 @@ const Meditation = () => {
 
         {/* Main Content Card - Compacted */}
         <div className="w-full max-w-6xl mx-auto">
-          <div className="relative backdrop-blur-xl bg-white/5 rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col lg:flex-row">
+          <div className="relative backdrop-blur-md bg-white/5 rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col lg:flex-row">
             {/* LEFT: Visual (Smaller on Desktop) */}
             <div className="lg:w-4/12 relative bg-gradient-to-br from-amber-400/10 via-purple-400/10 to-indigo-400/10 p-8 flex flex-col justify-center items-center min-h-[200px] lg:min-h-[450px]">
               {/* Om Animation */}
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 backdrop-blur-md border border-amber-400/40 flex items-center justify-center shadow-[0_0_30px_rgba(251,191,36,0.3)] relative z-10 animate-pulse">
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-500/20 backdrop-blur-md border border-amber-400/40 flex items-center justify-center shadow-[0_0_30px_rgba(251,191,36,0.3)] relative z-10">
                 <span className="text-5xl md:text-6xl text-amber-300">ॐ</span>
               </div>
               <div className="absolute inset-0 z-0">
@@ -100,7 +88,7 @@ const Meditation = () => {
               {/* Prayer Box */}
               <div className="bg-white/5 rounded-xl p-4 md:p-6 mb-8 border-l-4 border-amber-400">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-xl">📿</span>
+                  <GiPrayerBeads className="text-xl" />
                   <h3 className="text-sm md:text-base font-bold text-amber-100 uppercase tracking-wide">
                     Morning Mantra
                   </h3>
@@ -125,7 +113,11 @@ const Meditation = () => {
                     </div>
                   ))}
                 </div>
-                <Link to="/wishdomportal" className="w-full md:w-auto">
+                <Link
+                  to="/wishdomportal"
+                  state={{ activeTab: "meditation" }}
+                  className="w-full md:w-auto"
+                >
                   <button className="w-full whitespace-nowrap px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full font-bold text-white shadow-lg hover:shadow-cyan-500/30 transition-all flex items-center justify-center gap-2">
                     Start Practice <span>→</span>
                   </button>

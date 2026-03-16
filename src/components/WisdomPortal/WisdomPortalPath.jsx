@@ -1,5 +1,8 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
+import { IoEarOutline, IoSparkles } from "react-icons/io5";
+import { FaPray, FaOm, FaMusic, FaBolt } from "react-icons/fa";
+import { GiMeditation, GiPrayerBeads, GiLotus } from "react-icons/gi";
 
 const WisdomPortalPath = () => {
   const containerRef = useRef(null);
@@ -14,7 +17,7 @@ const WisdomPortalPath = () => {
       id: "sravanam",
       title: "Sravanam",
       subtitle: "Listening",
-      icon: "👂",
+      icon: <IoEarOutline />,
       description: "Ask questions & receive divine wisdom",
       points: "Clarity Points",
       color: "from-amber-400/20 to-orange-500/20",
@@ -24,7 +27,7 @@ const WisdomPortalPath = () => {
       id: "kirtanam",
       title: "Kirtanam",
       subtitle: "Chanting",
-      icon: "🙏",
+      icon: <FaPray />,
       description: "Sacred mantra counter & vibrations",
       points: "Vibration Points",
       color: "from-pink-400/20 to-rose-500/20",
@@ -34,7 +37,7 @@ const WisdomPortalPath = () => {
       id: "smaranam",
       title: "Smaranam",
       subtitle: "Remembrance",
-      icon: "💫",
+      icon: <IoSparkles />,
       description: "Daily practice & spiritual check-ins",
       points: "Presence Points",
       color: "from-cyan-400/20 to-blue-500/20",
@@ -44,7 +47,7 @@ const WisdomPortalPath = () => {
       id: "archanam",
       title: "Archanam",
       subtitle: "Meditation",
-      icon: "🧘",
+      icon: <GiMeditation />,
       description: "Roop Dhyana & guided stillness",
       points: "Stillness Points",
       color: "from-purple-400/20 to-violet-500/20",
@@ -68,8 +71,8 @@ const WisdomPortalPath = () => {
       />
 
       {/* Ambient Glows */}
-      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-[#d946ef] opacity-10 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-[#d946ef] opacity-10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-5%] w-[25vw] h-[25vw] bg-[#d946ef] opacity-[0.06] blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[25vw] h-[25vw] bg-[#d946ef] opacity-[0.06] blur-[80px] rounded-full pointer-events-none" />
 
       {/* Main Container */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6">
@@ -79,24 +82,15 @@ const WisdomPortalPath = () => {
           <div className="flex-shrink-0 flex flex-col items-center text-center lg:text-left lg:items-start">
             {/* Sacred Portal Visual - Compact */}
             <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mb-4 sm:mb-5 flex items-center justify-center">
-              {/* Outer Rotating Ring */}
-              <div
-                className="absolute inset-0 border border-t-[#d946ef] border-r-transparent border-b-[#d946ef] border-l-transparent rounded-full opacity-50 animate-spin"
-                style={{ animationDuration: "20s" }}
-              />
-              {/* Inner Rotating Ring */}
-              <div
-                className="absolute inset-3 border border-t-[var(--peacock-gold)] border-r-transparent border-b-[var(--peacock-gold)] border-l-transparent rounded-full opacity-40 animate-spin"
-                style={{
-                  animationDuration: "15s",
-                  animationDirection: "reverse",
-                }}
-              />
+              {/* Static Ring */}
+              <div className="absolute inset-0 border border-[#d946ef]/30 rounded-full opacity-50" />
+              {/* Inner Ring */}
+              <div className="absolute inset-3 border border-amber-400/20 rounded-full opacity-40" />
               {/* Core Glow */}
-              <div className="absolute w-20 h-20 sm:w-24 sm:h-24 bg-[var(--peacock-gold)] rounded-full blur-[30px] opacity-30 animate-pulse" />
+              <div className="absolute w-20 h-20 sm:w-24 sm:h-24 bg-[var(--peacock-gold)] rounded-full blur-[30px] opacity-20" />
               {/* Center Icon */}
               <div className="text-4xl sm:text-5xl md:text-6xl opacity-90 drop-shadow-[0_0_15px_rgba(255,183,0,0.6)]">
-                🕉️
+                <FaOm />
               </div>
             </div>
 
@@ -128,7 +122,7 @@ const WisdomPortalPath = () => {
 
             {/* Smart Greeting Badge */}
             <div className="mt-4 flex items-center gap-2 text-xs sm:text-sm text-amber-200/60">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+              <span className="w-2 h-2 bg-green-400 rounded-full"></span>
               <span>
                 Krishna remembers your journey & follows up on your practice
               </span>
@@ -173,9 +167,7 @@ const WisdomPortalPath = () => {
 
                   {/* Points Badge */}
                   <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/10 rounded-full">
-                    <span className="text-[8px] sm:text-[10px] text-amber-300">
-                      ⚡
-                    </span>
+                    <FaBolt className="text-[8px] sm:text-[10px] text-amber-300" />
                     <span className="text-[8px] sm:text-[10px] text-amber-200/80">
                       {pillar.points}
                     </span>
@@ -187,19 +179,19 @@ const WisdomPortalPath = () => {
             {/* Features Row */}
             <div className="mt-4 flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3">
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <span className="text-sm">🎵</span>
+                <FaMusic className="text-sm text-blue-100/70" />
                 <span className="text-[10px] sm:text-xs text-blue-100/70">
                   Flute Meditation
                 </span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <span className="text-sm">📿</span>
+                <GiPrayerBeads className="text-sm text-blue-100/70" />
                 <span className="text-[10px] sm:text-xs text-blue-100/70">
                   Mantra Counter
                 </span>
               </div>
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                <span className="text-sm">🪷</span>
+                <GiLotus className="text-sm text-blue-100/70" />
                 <span className="text-[10px] sm:text-xs text-blue-100/70">
                   Roop Dhyana
                 </span>
@@ -207,23 +199,6 @@ const WisdomPortalPath = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Floating Particles - Reduced */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white opacity-30 animate-pulse"
-            style={{
-              width: Math.random() * 2 + 1 + "px",
-              height: Math.random() * 2 + 1 + "px",
-              top: Math.random() * 100 + "%",
-              left: Math.random() * 100 + "%",
-              animationDuration: `${Math.random() * 3 + 3}s`,
-            }}
-          />
-        ))}
       </div>
     </section>
   );

@@ -8,11 +8,7 @@ import React, {
 } from "react";
 import { useLocation } from "react-router-dom";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navigation from "../Navigation/NavigationGSAP";
-
-// Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger);
 
 // Lazy load heavy game component - only loads when actually needed
 const EnhancedKrishnaGame = lazy(() => import("../FloatingKrishna"));
@@ -53,6 +49,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const isAuthPage = ["/login", "/signup"].includes(location.pathname);
   const isAdminPage = location.pathname.startsWith("/admin");
+  const isMyOrdersPage = location.pathname === "/my-orders";
   const mainRef = useRef(null);
 
   // OPTIMIZATION: Only load game after main content is ready
@@ -75,7 +72,7 @@ const Layout = ({ children }) => {
     }
   }, [location.state]);
 
-  // GSAP smooth scroll animations on route change
+  // Route transition animation
   useEffect(() => {
     // Scroll to top with GSAP smooth animation
     if (!location.state?.scrollToId) {
@@ -86,46 +83,20 @@ const Layout = ({ children }) => {
     if (mainRef.current) {
       gsap.fromTo(
         mainRef.current,
-        { opacity: 0.7, y: 20 },
-        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        { opacity: 0.92, y: 10 },
+        { opacity: 1, y: 0, duration: 0.25, ease: "power1.out" },
       );
     }
-
-    // Setup ScrollTrigger for sections
-    const sections = document.querySelectorAll("section[id]");
-    sections.forEach((section) => {
-      gsap.fromTo(
-        section,
-        { opacity: 0.8, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 85%",
-            toggleActions: "play none none none",
-            once: true,
-          },
-        },
-      );
-    });
-
-    // Cleanup ScrollTriggers on unmount
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
   }, [location.pathname]);
 
   // OPTIMIZATION: Delay game loading to prioritize content rendering
   useEffect(() => {
-    if (!isAuthPage && !isAdminPage) {
+    if (!isAuthPage && !isAdminPage && !isMyOrdersPage) {
       // Load game component after 2 seconds to let main content render first
       const timer = setTimeout(() => setGameReady(true), 2000);
       return () => clearTimeout(timer);
     }
-  }, [isAuthPage, isAdminPage]);
+  }, [isAuthPage, isAdminPage, isMyOrdersPage]);
 
   if (isAdminPage) {
     return <>{children}</>;
@@ -138,8 +109,8 @@ const Layout = ({ children }) => {
 
       {!isAuthPage && <Navigation />}
 
-      {/* OPTIMIZATION: Lazy load game component with delayed mounting */}
-      {gameReady && !isAuthPage && (
+      {/* OPTIMIZATION: Lazy load game component with delayed mounting - Exclude from MyOrders page */}
+      {gameReady && !isAuthPage && !isMyOrdersPage && (
         <Suspense fallback={null}>
           <EnhancedKrishnaGame />
         </Suspense>

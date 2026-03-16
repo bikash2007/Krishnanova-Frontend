@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GiPrayerBeads } from "react-icons/gi";
+import { GiPrayerBeads, GiFeather, GiLotusFlower } from "react-icons/gi";
 import {
   IoStop,
   IoTime,
@@ -8,7 +8,9 @@ import {
   IoHeart,
   IoCheckmark,
 } from "react-icons/io5";
+import { FaPray, FaHeart } from "react-icons/fa";
 import confetti from "canvas-confetti";
+import useLockBodyScroll from "../../../../utils/useLockBodyScroll";
 
 const ChantingSession = ({ config, onComplete, onStop }) => {
   const [count, setCount] = useState(0);
@@ -18,13 +20,19 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
   const timerRef = useRef(null);
   const audioRef = useRef(null);
 
+  useLockBodyScroll(showCompletionModal);
+
   const TARGET_COUNT = 108;
   const remaining = TARGET_COUNT - count;
   const malasCompleted = Math.floor(count / TARGET_COUNT);
 
-  const getDeityEmoji = () => {
-    const emojis = { krishna: "🦚", radha: "🌺", "radha-krishna": "💑" };
-    return emojis[config.deity] || "🦚";
+  const getDeityIcon = () => {
+    const icons = {
+      krishna: <GiFeather className="text-amber-300" />,
+      radha: <GiLotusFlower className="text-amber-300" />,
+      "radha-krishna": <FaHeart className="text-amber-300" />,
+    };
+    return icons[config.deity] || <GiFeather className="text-amber-300" />;
   };
 
   useEffect(() => {
@@ -97,7 +105,7 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
       .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
   return (
-    <div className="min-h-[70vh] max-h-[95vh] bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col overflow-hidden">
+    <div className="min-h-[calc(var(--app-height)*0.7)] max-h-[calc(var(--app-height)*0.95)] bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col overflow-hidden">
       <audio ref={audioRef} src="/audio/click.mp3" />
 
       {/* Header */}
@@ -106,7 +114,7 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
           <IoTime className="text-amber-400" />
           <span>{formatTime(time)}</span>
         </div>
-        <div className="text-2xl">{getDeityEmoji()}</div>
+        <div className="text-2xl">{getDeityIcon()}</div>
         <button
           onClick={handleStop}
           className="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-300 text-sm font-medium active:bg-red-500/30 flex items-center gap-1.5"
@@ -142,8 +150,9 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
             {remaining > 0 ? `${remaining} to complete mala` : "Mala complete!"}
           </p>
           {malasCompleted > 0 && (
-            <p className="text-cyan-300 text-xs font-medium">
-              📿 {malasCompleted} mala{malasCompleted > 1 ? "s" : ""} done
+            <p className="text-cyan-300 text-xs font-medium flex items-center justify-center gap-1">
+              <GiPrayerBeads className="inline" /> {malasCompleted} mala
+              {malasCompleted > 1 ? "s" : ""} done
             </p>
           )}
         </div>
@@ -174,7 +183,7 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
             </>
           ) : (
             <>
-              <span className="text-4xl">🙏</span>
+              <FaPray className="text-4xl text-amber-300" />
               <span className="text-base font-bold">Tap to Chant</span>
             </>
           )}
@@ -204,7 +213,7 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6 overflow-hidden overscroll-contain"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -222,8 +231,8 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
                 </div>
               </motion.div>
 
-              <h2 className="text-2xl font-bold text-white mb-2">
-                🙏 Mala Complete!
+              <h2 className="text-2xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+                <FaPray /> Mala Complete!
               </h2>
               <p className="text-amber-200 text-lg mb-5">
                 {TARGET_COUNT} mantras chanted
@@ -247,7 +256,7 @@ const ChantingSession = ({ config, onComplete, onStop }) => {
               <div className="bg-amber-400/10 rounded-xl p-4 mb-5 border border-amber-400/20">
                 <IoHeart className="text-3xl text-rose-400 mx-auto mb-2" />
                 <p className="text-amber-100 text-sm">
-                  Divine blessings upon you! 🌺
+                  Divine blessings upon you!
                 </p>
               </div>
 

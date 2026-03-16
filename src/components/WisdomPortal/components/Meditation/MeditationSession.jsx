@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GiLotusFlower } from "react-icons/gi";
+import { FaCrown, FaStar, FaPray, FaDove } from "react-icons/fa";
+import { IoLeaf, IoSparkles } from "react-icons/io5";
 import {
   IoStop,
   IoTrophy,
@@ -9,6 +11,7 @@ import {
   IoVolumeMute,
 } from "react-icons/io5";
 import confetti from "canvas-confetti";
+import useLockBodyScroll from "../../../../utils/useLockBodyScroll";
 
 const MeditationSession = ({ config, onComplete, onStop }) => {
   const [time, setTime] = useState(0);
@@ -21,6 +24,8 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
   const timerRef = useRef(null);
   const bellSoundRef = useRef(null);
   const startTimeRef = useRef(null);
+
+  useLockBodyScroll(showCompletionModal);
 
   useEffect(() => {
     if (isActive) {
@@ -97,12 +102,12 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
   };
 
   const messages = [
-    "Your dedication to inner peace is inspiring! 🙏",
-    "Krishna is pleased with your devotion! 💫",
-    "The divine light within you grows brighter! 🌟",
-    "Peace and clarity are your companions now! 🕊️",
-    "You are cultivating the garden of your soul! 🌸",
-    "Your spiritual journey is beautiful! 🌺",
+    "Your dedication to inner peace is inspiring!",
+    "Krishna is pleased with your devotion!",
+    "The divine light within you grows brighter!",
+    "Peace and clarity are your companions now!",
+    "You are cultivating the garden of your soul!",
+    "Your spiritual journey is beautiful!",
   ];
 
   // Select random message once when modal opens
@@ -116,27 +121,31 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
       return {
         level: "Master",
         color: "from-purple-400 to-indigo-500",
-        emoji: "👑",
+        icon: <FaCrown />,
       };
     if (m >= 20)
       return {
         level: "Advanced",
         color: "from-blue-400 to-cyan-500",
-        emoji: "⭐",
+        icon: <FaStar />,
       };
     if (m >= 10)
       return {
         level: "Seeker",
         color: "from-green-400 to-emerald-500",
-        emoji: "🌿",
+        icon: <IoLeaf />,
       };
     if (m >= 5)
       return {
         level: "Beginner",
         color: "from-amber-400 to-orange-500",
-        emoji: "🌱",
+        icon: <IoLeaf />,
       };
-    return { level: "Novice", color: "from-pink-400 to-rose-500", emoji: "✨" };
+    return {
+      level: "Novice",
+      color: "from-pink-400 to-rose-500",
+      icon: <IoSparkles />,
+    };
   };
 
   const imageUrl = config.customImage
@@ -144,7 +153,7 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
     : config.selectedImage;
 
   return (
-    <div className="h-[100dvh] relative overflow-hidden">
+    <div className="h-screen relative overflow-hidden">
       <audio ref={audioRef} />
 
       {/* Fullscreen Background Image */}
@@ -261,7 +270,7 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
             <div className="backdrop-blur-md bg-gradient-to-r from-amber-400/30 to-orange-500/30 rounded-2xl p-4 border-2 border-amber-400 text-center">
               <IoTrophy className="text-3xl text-amber-300 mx-auto mb-1" />
               <p className="text-lg font-bold text-amber-200">
-                {showMilestone} Minutes! 🎉
+                {showMilestone} Minutes!
               </p>
             </div>
           </motion.div>
@@ -275,7 +284,7 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-6"
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-6 overflow-hidden overscroll-contain"
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -293,7 +302,7 @@ const MeditationSession = ({ config, onComplete, onStop }) => {
                   className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${getAchievementLevel(time).color} flex items-center justify-center shadow-2xl`}
                 >
                   <span className="text-4xl">
-                    {getAchievementLevel(time).emoji}
+                    {getAchievementLevel(time).icon}
                   </span>
                 </div>
               </motion.div>

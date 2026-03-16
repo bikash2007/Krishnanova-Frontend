@@ -12,8 +12,7 @@
     }
 
     body {
-        min-height: 100vh;
-        min-height: -webkit-fill-available;
+        min-height: var(--app-height);
     }
 
     .scroll-container,
@@ -142,7 +141,7 @@ body {
 #meditation,
 /* #contact {
     background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%);
-    min-height: 100vh;
+    min-height: var(--app-height);
 } */
 
 /* Loading skeleton shimmer */
@@ -341,7 +340,7 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    min-height: var(--app-height);
     background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a8a 100%);
 }
 
@@ -404,4 +403,1203 @@ h3 {
     50% {
         opacity: 1;
     }
+}
+
+/* =========================================
+   SACRED GITA READER — Immersive Book UI
+========================================= */
+
+/* ── Light mode (default) ── */
+.gita-light {
+    --gita-bg: #e8dcc4;
+    --gita-bg-accent: rgba(180, 140, 80, 0.07);
+    --gita-page-bg: #f6f0e0;
+    --gita-page-bg2: #f0e8d4;
+    --gita-page-highlight: rgba(255, 255, 255, 0.55);
+    --gita-border: rgba(160, 120, 60, 0.22);
+    --gita-border-light: rgba(160, 120, 60, 0.10);
+    --gita-shadow-1: rgba(120, 80, 30, 0.10);
+    --gita-shadow-2: rgba(120, 80, 30, 0.07);
+    --gita-text-primary: #3a2a14;
+    --gita-text-secondary: #5c3d14;
+    --gita-text-muted: rgba(100, 70, 30, 0.5);
+    --gita-text-label: #7a5c30;
+    --gita-gold: #b8860b;
+    --gita-gold-soft: rgba(184, 134, 11, 0.45);
+    --gita-divider: rgba(184, 134, 11, 0.35);
+    --gita-toolbar-bg: rgba(240, 228, 200, 0.94);
+    --gita-toolbar-border: rgba(160, 120, 60, 0.15);
+    --gita-input-bg: rgba(140, 100, 40, 0.06);
+    --gita-input-border: rgba(160, 120, 60, 0.20);
+    --gita-wood-bg: linear-gradient(180deg, #8b6914 0%, #6b4f10 50%, #5a420d 100%);
+    --gita-wood-text: #fef3c7;
+    --gita-wood-shadow: rgba(80, 50, 10, 0.35);
+    --gita-wood-nav-bg: linear-gradient(180deg, #a37c1f 0%, #8b6914 100%);
+    --gita-fold: rgba(160, 120, 60, 0.08);
+    --gita-vignette: rgba(100, 70, 30, 0.06);
+    --gita-completed-bg: rgba(22, 101, 52, 0.08);
+    --gita-completed-border: rgba(22, 101, 52, 0.18);
+    --gita-completed-text: #166534;
+    --gita-dropdown-bg: #f5e8d0;
+    --gita-dropdown-hover: rgba(140, 100, 40, 0.08);
+    --gita-dropdown-active: rgba(184, 134, 11, 0.12);
+    --gita-dropdown-border: rgba(160, 120, 60, 0.08);
+    --gita-chapter-num-bg: rgba(140, 100, 40, 0.08);
+    --gita-explain-bg: rgba(140, 100, 40, 0.04);
+    --gita-explain-border: rgba(160, 120, 60, 0.12);
+    --gita-explain-text: rgba(60, 40, 20, 0.7);
+}
+
+/* ── Dark mode ── */
+.gita-dark {
+    --gita-bg: #1a1510;
+    --gita-bg-accent: rgba(180, 140, 80, 0.04);
+    --gita-page-bg: #252015;
+    --gita-page-bg2: #201b12;
+    --gita-page-highlight: rgba(255, 255, 255, 0.03);
+    --gita-border: rgba(200, 160, 80, 0.15);
+    --gita-border-light: rgba(200, 160, 80, 0.08);
+    --gita-shadow-1: rgba(0, 0, 0, 0.30);
+    --gita-shadow-2: rgba(0, 0, 0, 0.20);
+    --gita-text-primary: #e8dcc0;
+    --gita-text-secondary: #d4bc88;
+    --gita-text-muted: rgba(200, 170, 110, 0.45);
+    --gita-text-label: #c4a060;
+    --gita-gold: #d4a520;
+    --gita-gold-soft: rgba(212, 165, 32, 0.35);
+    --gita-divider: rgba(212, 165, 32, 0.25);
+    --gita-toolbar-bg: rgba(30, 25, 18, 0.95);
+    --gita-toolbar-border: rgba(200, 160, 80, 0.10);
+    --gita-input-bg: rgba(255, 255, 255, 0.05);
+    --gita-input-border: rgba(200, 160, 80, 0.15);
+    --gita-wood-bg: linear-gradient(180deg, #5a420d 0%, #3d2d08 50%, #2a1f05 100%);
+    --gita-wood-text: #e8d8b0;
+    --gita-wood-shadow: rgba(0, 0, 0, 0.45);
+    --gita-wood-nav-bg: linear-gradient(180deg, #5a420d 0%, #3d2d08 100%);
+    --gita-fold: rgba(255, 220, 130, 0.04);
+    --gita-vignette: rgba(0, 0, 0, 0.15);
+    --gita-completed-bg: rgba(22, 101, 52, 0.12);
+    --gita-completed-border: rgba(34, 197, 94, 0.15);
+    --gita-completed-text: #86efac;
+    --gita-dropdown-bg: #252015;
+    --gita-dropdown-hover: rgba(255, 255, 255, 0.04);
+    --gita-dropdown-active: rgba(212, 165, 32, 0.10);
+    --gita-dropdown-border: rgba(200, 160, 80, 0.06);
+    --gita-chapter-num-bg: rgba(200, 160, 80, 0.08);
+    --gita-explain-bg: rgba(255, 255, 255, 0.03);
+    --gita-explain-border: rgba(200, 160, 80, 0.10);
+    --gita-explain-text: rgba(228, 218, 190, 0.65);
+}
+
+/* ── Parchment background with subtle grain ── */
+.gita-sacred-bg {
+    background:
+        radial-gradient(ellipse at 20% 0%, var(--gita-bg-accent) 0%, transparent 60%),
+        radial-gradient(ellipse at 85% 100%, var(--gita-bg-accent) 0%, transparent 60%),
+        var(--gita-bg);
+    min-height: var(--app-height);
+    transition: background 0.4s ease;
+}
+
+/* ── Book page card — realistic aged paper with texture image ── */
+.gita-page {
+    background:
+        radial-gradient(ellipse at 25% 15%, var(--gita-page-highlight) 0%, transparent 65%),
+        url('/vagwatbg.png') center / cover no-repeat,
+        linear-gradient(172deg, var(--gita-page-bg) 0%, var(--gita-page-bg2) 100%);
+    border: 1px solid var(--gita-border);
+    border-radius: 0.5rem;
+    padding: 2rem 1.5rem;
+    box-shadow:
+        0 2px 8px var(--gita-shadow-1),
+        0 16px 48px var(--gita-shadow-2),
+        inset 0 1px 0 var(--gita-page-highlight),
+        inset 0 0 80px var(--gita-vignette);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+
+@media (min-width: 640px) {
+    .gita-page {
+        padding: 3rem 2.5rem;
+        border-radius: 0.75rem;
+    }
+}
+
+/* Page vignette — soft shadow edges for depth */
+.gita-page-vignette {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 60px var(--gita-vignette);
+}
+
+/* Page fold corner */
+.gita-page-fold {
+    background: linear-gradient(225deg, var(--gita-fold) 0%, transparent 60%);
+}
+
+/* ── Enhanced Toolbar — warm dark frosted glass ── */
+.gita-toolbar {
+    background: linear-gradient(135deg, rgba(76, 29, 149, 0.85) 0%, rgba(67, 20, 120, 0.90) 100%);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(167, 139, 250, 0.15);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(167, 139, 250, 0.1) inset;
+    transition: all 0.3s ease;
+}
+
+/* ── Icon buttons (back, bookmark, dark/light toggle) ── */
+.gita-icon-btn {
+    padding: 0.45rem;
+    border-radius: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gita-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+/* ── Chapter dropdown trigger ── */
+.gita-chapter-select {
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.95);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.gita-chapter-select:hover {
+    border-color: rgba(251, 191, 36, 0.45);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+}
+
+/* ── Chapter dropdown panel — matches warm dark theme ── */
+.gita-dropdown-panel {
+    background: linear-gradient(135deg, rgba(76, 29, 149, 0.95) 0%, rgba(67, 20, 120, 0.97) 100%);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(167, 139, 250, 0.15) inset;
+    transition: background 0.3s;
+}
+
+.gita-dropdown-item {
+    border-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
+    transition: background 0.15s;
+}
+
+.gita-dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+}
+
+.gita-dropdown-item.gita-dropdown-active {
+    background: rgba(251, 191, 36, 0.18);
+    color: rgba(251, 191, 36, 0.95);
+    box-shadow: 0 2px 12px rgba(251, 191, 36, 0.2);
+}
+
+.gita-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.gita-chapter-num {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.18) 0%, rgba(245, 158, 11, 0.15) 100%);
+    color: rgba(251, 191, 36, 0.95);
+    border: 1px solid rgba(251, 191, 36, 0.30);
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);
+}
+
+/* ── Verse quick-jump input ── */
+.gita-verse-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.5rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: 'Playfair Display', 'Georgia', serif;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.gita-verse-input:focus {
+    border-color: rgba(251, 191, 36, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15), 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+.gita-verse-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Hide number input spinners */
+.gita-verse-input::-webkit-inner-spin-button,
+.gita-verse-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.gita-verse-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* ── Typography ── */
+
+/* Muted helper text */
+.gita-muted-text {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.4s;
+}
+
+/* Main heading text */
+.gita-heading-text {
+    color: var(--gita-text-primary);
+    transition: color 0.4s;
+}
+
+/* Verse label */
+.gita-verse-label {
+    color: var(--gita-gold);
+    transition: color 0.4s;
+}
+
+/* Ornamental line */
+.gita-ornament-line {
+    background: linear-gradient(90deg, transparent, var(--gita-divider), transparent);
+}
+
+/* Sanskrit text — large, bold, centered, sacred Devanagari */
+.gita-sanskrit {
+    font-family: 'Playfair Display', 'Noto Serif Devanagari', serif;
+    font-size: 1.4rem;
+    line-height: 2;
+    color: var(--gita-text-secondary);
+    text-align: center;
+    letter-spacing: 0.04em;
+    font-style: italic;
+    font-weight: 600;
+    transition: color 0.4s;
+}
+
+@media (min-width: 640px) {
+    .gita-sanskrit {
+        font-size: 1.75rem;
+        line-height: 2.1;
+    }
+}
+
+/* Transliteration */
+.gita-transliteration {
+    color: var(--gita-text-muted);
+    font-family: 'Playfair Display', 'Georgia', serif;
+    transition: color 0.4s;
+}
+
+/* Om symbol in divider */
+.gita-om-symbol {
+    color: var(--gita-gold);
+    text-shadow: 0 0 12px var(--gita-gold-soft);
+    transition: color 0.4s;
+}
+
+/* Divider lines */
+.gita-divider-line {
+    background: linear-gradient(90deg, transparent, var(--gita-divider), transparent);
+}
+
+/* Translation text — comfortable reading serif, slightly bold */
+.gita-translation {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--gita-text-primary);
+    text-align: center;
+    max-width: 580px;
+    margin: 0 auto;
+    font-weight: 500;
+    transition: color 0.4s;
+}
+
+@media (min-width: 640px) {
+    .gita-translation {
+        font-size: 1.18rem;
+        line-height: 1.95;
+    }
+}
+
+/* ── Explanation toggle + content ── */
+.gita-explain-toggle {
+    background: var(--gita-explain-bg);
+    color: var(--gita-text-muted);
+    transition: background 0.2s, color 0.2s;
+}
+
+.gita-explain-toggle:hover {
+    background: var(--gita-dropdown-hover);
+    color: var(--gita-text-label);
+}
+
+.gita-explain-border {
+    border-top: 1px solid var(--gita-explain-border);
+}
+
+.gita-explain-text {
+    color: var(--gita-explain-text);
+}
+
+/* ── Carved wooden buttons — primary action ── */
+.gita-wood-btn {
+    background: var(--gita-wood-bg);
+    color: var(--gita-wood-text);
+    border: none;
+    border-radius: 9999px;
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-weight: 600;
+    box-shadow:
+        0 2px 8px var(--gita-wood-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.gita-wood-btn:hover {
+    box-shadow:
+        0 4px 14px var(--gita-wood-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.gita-wood-btn:active {
+    box-shadow:
+        0 1px 4px var(--gita-wood-shadow),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Carved wooden buttons — navigation (Previous/Next) */
+.gita-wood-btn-nav {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.18) 0%, rgba(245, 158, 11, 0.15) 100%);
+    color: rgba(251, 191, 36, 0.95);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    border-radius: 0.65rem;
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-weight: 600;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(167, 139, 250, 0.1) inset,
+        0 1px 0 rgba(255, 255, 255, 0.1) inset;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s, background 0.2s, border-color 0.2s;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.gita-wood-btn-nav:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.28) 0%, rgba(245, 158, 11, 0.25) 100%);
+    border-color: rgba(251, 191, 36, 0.5);
+    box-shadow:
+        0 4px 16px rgba(251, 191, 36, 0.3),
+        0 0 0 1px rgba(167, 139, 250, 0.15) inset,
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    transform: translateY(-2px);
+}
+
+.gita-wood-btn-nav:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(167, 139, 250, 0.1) inset,
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Completed badge ── */
+.gita-completed-badge {
+    background: var(--gita-completed-bg);
+    border: 1px solid var(--gita-completed-border);
+    color: var(--gita-completed-text);
+}
+
+/* ── Page number ── */
+.gita-page-number {
+    color: var(--gita-text-muted);
+    transition: color 0.4s;
+}
+
+/* ── Scrollbar ── */
+.gita-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.gita-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.gita-scroll::-webkit-scrollbar-thumb {
+    background: var(--gita-border);
+    border-radius: 10px;
+}
+
+.gita-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--gita-gold-soft);
+}
+
+/* ═════════════════════════════════════════════
+   BOOK MODE — Realistic Bhagavad Gita Flipbook
+═════════════════════════════════════════════ */
+
+/* ── Fullscreen overlay — wooden desk / temple ambience ── */
+.book-mode-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(ellipse at 50% 40%, rgba(60, 40, 18, 0.55) 0%, transparent 70%),
+        url('/vagwatbg.png') center / cover no-repeat,
+        linear-gradient(170deg, #2c1e0e 0%, #1a120a 40%, #0f0a05 100%);
+    transition: background 0.4s ease;
+}
+
+/* Subtle ambient light glow behind the book */
+.book-mode-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 50%, rgba(184, 134, 11, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 20%, rgba(139, 90, 30, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Header bar — dark leather-bound toolbar ── */
+.book-mode-header {
+    background: linear-gradient(180deg,
+        rgba(35, 22, 10, 0.97) 0%,
+        rgba(45, 30, 15, 0.95) 50%,
+        rgba(40, 26, 12, 0.97) 100%);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid rgba(184, 134, 11, 0.25);
+    box-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.4),
+        0 1px 0 rgba(184, 134, 11, 0.12) inset,
+        0 -1px 0 rgba(0, 0, 0, 0.3) inset;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Gold trim line at bottom of header */
+.book-mode-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184, 134, 11, 0.4), rgba(212, 175, 55, 0.5), rgba(184, 134, 11, 0.4), transparent);
+}
+
+/* ── Footer bar — matching dark leather ── */
+.book-mode-footer {
+    background: linear-gradient(180deg,
+        rgba(40, 26, 12, 0.97) 0%,
+        rgba(35, 22, 10, 0.97) 50%,
+        rgba(30, 18, 8, 0.98) 100%);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-top: 1px solid rgba(184, 134, 11, 0.25);
+    box-shadow:
+        0 -2px 12px rgba(0, 0, 0, 0.4),
+        0 1px 0 rgba(184, 134, 11, 0.12) inset;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Gold trim line at top of footer */
+.book-mode-footer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184, 134, 11, 0.4), rgba(212, 175, 55, 0.5), rgba(184, 134, 11, 0.4), transparent);
+}
+
+/* ── Page indicator text ── */
+.book-mode-page-indicator {
+    color: rgba(212, 175, 55, 0.85);
+    transition: color 0.4s;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Loading text ── */
+.book-mode-loading-text {
+    color: rgba(212, 175, 55, 0.8);
+    text-shadow: 0 0 15px rgba(184, 134, 11, 0.25);
+    transition: color 0.4s;
+}
+
+/* ── Content area — centers the flipbook ── */
+.book-mode-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+@media (min-width: 768px) {
+    .book-mode-content {
+        padding: 1.5rem;
+    }
+}
+
+/* ── Book wrapper — adds the leather binding effect ── */
+.book-mode-book-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.5))
+            drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+/* Leather cover edge glow (left binding) */
+.book-mode-book-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    left: -8px;
+    width: 14px;
+    background: linear-gradient(90deg,
+        #3a2510 0%,
+        #5a3a1a 30%,
+        #7a5428 50%,
+        #5a3a1a 70%,
+        #4a2e14 100%);
+    border-radius: 4px 0 0 4px;
+    box-shadow:
+        -2px 0 8px rgba(0, 0, 0, 0.4),
+        inset 1px 0 2px rgba(184, 134, 11, 0.15);
+    z-index: -1;
+}
+
+/* ── Book spine shadow (desktop two-page spread) ── */
+.book-spine-shadow {
+    position: absolute;
+    top: 2%;
+    bottom: 2%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(60, 35, 10, 0.08) 15%,
+        rgba(40, 20, 5, 0.18) 40%,
+        rgba(30, 15, 5, 0.25) 50%,
+        rgba(40, 20, 5, 0.18) 60%,
+        rgba(60, 35, 10, 0.08) 85%,
+        transparent 100%
+    );
+    z-index: 10;
+    pointer-events: none;
+    border-radius: 50%;
+}
+
+/* ── Flipbook container — leather bound book shadow ── */
+.book-mode-flipbook {
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.15),
+        0 4px 12px rgba(60, 35, 10, 0.2),
+        0 12px 40px rgba(40, 20, 5, 0.3),
+        4px 0 8px -2px rgba(0, 0, 0, 0.15),
+        -2px 0 6px -2px rgba(0, 0, 0, 0.1);
+    border-radius: 2px 6px 6px 2px;
+    border-right: 3px solid rgba(90, 60, 25, 0.4);
+}
+
+/* ═══ Individual book pages — aged parchment ═══ */
+.book-page {
+    background:
+        /* Light highlight in corner for reading lamp effect */
+        radial-gradient(ellipse at 85% 10%, rgba(255, 248, 225, 0.25) 0%, transparent 50%),
+        /* Subtle paper texture grain */
+        radial-gradient(ellipse at 20% 80%, rgba(180, 150, 100, 0.08) 0%, transparent 40%),
+        /* Warm aged parchment base using the sacred bg image */
+        url('/vagwatbg.png') center / cover no-repeat,
+        /* Fallback parchment gradient */
+        linear-gradient(172deg, #f5edd5 0%, #ede0c0 30%, #e8d8b0 60%, #e2d0a5 100%);
+    padding: 1.5rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Aged page vignette — darker edges like a real old book */
+    box-shadow:
+        inset 0 0 80px rgba(100, 70, 30, 0.12),
+        inset 0 0 30px rgba(80, 55, 20, 0.06),
+        inset -3px 0 8px rgba(0, 0, 0, 0.04);
+    border: none;
+    border-right: 1px solid rgba(160, 120, 60, 0.15);
+    transition: background 0.4s;
+}
+
+/* Page edge effect — slight yellowing on outer edge */
+.book-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 25px;
+    background: linear-gradient(90deg, transparent, rgba(180, 150, 90, 0.08));
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Subtle paper fiber texture overlay */
+.book-page::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 3px,
+            rgba(160, 130, 80, 0.015) 3px,
+            rgba(160, 130, 80, 0.015) 4px
+        );
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: multiply;
+}
+
+@media (min-width: 768px) {
+    .book-page {
+        padding: 2rem 1.75rem;
+    }
+}
+
+/* ── Page number — classic book style ── */
+.book-page-number {
+    position: absolute;
+    bottom: 0.6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 0.7rem;
+    color: rgba(100, 70, 30, 0.45);
+    letter-spacing: 0.05em;
+    z-index: 2;
+}
+
+/* ── Page inner (scrollable content) ── */
+.book-page-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(160, 120, 60, 0.3) transparent;
+    position: relative;
+    z-index: 2;
+}
+
+.book-page-inner::-webkit-scrollbar {
+    width: 3px;
+}
+
+.book-page-inner::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.book-page-inner::-webkit-scrollbar-thumb {
+    background: rgba(160, 120, 60, 0.3);
+    border-radius: 10px;
+}
+
+/* ═══ TITLE PAGE — ornate cover page ═══ */
+.book-page-title {
+    background:
+        radial-gradient(ellipse at 50% 30%, rgba(212, 175, 55, 0.06) 0%, transparent 60%),
+        url('/vagwatbg.png') center / cover no-repeat,
+        linear-gradient(172deg, #f2e8d0 0%, #e8d8b5 50%, #ddc8a0 100%);
+    border-right: 1px solid rgba(160, 120, 60, 0.2);
+}
+
+.book-title-inner {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+}
+
+.book-ornament-top,
+.book-ornament-bottom {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.65rem;
+    color: rgba(160, 120, 40, 0.5);
+    letter-spacing: 0.3em;
+    user-select: none;
+}
+
+.book-title-om {
+    font-size: 2.5rem;
+    color: #8b6914;
+    text-shadow:
+        0 0 20px rgba(184, 134, 11, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.15);
+    margin: 0.5rem 0;
+    line-height: 1;
+}
+
+@media (min-width: 768px) {
+    .book-title-om {
+        font-size: 3.5rem;
+    }
+}
+
+.book-chapter-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(90, 60, 20, 0.55);
+    margin-top: 0.75rem;
+}
+
+.book-chapter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #4a3010;
+    line-height: 1.3;
+    margin: 0.5rem 0;
+    max-width: 90%;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+@media (min-width: 768px) {
+    .book-chapter-title {
+        font-size: 1.6rem;
+    }
+}
+
+.book-chapter-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: rgba(90, 60, 20, 0.6);
+    margin-bottom: 0.75rem;
+}
+
+.book-title-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 60%;
+    margin: 0.5rem 0;
+}
+
+.book-title-divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(160, 120, 40, 0.45), transparent);
+}
+
+.book-title-divider-symbol {
+    color: #8b6914;
+    font-size: 1rem;
+    text-shadow: 0 0 8px rgba(184, 134, 11, 0.2);
+}
+
+.book-verse-count {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b4f10;
+    letter-spacing: 0.15em;
+}
+
+.book-title-lotus {
+    font-size: 1.5rem;
+    color: rgba(160, 120, 40, 0.5);
+    margin-top: 0.5rem;
+}
+
+/* ═══ VERSE PAGE — readable sacred text ═══ */
+.book-verse-header {
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+.book-verse-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #8b6914;
+    padding: 0.2rem 1rem;
+    border-bottom: 1px solid rgba(160, 120, 40, 0.35);
+    display: inline-block;
+}
+
+/* Sanskrit text block */
+.book-sanskrit-block {
+    text-align: center;
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.25rem;
+    position: relative;
+}
+
+/* Light decorative border around sanskrit */
+.book-sanskrit-block::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(160, 120, 40, 0.2), transparent);
+}
+
+.book-sanskrit-line {
+    font-family: 'Noto Serif Devanagari', 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    font-style: normal;
+    line-height: 1.9;
+    color: #3a2510;
+    letter-spacing: 0.03em;
+}
+
+@media (min-width: 768px) {
+    .book-sanskrit-line {
+        font-size: 1.15rem;
+        line-height: 2;
+    }
+}
+
+/* Transliteration */
+.book-transliteration {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.72rem;
+    font-style: italic;
+    color: rgba(80, 55, 20, 0.55);
+    letter-spacing: 0.04em;
+    margin: 0.25rem 0 0.5rem;
+    padding: 0 0.5rem;
+    line-height: 1.6;
+}
+
+/* Verse divider (OM + lines) */
+.book-verse-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 1rem;
+}
+
+.book-verse-divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(160, 120, 40, 0.4), transparent);
+}
+
+.book-verse-divider-om {
+    font-size: 0.9rem;
+    color: #8b6914;
+    text-shadow: 0 0 8px rgba(184, 134, 11, 0.2);
+}
+
+/* Translation block */
+.book-translation-block {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    padding: 0 0.25rem;
+}
+
+.book-translation-text {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.8;
+    color: #3a2a14;
+    text-align: justify;
+    text-align-last: center;
+    width: 100%;
+    hyphens: auto;
+}
+
+@media (min-width: 768px) {
+    .book-translation-text {
+        font-size: 0.95rem;
+        line-height: 1.9;
+    }
+}
+
+/* Commentary hint — subtle footnote feel */
+.book-commentary-hint {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(160, 120, 40, 0.18);
+    position: relative;
+}
+
+/* Small asterisk marker */
+.book-commentary-hint::before {
+    content: '✻';
+    position: absolute;
+    top: -0.35rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5rem;
+    color: rgba(160, 120, 40, 0.4);
+    background: #f0e4cc;
+    padding: 0 0.3rem;
+}
+
+.book-commentary-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.68rem;
+    line-height: 1.55;
+    color: rgba(60, 40, 20, 0.65);
+    font-style: italic;
+}
+
+/* ═══ CLOSING PAGE ═══ */
+.book-page-closing {
+    background:
+        radial-gradient(ellipse at 50% 60%, rgba(212, 175, 55, 0.06) 0%, transparent 60%),
+        url('/vagwatbg.png') center / cover no-repeat,
+        linear-gradient(172deg, #f2e8d0 0%, #e8d8b5 50%, #ddc8a0 100%);
+}
+
+.book-closing-inner {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+}
+
+.book-closing-om {
+    font-size: 2.5rem;
+    color: #8b6914;
+    text-shadow:
+        0 0 20px rgba(184, 134, 11, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.15);
+    line-height: 1;
+}
+
+@media (min-width: 768px) {
+    .book-closing-om {
+        font-size: 3rem;
+    }
+}
+
+.book-closing-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #4a3010;
+    margin: 0.5rem 0;
+}
+
+.book-closing-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: rgba(90, 60, 20, 0.6);
+}
+
+.book-closing-stats {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b4f10;
+    letter-spacing: 0.1em;
+}
+
+.book-closing-blessing {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    font-style: italic;
+    color: rgba(80, 55, 20, 0.6);
+    line-height: 1.8;
+    max-width: 85%;
+    margin-top: 0.5rem;
+}
+
+/* ═══ Progress bar — warm gold ═══ */
+.book-progress-track {
+    height: 4px;
+    background: rgba(160, 120, 40, 0.15);
+    border: 1px solid rgba(160, 120, 40, 0.2);
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.book-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b6914 0%, #d4a520 50%, #b8860b 100%);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px rgba(184, 134, 11, 0.4);
+}
+
+/* ═══ Read Full Chapter button (in GitaReader) ═══ */
+.gita-book-mode-btn {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.18) 0%, rgba(245, 158, 11, 0.15) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    border-radius: 0.5rem;
+    color: rgba(251, 191, 36, 0.95);
+    font-family: 'Playfair Display', 'Georgia', serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.15);
+}
+
+.gita-book-mode-btn:hover {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.28) 0%, rgba(245, 158, 11, 0.25) 100%);
+    border-color: rgba(251, 191, 36, 0.55);
+    color: rgb(251, 191, 36);
+    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+}
+
+/* ═════════════════════════════════════════════
+   BOOK MODE — Scoped overrides for toolbar 
+   inside the dark leather header/footer
+═════════════════════════════════════════════ */
+
+/* Icon buttons in book mode — warm gold tones on dark leather */
+.book-mode-overlay .gita-icon-btn {
+    color: rgba(212, 175, 55, 0.85);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.book-mode-overlay .gita-icon-btn:hover {
+    background: rgba(184, 134, 11, 0.15);
+    color: rgba(212, 175, 55, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Chapter select in book mode */
+.book-mode-overlay .gita-chapter-select {
+    background: rgba(184, 134, 11, 0.08);
+    border: 1px solid rgba(184, 134, 11, 0.25);
+    color: rgba(232, 216, 176, 0.95);
+}
+
+.book-mode-overlay .gita-chapter-select:hover {
+    border-color: rgba(212, 175, 55, 0.45);
+    background: rgba(184, 134, 11, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Dropdown panel in book mode — dark parchment theme */
+.book-mode-overlay .gita-dropdown-panel {
+    background: linear-gradient(135deg, rgba(35, 22, 10, 0.97) 0%, rgba(45, 30, 15, 0.98) 100%);
+    border: 1px solid rgba(184, 134, 11, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(184, 134, 11, 0.1) inset;
+}
+
+.book-mode-overlay .gita-dropdown-item {
+    border-color: rgba(184, 134, 11, 0.08);
+    color: rgba(232, 216, 176, 0.9);
+}
+
+.book-mode-overlay .gita-dropdown-item:hover {
+    background: rgba(184, 134, 11, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.book-mode-overlay .gita-dropdown-item.gita-dropdown-active {
+    background: rgba(184, 134, 11, 0.2);
+    color: rgba(212, 175, 55, 0.95);
+    box-shadow: 0 2px 12px rgba(184, 134, 11, 0.25);
+}
+
+.book-mode-overlay .gita-chapter-num {
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.2) 0%, rgba(160, 120, 40, 0.15) 100%);
+    color: rgba(212, 175, 55, 0.95);
+    border: 1px solid rgba(184, 134, 11, 0.35);
+}
+
+/* Verse input in book mode */
+.book-mode-overlay .gita-verse-input {
+    background: rgba(184, 134, 11, 0.08);
+    border: 1px solid rgba(184, 134, 11, 0.25);
+    color: rgba(232, 216, 176, 0.95);
+}
+
+.book-mode-overlay .gita-verse-input:focus {
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(184, 134, 11, 0.15);
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation buttons in book mode — leather binding style */
+.book-mode-overlay .gita-wood-btn-nav {
+    background: linear-gradient(180deg,
+        rgba(90, 60, 25, 0.6) 0%,
+        rgba(70, 45, 18, 0.5) 100%);
+    color: rgba(212, 175, 55, 0.95);
+    border: 1px solid rgba(184, 134, 11, 0.35);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        0 1px 0 rgba(184, 134, 11, 0.1) inset;
+}
+
+.book-mode-overlay .gita-wood-btn-nav:hover:not(:disabled) {
+    background: linear-gradient(180deg,
+        rgba(110, 75, 30, 0.7) 0%,
+        rgba(90, 60, 25, 0.6) 100%);
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow:
+        0 4px 16px rgba(184, 134, 11, 0.25),
+        0 1px 0 rgba(184, 134, 11, 0.15) inset;
 }

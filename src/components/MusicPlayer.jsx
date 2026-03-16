@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { FaVolumeUp, FaVolumeMute } from "react-icons/fa";
 import bgMusic from "../Audio/bg.mp3";
 export default function MusicPlayer() {
   const audioRef = useRef(null);
@@ -41,13 +42,21 @@ export default function MusicPlayer() {
         onClick={toggleMusic}
         className="bg-yellow-400/40 top-20 z-50 fixed text-white px-4 py-2 rounded text-sm shadow hover:bg-yellow-500 transition hidden md:flex"
       >
-        {isPlaying ? "🔇 Stop Music" : "🔊 Play Music"}
+        {isPlaying ? (
+          <>
+            <FaVolumeMute className="inline" /> Stop Music
+          </>
+        ) : (
+          <>
+            <FaVolumeUp className="inline" /> Play Music
+          </>
+        )}
       </button>
       <button
         onClick={toggleMusic}
         className="bg-yellow-400/40 top-18 left-0 z-40 fixed text-white px-2 py-2 rounded text-sm shadow hover:bg-yellow-500 transition md:hidden"
       >
-        {isPlaying ? "🔇 " : "🔊 "}
+        {isPlaying ? <FaVolumeMute /> : <FaVolumeUp />}
       </button>
     </div>
   );

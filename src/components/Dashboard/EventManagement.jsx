@@ -13,7 +13,9 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://krishnanova-backend.onrender.com/api";
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://krishnanova-backend.onrender.com/api";
 
 const initialEventFormData = {
   name: "",
@@ -38,19 +40,19 @@ const EventCard = memo(({ event, onEdit, onDelete, index }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }} // Reduced delay for performance
-      className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-200 group"
+      transition={{ delay: index * 0.05 }}
+      className="bg-gradient-to-br from-[#1e2139] to-[#23263a] rounded-2xl shadow-xl border border-gray-700/50 p-6 hover:border-gray-600/50 hover:shadow-2xl transition-all duration-300 group"
     >
       {/* Status Badge */}
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-xl font-bold text-white group-hover:text-[#01abfd] transition-colors">
           {event.name}
         </h3>
         <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          className={`px-3 py-1 rounded-full text-xs font-semibold border ${
             isUpcoming
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-100 text-gray-600"
+              ? "bg-green-500/20 text-green-400 border-green-500/30"
+              : "bg-gray-500/20 text-gray-400 border-gray-500/30"
           }`}
         >
           {isUpcoming ? "Upcoming" : "Past"}
@@ -59,26 +61,26 @@ const EventCard = memo(({ event, onEdit, onDelete, index }) => {
 
       {/* Event Details */}
       <div className="space-y-2 mb-4">
-        <div className="flex items-center text-gray-600">
-          <FaCalendarAlt className="w-4 h-4 mr-3 text-blue-500" />
+        <div className="flex items-center text-gray-400">
+          <FaCalendarAlt className="w-4 h-4 mr-3 text-[#01abfd]" />
           <span className="text-sm">{formatEventDate(event.date)}</span>
         </div>
 
-        <div className="flex items-center text-gray-600">
-          <FaMapMarkerAlt className="w-4 h-4 mr-3 text-red-500" />
+        <div className="flex items-center text-gray-400">
+          <FaMapMarkerAlt className="w-4 h-4 mr-3 text-red-400" />
           <span className="text-sm">{event.location}</span>
         </div>
 
         {event.createdBy && (
-          <div className="flex items-center text-gray-600">
-            <FaUser className="w-4 h-4 mr-3 text-green-500" />
+          <div className="flex items-center text-gray-400">
+            <FaUser className="w-4 h-4 mr-3 text-green-400" />
             <span className="text-sm">By {event.createdBy.name}</span>
           </div>
         )}
       </div>
 
       {/* Description */}
-      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+      <p className="text-gray-300 text-sm mb-4 line-clamp-2">
         {event.description}
       </p>
 
@@ -86,14 +88,14 @@ const EventCard = memo(({ event, onEdit, onDelete, index }) => {
       <div className="flex justify-end space-x-2">
         <button
           onClick={() => onEdit(event)}
-          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+          className="p-2 text-[#01abfd] hover:bg-[#01abfd]/10 rounded-lg transition-colors"
           title="Edit event"
         >
           <FaEdit size={14} />
         </button>
         <button
           onClick={() => onDelete(event._id)}
-          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
           title="Delete event"
         >
           <FaTrash size={14} />
@@ -106,24 +108,26 @@ const EventCard = memo(({ event, onEdit, onDelete, index }) => {
 // **Performance Optimization: Memoized Loading Component**
 const LoadingSpinner = memo(() => (
   <div className="flex justify-center items-center py-12">
-    <FaSpinner className="animate-spin text-blue-500 text-2xl mr-3" />
-    <span className="text-gray-600">Loading events...</span>
+    <div className="relative">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#01abfd] shadow-lg"></div>
+      <div className="absolute inset-0 animate-ping rounded-full h-12 w-12 border-2 border-[#01abfd] opacity-20"></div>
+    </div>
   </div>
 ));
 
 // **Performance Optimization: Memoized Empty State**
 const EmptyState = memo(({ onAddEvent }) => (
-  <div className="text-center py-16">
-    <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-      <FaCalendarAlt className="text-blue-500" size={32} />
+  <div className="text-center py-16 bg-[#1e2139] rounded-xl border border-gray-700">
+    <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-[#01abfd]/20 to-[#10b981]/20 rounded-full flex items-center justify-center border border-[#01abfd]/30">
+      <FaCalendarAlt className="text-[#01abfd]" size={32} />
     </div>
-    <h3 className="text-xl font-bold text-gray-900 mb-2">No Events Yet</h3>
-    <p className="text-gray-600 mb-6">
+    <h3 className="text-xl font-bold text-white mb-2">No Events Yet</h3>
+    <p className="text-gray-400 mb-6">
       Create your first event to get started!
     </p>
     <button
       onClick={onAddEvent}
-      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200"
+      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#01abfd] to-[#10b981] text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-[#01abfd]/25 transition-all duration-200"
     >
       <FaPlus className="mr-2" />
       Create First Event
@@ -217,7 +221,7 @@ export default function EventManagement() {
           await axios.put(
             `${API_URL}/events/${editingEvent._id}`,
             formData,
-            config
+            config,
           );
         } else {
           await axios.post(`${API_URL}/events/create`, formData, config);
@@ -232,7 +236,7 @@ export default function EventManagement() {
         setSubmitting(false);
       }
     },
-    [editingEvent, formData, fetchEvents, closeModal]
+    [editingEvent, formData, fetchEvents, closeModal],
   );
 
   const handleDelete = useCallback(
@@ -251,7 +255,7 @@ export default function EventManagement() {
         setError(err.response?.data?.message || "Failed to delete event.");
       }
     },
-    [fetchEvents]
+    [fetchEvents],
   );
 
   // **Access Control**
@@ -265,12 +269,12 @@ export default function EventManagement() {
 
   if (!user || !isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-red-50">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-700 mb-2">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f1419] via-[#151922] to-[#1a1f2e]">
+        <div className="text-center bg-[#1e2139] p-12 rounded-2xl border border-red-500/30">
+          <h2 className="text-2xl font-bold text-red-400 mb-2">
             Access Denied
           </h2>
-          <p className="text-red-600">
+          <p className="text-red-300">
             You must be an admin to view this page.
           </p>
         </div>
@@ -279,159 +283,169 @@ export default function EventManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex justify-between items-center mb-8"
-        >
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Event Management
-            </h1>
-            <p className="text-gray-600">Create and manage community events</p>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-[#01abfd] to-[#10b981] bg-clip-text text-transparent">
+            Event Management
+          </h1>
+          <p className="text-gray-400 mt-2">
+            Create and manage community events
+          </p>
+        </div>
 
+        <button
+          onClick={openAddModal}
+          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#01abfd] to-[#10b981] text-white rounded-xl font-semibold shadow-lg hover:shadow-[#01abfd]/25 transition-all duration-200"
+        >
+          <FaPlus className="mr-2" />
+          Add New Event
+        </button>
+      </motion.div>
+
+      {/* Error Message */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-red-900/20 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl backdrop-blur-sm"
+        >
+          <span className="block sm:inline">{error}</span>
           <button
-            onClick={openAddModal}
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+            onClick={() => setError(null)}
+            className="absolute top-2 right-2 text-red-400 hover:text-red-300"
           >
-            <FaPlus className="mr-2" />
-            Add New Event
+            ×
           </button>
         </motion.div>
+      )}
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-lg">
-            <p className="text-red-700">{error}</p>
-          </div>
-        )}
+      {/* Events Content */}
+      {loading ? (
+        <LoadingSpinner />
+      ) : events.length === 0 ? (
+        <EmptyState onAddEvent={openAddModal} />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event, index) => (
+            <EventCard
+              key={event._id}
+              event={event}
+              index={index}
+              onEdit={openEditModal}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
-        {/* Events Content */}
-        {loading ? (
-          <LoadingSpinner />
-        ) : events.length === 0 ? (
-          <EmptyState onAddEvent={openAddModal} />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event, index) => (
-              <EventCard
-                key={event._id}
-                event={event}
-                index={index}
-                onEdit={openEditModal}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Modal */}
-        <AnimatePresence>
-          {showModal && (
+      {/* Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={closeModal}
+          >
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-              onClick={closeModal}
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-gradient-to-br from-[#1e2139] to-[#23263a] rounded-2xl shadow-2xl border border-gray-700/50 p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                  {editingEvent ? "Edit Event" : "Create New Event"}
-                </h2>
+              <h2 className="text-3xl font-bold text-white mb-6">
+                {editingEvent ? "Edit Event" : "Create New Event"}
+              </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Event Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleFormChange}
-                      className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      required
-                    />
-                  </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
+                    Event Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleFormChange}
+                    className="w-full bg-[#0f1419] border border-gray-700 rounded-xl p-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#01abfd] focus:border-transparent outline-none transition-all"
+                    required
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Event Date *
-                    </label>
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleFormChange}
-                      className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      required
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
+                    Event Date *
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleFormChange}
+                    className="w-full bg-[#0f1419] border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-[#01abfd] focus:border-transparent outline-none transition-all"
+                    required
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleFormChange}
-                      className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleFormChange}
+                    className="w-full bg-[#0f1419] border border-gray-700 rounded-xl p-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#01abfd] focus:border-transparent outline-none transition-all"
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Description *
-                    </label>
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleFormChange}
-                      rows={4}
-                      className="w-full border border-gray-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-                      required
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-300 mb-2">
+                    Description *
+                  </label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleFormChange}
+                    rows={4}
+                    className="w-full bg-[#0f1419] border border-gray-700 rounded-xl p-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-[#01abfd] focus:border-transparent outline-none resize-none transition-all"
+                    required
+                  />
+                </div>
 
-                  <div className="flex justify-end space-x-4 pt-6">
-                    <button
-                      type="button"
-                      onClick={closeModal}
-                      className="px-6 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold disabled:opacity-50"
-                    >
-                      {submitting
-                        ? "Saving..."
-                        : editingEvent
+                <div className="flex justify-end space-x-4 pt-6">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="px-6 py-3 text-gray-300 bg-[#0f1419] hover:bg-[#1a1f2e] rounded-xl font-semibold border border-gray-700 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-8 py-3 bg-gradient-to-r from-[#01abfd] to-[#10b981] text-white rounded-xl font-semibold disabled:opacity-50 hover:shadow-lg hover:shadow-[#01abfd]/25 transition-all"
+                  >
+                    {submitting
+                      ? "Saving..."
+                      : editingEvent
                         ? "Update Event"
                         : "Create Event"}
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
+                  </button>
+                </div>
+              </form>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

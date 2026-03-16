@@ -39,10 +39,18 @@ const App = () => {
 
   // GSAP smooth scrolling and animations - optimized for performance
   useLayoutEffect(() => {
-    // Use RAF for smooth updates
-    gsap.ticker.lagSmoothing(0);
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const enableScrollAnimations = !prefersReducedMotion;
+    const enableParallax =
+      !prefersReducedMotion && !isTouchDevice && window.innerWidth > 1024;
 
     const ctx = gsap.context(() => {
+      if (!enableScrollAnimations) return;
+
       // Batch ScrollTriggers for better performance
       ScrollTrigger.batch(".scroll-reveal", {
         onEnter: (elements) => {
@@ -101,11 +109,11 @@ const App = () => {
         once: true,
       });
 
-      // Simplified parallax - only on desktop for performance
-      if (window.innerWidth > 768) {
+      // Simplified parallax - desktop non-touch only
+      if (enableParallax) {
         gsap.utils.toArray(".parallax-bg").forEach((bg) => {
           gsap.to(bg, {
-            yPercent: 30,
+            yPercent: 20,
             ease: "none",
             scrollTrigger: {
               trigger: bg,
@@ -120,7 +128,9 @@ const App = () => {
 
     // Refresh ScrollTrigger after layout settles
     const refreshTimer = setTimeout(() => {
-      ScrollTrigger.refresh();
+      if (enableScrollAnimations) {
+        ScrollTrigger.refresh();
+      }
     }, 100);
 
     return () => {
@@ -159,45 +169,44 @@ const App = () => {
         <HomeSection />
       </div>
 
-      <div className="relative">
-        <div id="wisdom" className="relative z-10 ">
-          <WisdomPortalPath />
-        </div>
-        <div id="products">
-          <CarouselSlider />
-        </div>
-
-        <div id="mission">
-          <Mission />
-        </div>
-
-        <div id="krishna-names">
-          <KrishnaNames />
-        </div>
-
-        {/* 🎨 Decorative background elements specific to Home */}
+      <div className="relative isolate">
+        {/* 🎨 Decorative background elements (kept behind content) */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          {/* Animated SVG flute / feather */}
-          <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-20 left-10 animate-float-slow" />
-          <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-[40%] right-10 animate-float-slow" />
-          <FeatherSVG className="absolute w-32 md:w-48 opacity-10 bottom-10 right-10 animate-float-slower" />
-          <PeacockFeatherSVG className="absolute w-48 opacity-8 top-1/3 right-1/3 animate-float-slower" />
-          <LotusSVG className="absolute w-32 opacity-8 bottom-20 left-1/4 animate-float-slow" />
+          <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-20 left-10" />
+          <FluteSVG className="absolute w-40 md:w-56 opacity-10 top-[40%] right-10" />
+          <FeatherSVG className="absolute w-32 md:w-48 opacity-10 bottom-10 right-10" />
+          <LotusSVG className="absolute w-32 opacity-[0.08] bottom-20 left-1/4" />
         </div>
 
         {/* 🌟 Main Content */}
+        <div className="relative z-10">
+          <div id="wisdom" className="relative z-10 ">
+            <WisdomPortalPath />
+          </div>
+          <div id="products">
+            <CarouselSlider />
+          </div>
 
-        <div id="community">
-          <Community />
-        </div>
-        <div id="festival">
-          <Festival />
-        </div>
-        <div className="relative" id="meditation">
-          <Meditation />
-        </div>
-        <div id="contact">
-          <Footer />
+          <div id="mission">
+            <Mission />
+          </div>
+
+          <div id="krishna-names">
+            <KrishnaNames />
+          </div>
+
+          <div id="community">
+            <Community />
+          </div>
+          <div id="festival">
+            <Festival />
+          </div>
+          <div className="relative" id="meditation">
+            <Meditation />
+          </div>
+          <div id="contact">
+            <Footer />
+          </div>
         </div>
       </div>
     </div>

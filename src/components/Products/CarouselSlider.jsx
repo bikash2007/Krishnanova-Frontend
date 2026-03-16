@@ -17,6 +17,14 @@ import {
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useCart } from "../../Context/CartContext";
+import { normalizeImageUrl } from "../../utils/imageUrl";
+import {
+  GiFeather,
+  GiFlute,
+  GiCandleLight,
+  GiPrayerBeads,
+} from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 
 const CarouselSlider = () => {
   const [products, setProducts] = useState([]);
@@ -24,7 +32,6 @@ const CarouselSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showSuccess, setShowSuccess] = useState(false);
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1200,
@@ -32,7 +39,6 @@ const CarouselSlider = () => {
   const intervalRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Handle window resize for responsive calculations
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -71,33 +77,6 @@ const CarouselSlider = () => {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
   };
-
-  // Throttle ref for mouse events
-  const throttleRef = useRef(false);
-
-  // Mouse parallax effect - throttled for performance
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (throttleRef.current) return;
-      throttleRef.current = true;
-
-      requestAnimationFrame(() => {
-        if (containerRef.current) {
-          const rect = containerRef.current.getBoundingClientRect();
-          setMousePosition({
-            x: (e.clientX - rect.left - rect.width / 2) / 50,
-            y: (e.clientY - rect.top - rect.height / 2) / 50,
-          });
-        }
-        setTimeout(() => {
-          throttleRef.current = false;
-        }, 50);
-      });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   // Responsive display products calculation
   const displayProducts = useMemo(() => {
@@ -167,7 +146,9 @@ const CarouselSlider = () => {
             desc: "108 sacred beads blessed with Krishna's divine mantras for spiritual elevation",
             price: 1299,
             originalPrice: 1999,
-            images: ["/api/placeholder/400/400"],
+            images: [
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E",
+            ],
           },
           {
             _id: "demo-2",
@@ -175,7 +156,9 @@ const CarouselSlider = () => {
             desc: "Handcrafted pendant with authentic peacock feather, symbol of Krishna's grace",
             price: 2499,
             originalPrice: 3499,
-            images: ["/api/placeholder/400/400"],
+            images: [
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E",
+            ],
           },
           {
             _id: "demo-3",
@@ -183,7 +166,9 @@ const CarouselSlider = () => {
             desc: "Miniature flute keychain carrying the melody of Krishna's divine music",
             price: 599,
             originalPrice: 899,
-            images: ["/api/placeholder/400/400"],
+            images: [
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E",
+            ],
           },
           {
             _id: "demo-4",
@@ -191,7 +176,9 @@ const CarouselSlider = () => {
             desc: "Gold-embossed edition with Sanskrit verses and detailed commentary",
             price: 3999,
             originalPrice: 5999,
-            images: ["/api/placeholder/400/400"],
+            images: [
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E",
+            ],
           },
           {
             _id: "demo-5",
@@ -199,7 +186,9 @@ const CarouselSlider = () => {
             desc: "Pure silver locket depicting eternal love of Radha and Krishna",
             price: 4599,
             originalPrice: 6999,
-            images: ["/api/placeholder/400/400"],
+            images: [
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E",
+            ],
           },
           {
             _id: "demo-6",
@@ -207,7 +196,9 @@ const CarouselSlider = () => {
             desc: "Sacred fragrances from the holy land of Vrindavan",
             price: 799,
             originalPrice: 1199,
-            images: ["/api/placeholder/400/400"],
+            images: [
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E",
+            ],
           },
         ];
 
@@ -326,55 +317,35 @@ const CarouselSlider = () => {
     [windowWidth],
   );
 
-  const getImageUrl = useCallback(
-    (product) => {
-      if (!product?.images?.length) return "/api/placeholder/400/400";
-      const imagePath = product.images[0];
-      return typeof imagePath === "string" && imagePath.startsWith("http")
-        ? imagePath
-        : `${baseUrl.replace("/api", "")}${imagePath}`;
-    },
-    [baseUrl],
-  );
+  const placeholderImg =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+  const getImageUrl = useCallback((product) => {
+    // Try media[] first (new format), then legacy images[]
+    const url =
+      product?.media?.[0]?.url ||
+      (Array.isArray(product?.images) && product.images[0]) ||
+      null;
+    if (!url) return placeholderImg;
+    return normalizeImageUrl(url) || placeholderImg;
+  }, []);
 
   if (loading) {
     return (
-      <section className="md:min-h-[100dvh] flex items-center   justify-center bg-gradient-to-br from-indigo-950 via-purple-900 to-blue-950 relative overflow-hidden">
-        {/* Animated background orbs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div
-            className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: "1s" }}
-          ></div>
-        </div>
-
+      <section className="md:min-h-[100dvh] flex items-center justify-center bg-gradient-to-br from-indigo-950 via-purple-900 to-blue-950 relative overflow-hidden">
         <div className="text-center px-4 relative z-10">
           <div className="relative mb-8">
-            {/* Animated Krishna Chakra Loader */}
             <div className="relative w-28 h-28 sm:w-32 sm:h-32 mx-auto">
-              <div
-                className="absolute inset-0 border-4 border-amber-400/20 rounded-full"
-                style={{ animation: "spin 8s linear infinite" }}
-              ></div>
               <div
                 className="absolute inset-2 border-4 border-t-amber-400 border-r-amber-400/50 border-b-transparent border-l-transparent rounded-full"
                 style={{ animation: "spin 1.5s linear infinite" }}
               ></div>
-              <div
-                className="absolute inset-4 border-4 border-purple-400/30 rounded-full"
-                style={{ animation: "spin 6s linear infinite reverse" }}
-              ></div>
-              <div
-                className="absolute inset-6 border-2 border-amber-300/20 rounded-full"
-                style={{ animation: "spin 4s linear infinite" }}
-              ></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-3xl sm:text-4xl animate-pulse">🦚</span>
+                <GiFeather className="text-3xl sm:text-4xl text-amber-300" />
               </div>
             </div>
           </div>
-          <p className="font-semibold text-lg sm:text-xl text-amber-200 animate-pulse">
+          <p className="font-semibold text-lg sm:text-xl text-amber-200">
             Loading Divine Collection...
           </p>
           <p className="text-sm text-amber-200/50 mt-3 tracking-wider">
@@ -395,7 +366,7 @@ const CarouselSlider = () => {
         </div>
 
         <div className="text-center px-6 relative z-10">
-          <div className="text-6xl sm:text-7xl mb-6 animate-bounce">🪈</div>
+          <GiFlute className="text-6xl sm:text-7xl mb-6 text-amber-300" />
           <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3">
             Divine Collection Coming Soon
           </h2>
@@ -403,13 +374,13 @@ const CarouselSlider = () => {
             Stay blessed • हरे कृष्ण
           </p>
           <div className="mt-6 flex justify-center gap-3">
-            {["🪔", "📿", "🦚"].map((emoji, i) => (
-              <span
-                key={i}
-                className="text-2xl animate-pulse"
-                style={{ animationDelay: `${i * 0.3}s` }}
-              >
-                {emoji}
+            {[
+              <GiCandleLight key={0} />,
+              <GiPrayerBeads key={1} />,
+              <GiFeather key={2} />,
+            ].map((icon, i) => (
+              <span key={i} className="text-2xl text-amber-300">
+                {icon}
               </span>
             ))}
           </div>
@@ -433,73 +404,11 @@ const CarouselSlider = () => {
         </div>
       )}
 
-      {/* Animated Background Elements */}
+      {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Floating Lotus Petals - Hidden on mobile for performance */}
-        <div
-          className="hidden sm:block absolute top-1/4 left-1/4 opacity-[0.07]"
-          style={{ animation: "float 8s ease-in-out infinite" }}
-        >
-          <svg
-            width="120"
-            height="120"
-            viewBox="0 0 100 100"
-            className="text-pink-300"
-          >
-            <path d="M50 15 Q25 40 50 65 Q75 40 50 15" fill="currentColor" />
-            <path
-              d="M35 25 Q20 50 35 75 Q50 50 35 25"
-              fill="currentColor"
-              opacity="0.7"
-            />
-            <path
-              d="M65 25 Q80 50 65 75 Q50 50 65 25"
-              fill="currentColor"
-              opacity="0.7"
-            />
-          </svg>
-        </div>
-        <div
-          className="hidden sm:block absolute bottom-1/3 right-1/5 opacity-[0.07]"
-          style={{
-            animation: "float 10s ease-in-out infinite",
-            animationDelay: "2s",
-          }}
-        >
-          <svg
-            width="90"
-            height="90"
-            viewBox="0 0 100 100"
-            className="text-purple-300"
-          >
-            <path d="M50 15 Q25 40 50 65 Q75 40 50 15" fill="currentColor" />
-          </svg>
-        </div>
-
-        {/* Mandala Pattern - Simplified on mobile */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <div
-              className="w-[300px] sm:w-[500px] lg:w-[700px] h-[300px] sm:h-[500px] lg:h-[700px] border border-amber-400/30 rounded-full"
-              style={{ animation: "spin 60s linear infinite" }}
-            ></div>
-            <div
-              className="absolute inset-6 sm:inset-10 border border-amber-400/30 rounded-full"
-              style={{ animation: "spin 45s linear infinite reverse" }}
-            ></div>
-            <div
-              className="absolute inset-12 sm:inset-20 border border-amber-400/30 rounded-full"
-              style={{ animation: "spin 30s linear infinite" }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Gradient Orbs - Responsive sizing */}
-        <div className="absolute -top-20 -right-20 w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-amber-400/15 to-orange-500/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-20 -left-20 w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96 bg-gradient-to-tr from-purple-500/15 to-blue-500/5 rounded-full blur-3xl animate-pulse" />
-
-        {/* Additional ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-4xl max-h-4xl bg-gradient-radial from-amber-500/5 via-transparent to-transparent"></div>
+        {/* Gradient Orbs - Static */}
+        <div className="absolute -top-20 -right-20 w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-amber-400/10 to-orange-500/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96 bg-gradient-to-tr from-purple-500/10 to-blue-500/5 rounded-full blur-3xl" />
       </div>
 
       <div className="relative md:min-h-[100dvh] flex items-center justify-center flex-wrap px-3 sm:px-6 lg:px-8 py-10  lg:py-12 z-10">
@@ -507,7 +416,7 @@ const CarouselSlider = () => {
         <button
           onClick={prevSlide}
           disabled={isTransitioning}
-          className="absolute left-2 sm:left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 p-2.5 sm:p-3.5 rounded-full backdrop-blur-xl bg-white/10 border border-amber-400/40 shadow-xl transition-all duration-300 group disabled:opacity-40 hover:bg-amber-400/25 hover:border-amber-400/60 hover:shadow-amber-500/20 hover:scale-110 hover:-translate-x-0.5 active:scale-90"
+          className="absolute left-2 sm:left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 p-2.5 sm:p-3.5 rounded-full bg-white/10 border border-amber-400/40 shadow-xl transition-all duration-300 group disabled:opacity-40 hover:bg-amber-400/25 hover:border-amber-400/60 hover:scale-110 active:scale-90"
         >
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-amber-200 group-hover:text-amber-100 transition-colors" />
         </button>
@@ -515,7 +424,7 @@ const CarouselSlider = () => {
         <button
           onClick={nextSlide}
           disabled={isTransitioning}
-          className="absolute right-2 sm:right-4 lg:right-8 top-1/2 -translate-y-1/2 z-50 p-2.5 sm:p-3.5 rounded-full backdrop-blur-xl bg-white/10 border border-amber-400/40 shadow-xl transition-all duration-300 group disabled:opacity-40 hover:bg-amber-400/25 hover:border-amber-400/60 hover:shadow-amber-500/20 hover:scale-110 hover:translate-x-0.5 active:scale-90"
+          className="absolute right-2 sm:right-4 lg:right-8 top-1/2 -translate-y-1/2 z-50 p-2.5 sm:p-3.5 rounded-full bg-white/10 border border-amber-400/40 shadow-xl transition-all duration-300 group disabled:opacity-40 hover:bg-amber-400/25 hover:border-amber-400/60 hover:scale-110 active:scale-90"
         >
           <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-amber-200 group-hover:text-amber-100 transition-colors" />
         </button>
@@ -529,7 +438,7 @@ const CarouselSlider = () => {
                 className="space-y-3 sm:space-y-5 lg:space-y-6"
               >
                 {/* Sacred Badge */}
-                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/15 to-orange-500/15 backdrop-blur-xl border border-amber-400/25 rounded-full px-3 sm:px-4 py-1.5 sm:py-2">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/15 to-orange-500/15 border border-amber-400/25 rounded-full px-3 sm:px-4 py-1.5 sm:py-2">
                   <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300" />
                   <span className="text-xs sm:text-sm font-medium text-amber-200/90 tracking-wider">
                     KRISHNA'S BLESSING
@@ -538,7 +447,7 @@ const CarouselSlider = () => {
                 </div>
 
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-                  {currentProduct.title}
+                  {currentProduct.shortTitle || currentProduct.title}
                 </h1>
 
                 <p className="text-sm sm:text-base lg:text-lg leading-relaxed text-blue-100/75 max-w-sm sm:max-w-md mx-auto lg:mx-0 line-clamp-3 sm:line-clamp-none">
@@ -585,13 +494,13 @@ const CarouselSlider = () => {
                     <span className="relative z-10 text-indigo-900 font-bold text-sm sm:text-base tracking-wide flex items-center justify-center gap-2">
                       <Eye className="w-4 h-4" />
                       View Product
-                      <span className="animate-pulse">→</span>
+                      <span>→</span>
                     </span>
                   </Link>
 
                   <button
                     onClick={() => handleAddToCart(currentProduct)}
-                    className="group px-5 sm:px-6 py-3 sm:py-4 border-2 border-amber-400/40 text-amber-200 rounded-full font-semibold backdrop-blur-xl bg-white/5 hover:bg-amber-400/15 hover:border-amber-400/70 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                    className="group px-5 sm:px-6 py-3 sm:py-4 border-2 border-amber-400/40 text-amber-200 rounded-full font-semibold bg-white/5 hover:bg-amber-400/15 hover:border-amber-400/70 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                   >
                     <span className="flex items-center justify-center gap-2 text-sm sm:text-base">
                       <Heart className="w-4 h-4 group-hover:text-red-400 transition-colors" />
@@ -603,16 +512,18 @@ const CarouselSlider = () => {
                 {/* Trust Badges */}
                 <div className="hidden sm:flex items-center justify-center lg:justify-start gap-4 sm:gap-6 pt-3 sm:pt-4">
                   {[
-                    { emoji: "🪔", label: "Blessed" },
-                    { emoji: "📿", label: "Sacred" },
-                    { emoji: "🦚", label: "Divine" },
-                    { emoji: "✨", label: "Premium" },
+                    { icon: <GiCandleLight />, label: "Blessed" },
+                    { icon: <GiPrayerBeads />, label: "Sacred" },
+                    { icon: <GiFeather />, label: "Divine" },
+                    { icon: <IoSparkles />, label: "Premium" },
                   ].map((badge, index) => (
                     <div
                       key={badge.label}
                       className="text-center px-3 py-2 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 hover:scale-105 hover:bg-amber-400/10 transition-all duration-300"
                     >
-                      <p className="text-xl sm:text-2xl">{badge.emoji}</p>
+                      <div className="text-xl sm:text-2xl text-amber-300 flex justify-center">
+                        {badge.icon}
+                      </div>
                       <p className="text-xs text-amber-200/60 mt-0.5">
                         {badge.label}
                       </p>
@@ -680,12 +591,12 @@ const CarouselSlider = () => {
                     <div className="relative w-full h-full">
                       {/* Divine Glow for current item */}
                       {isCurrent && (
-                        <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-r from-amber-400/25 via-purple-400/20 to-amber-400/25 rounded-2xl blur-xl animate-pulse" />
+                        <div className="absolute -inset-3 sm:-inset-4 bg-gradient-to-r from-amber-400/15 via-purple-400/10 to-amber-400/15 rounded-2xl blur-xl" />
                       )}
 
                       {/* Product Card */}
                       <div
-                        className={`relative w-full h-full rounded-xl sm:rounded-2xl border backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300 ${
+                        className={`relative w-full h-full rounded-xl sm:rounded-2xl border shadow-xl overflow-hidden transition-all duration-300 ${
                           isCurrent
                             ? "bg-gradient-to-br from-indigo-900/95 via-purple-900/90 to-blue-900/95 border-amber-400/40 shadow-amber-500/10"
                             : "bg-gradient-to-br from-indigo-900/70 to-purple-900/70 border-white/10"
@@ -694,8 +605,8 @@ const CarouselSlider = () => {
                         {/* Card Header */}
                         {isCurrent && (
                           <div className="absolute top-0 left-0 right-0 h-8 sm:h-10 bg-gradient-to-b from-amber-400/15 to-transparent flex items-center justify-center z-10">
-                            <span className="text-[10px] sm:text-xs text-amber-200/90 font-medium tracking-wide">
-                              ✨ Divine Selection ✨
+                            <span className="text-[10px] sm:text-xs text-amber-200/90 font-medium tracking-wide flex items-center gap-1">
+                              <IoSparkles /> Divine Selection <IoSparkles />
                             </span>
                           </div>
                         )}
@@ -705,15 +616,16 @@ const CarouselSlider = () => {
                           <img
                             src={imageUrl}
                             alt={item.title}
-                            className={`w-full h-full object-contain rounded-lg drop-shadow-lg ${isCurrent ? "animate-pulse" : ""}`}
+                            className="w-full h-full object-contain rounded-lg drop-shadow-lg"
                             style={{
                               maxWidth: `${cardSize.width - 24}px`,
                               maxHeight: `${cardSize.height - 40}px`,
-                              animationDuration: "3.5s",
                             }}
                             loading="lazy"
                             onError={(e) => {
-                              e.target.src = "/api/placeholder/400/400";
+                              e.target.onerror = null;
+                              e.target.src =
+                                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23312e81'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23a5b4fc' font-size='20'%3ENo Image%3C/text%3E%3C/svg%3E";
                             }}
                           />
                         </div>
@@ -764,10 +676,10 @@ const CarouselSlider = () => {
               <button
                 key={`dot-${index}`}
                 onClick={() => goToSlide(index)}
-                className={`transition-all duration-300 hover:scale-125 ${
+                className={`appearance-none p-0 m-0 border-0 min-w-0 min-h-0 leading-none text-[0px] shrink-0 touch-manipulation transition-all duration-300 md:hover:scale-125 ${
                   index === currentIndex
-                    ? "w-8 h-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 animate-pulse"
-                    : "w-2 h-2 rounded-full bg-amber-400/30 hover:bg-amber-400/50"
+                    ? "w-8 h-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-400"
+                    : "w-2 h-2 rounded-full bg-amber-400/30 md:hover:bg-amber-400/50"
                 }`}
               />
             ))}

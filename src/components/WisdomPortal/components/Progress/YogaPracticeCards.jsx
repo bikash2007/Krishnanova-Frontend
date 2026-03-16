@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import {
   GiPrayerBeads,
   GiAncientSword,
@@ -47,8 +46,7 @@ const YogaPracticeCards = ({ practices, isMobile }) => {
       {yogaTypes.map((yoga) => (
         <div
           key={yoga.key}
-          className="bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all"
-          style={{ touchAction: 'manipulation' }}
+          className="bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 md:hover:border-amber-400/50 transition-all"
         >
           <div
             className={`w-12 h-12 md:w-16 md:h-16 mx-auto rounded-full bg-gradient-to-br ${yoga.color} flex items-center justify-center mb-2 md:mb-3`}

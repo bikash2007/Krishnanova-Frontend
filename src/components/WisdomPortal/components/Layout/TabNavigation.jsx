@@ -37,25 +37,29 @@ const TabNavigation = ({ activeTab, setActiveTab, isMobile }) => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 mb-4 md:mb-6">
-      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl md:rounded-2xl p-1.5 md:p-2 border border-white/20">
-        <div className="grid grid-cols-5 gap-1 md:gap-2">
+    <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 mb-3 md:mb-5">
+      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-lg sm:rounded-xl md:rounded-2xl p-1 sm:p-1.5 md:p-2 border border-white/20">
+        <div className="grid grid-cols-5 gap-0.5 sm:gap-1 md:gap-2">
           {tabs.map((tab) => (
             <motion.button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-2 md:py-3 px-2 md:px-4 rounded-lg md:rounded-xl font-semibold transition-all flex items-center justify-center gap-1 md:gap-2 text-xs md:text-base ${
+              className={`py-1.5 sm:py-2 md:py-3 px-1.5 sm:px-2 md:px-4 rounded-md sm:rounded-lg md:rounded-xl font-semibold transition-all flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 text-[10px] sm:text-xs md:text-base min-h-[44px] ${
                 activeTab === tab.id
                   ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg"
                   : "text-blue-100/60 hover:text-amber-200 hover:bg-white/5"
               }`}
-              whileHover={{ scale: 1.02 }}
+              style={{
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "transparent",
+                cursor: "pointer",
+              }}
+              whileHover={!isMobile ? { scale: 1.02 } : {}}
               whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.1 }}
             >
               {tab.icon}
-              <span className={isMobile ? "hidden" : "hidden md:inline"}>
-                {tab.label}
-              </span>
+              <span className="hidden sm:inline">{tab.label}</span>
             </motion.button>
           ))}
         </div>

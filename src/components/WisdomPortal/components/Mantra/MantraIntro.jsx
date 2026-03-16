@@ -5,7 +5,7 @@ import { IoSparkles, IoHeart, IoShield } from "react-icons/io5";
 
 const MantraIntro = ({ onContinue }) => {
   return (
-    <div className="min-h-[60vh] max-h-[85vh] bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col py-8 px-6">
+    <div className="min-h-[calc(var(--app-height)*0.6)] max-h-[calc(var(--app-height)*0.85)] bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col py-8 px-6">
       {/* Main Content - Centered */}
       <div className="flex-1 flex flex-col items-center justify-center">
         {/* Icon */}

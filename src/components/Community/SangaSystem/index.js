@@ -13,13 +13,13 @@ export {
   DevoteeLevelCard,
   DevoteeInlineBadge,
   LevelProgressMini,
+  RasaTag,
 } from "./DevoteeLevelBadge";
 
 export { default as SpiritualHotspotMap } from "./SpiritualHotspotMap";
 
 export {
   LilaStoryCard,
-  RasaTag,
   RasaFilterBar,
   default as LilaStoriesFeed,
 } from "./LilaStory";

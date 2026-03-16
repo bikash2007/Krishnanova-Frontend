@@ -362,7 +362,7 @@ function Navigation() {
                 <div
                   ref={dropdownRef}
                   style={{ display: "none" }}
-                  className="absolute right-0 mt-2 w-48 backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-xl shadow-2xl border border-white/20 py-2 z-50"
+                  className="absolute right-0 mt-2 w-48 backdrop-blur-2xl  bg-gradient-to-br from-violet-950/80 to-cyan-950/80 rounded-xl shadow-2xl border border-white/20 py-2 z-50"
                 >
                   <Link
                     to="/profile"

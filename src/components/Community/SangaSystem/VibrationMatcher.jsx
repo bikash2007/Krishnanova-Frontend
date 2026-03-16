@@ -9,54 +9,59 @@ import {
   FaArrowRight,
   FaUsers,
   FaSpinner,
+  FaDove,
+  FaPray,
+  FaSearch,
 } from "react-icons/fa";
+import { GiLotusFlower, GiLotus, GiCrystalBall } from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 
 // Vibration States
 const VIBRATION_STATES = {
   peaceful: {
-    emoji: "🕊️",
+    emoji: <FaDove />,
     label: "Peaceful",
     color: "from-blue-400 to-cyan-500",
     description: "In a state of inner calm",
   },
   joyful: {
-    emoji: "🌸",
+    emoji: <GiLotusFlower />,
     label: "Joyful",
     color: "from-pink-400 to-rose-500",
     description: "Filled with divine joy",
   },
   devoted: {
-    emoji: "🙏",
+    emoji: <FaPray />,
     label: "Devoted",
     color: "from-amber-400 to-orange-500",
     description: "Heart full of devotion",
   },
   seeking: {
-    emoji: "🔍",
+    emoji: <FaSearch />,
     label: "Seeking",
     color: "from-purple-400 to-indigo-500",
     description: "Searching for truth",
   },
   grateful: {
-    emoji: "💛",
+    emoji: <FaHeart />,
     label: "Grateful",
     color: "from-yellow-400 to-amber-500",
     description: "Overflowing with gratitude",
   },
   surrendered: {
-    emoji: "🪷",
+    emoji: <GiLotus />,
     label: "Surrendered",
     color: "from-teal-400 to-cyan-500",
     description: "Fully surrendered to divine will",
   },
   healing: {
-    emoji: "💚",
+    emoji: <FaHeart />,
     label: "Healing",
     color: "from-green-400 to-emerald-500",
     description: "In the process of healing",
   },
   inspired: {
-    emoji: "✨",
+    emoji: <IoSparkles />,
     label: "Inspired",
     color: "from-yellow-300 to-orange-400",
     description: "Touched by divine inspiration",
@@ -194,15 +199,14 @@ const VibrationMatcher = ({ onConnect }) => {
     devoteeData,
     setVibration,
     getSimilarDevotees,
-    setFavoriteRasas,
+    setSelectedRasa,
+    getSelectedRasa,
     EMOTIONAL_RASAS,
     similarSouls,
   } = useSanga();
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedRasas, setSelectedRasas] = useState(
-    devoteeData.favoriteRasas || [],
-  );
+  const currentRasa = getSelectedRasa();
   const [showRasaPicker, setShowRasaPicker] = useState(false);
 
   const handleVibrationChange = async (newVibration) => {
@@ -225,13 +229,10 @@ const VibrationMatcher = ({ onConnect }) => {
     }
   };
 
-  const handleRasaToggle = async (rasaId) => {
-    const newRasas = selectedRasas.includes(rasaId)
-      ? selectedRasas.filter((r) => r !== rasaId)
-      : [...selectedRasas, rasaId].slice(0, 3); // Max 3 rasas
-
-    setSelectedRasas(newRasas);
-    await setFavoriteRasas(newRasas);
+  const handleRasaSelect = async (rasaId) => {
+    // Single-select: toggle off if same, otherwise set new
+    const newRasa = currentRasa === rasaId ? null : rasaId;
+    await setSelectedRasa(newRasa);
   };
 
   return (
@@ -242,46 +243,48 @@ const VibrationMatcher = ({ onConnect }) => {
         onSelect={handleVibrationChange}
       />
 
-      {/* Favorite Rasas */}
+      {/* Single Bhakti Rasa */}
       <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold text-amber-300 flex items-center gap-2">
             <FaHeart />
-            Your Spiritual Rasas
+            Your Bhakti Rasa
           </h3>
           <button
             onClick={() => setShowRasaPicker(!showRasaPicker)}
             className="text-xs text-amber-400 hover:text-amber-300"
           >
-            {showRasaPicker ? "Done" : "Edit"}
+            {showRasaPicker ? "Done" : "Choose"}
           </button>
         </div>
 
-        {selectedRasas.length > 0 ? (
+        {currentRasa ? (
           <div className="flex flex-wrap gap-2">
-            {selectedRasas.map((rasaId) => {
+            {(() => {
               const rasa = Object.values(EMOTIONAL_RASAS).find(
-                (r) => r.id === rasaId,
+                (r) => r.id === currentRasa,
               );
               if (!rasa) return null;
               return (
                 <div
-                  key={rasaId}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r ${rasa.color} text-white text-sm font-medium`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r ${rasa.color} text-white text-sm font-medium shadow-lg`}
                 >
-                  <span>{rasa.emoji}</span>
-                  <span>{rasa.name}</span>
+                  <span className="text-lg">{rasa.emoji}</span>
+                  <div>
+                    <span className="font-semibold">{rasa.name}</span>
+                    <span className="ml-2 opacity-80">· {rasa.meaning}</span>
+                  </div>
                 </div>
               );
-            })}
+            })()}
           </div>
         ) : (
           <p className="text-sm text-blue-100/60">
-            Select up to 3 rasas that resonate with you
+            Choose the one rasa that defines your relationship with the Divine
           </p>
         )}
 
-        {/* Rasa Picker */}
+        {/* Rasa Picker — Single Select */}
         <AnimatePresence>
           {showRasaPicker && (
             <motion.div
@@ -290,22 +293,37 @@ const VibrationMatcher = ({ onConnect }) => {
               exit={{ height: 0, opacity: 0 }}
               className="mt-4 pt-4 border-t border-white/10"
             >
-              <div className="grid grid-cols-2 gap-2">
+              <p className="text-xs text-blue-100/50 mb-3">
+                Select one rasa — this will be displayed on your profile
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {Object.values(EMOTIONAL_RASAS).map((rasa) => (
                   <button
                     key={rasa.id}
-                    onClick={() => handleRasaToggle(rasa.id)}
-                    className={`flex items-center gap-2 p-2 rounded-lg text-left transition-all ${
-                      selectedRasas.includes(rasa.id)
-                        ? `bg-gradient-to-r ${rasa.color}/30 border border-white/30`
-                        : "bg-white/5 hover:bg-white/10 border border-transparent"
+                    onClick={() => handleRasaSelect(rasa.id)}
+                    className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
+                      currentRasa === rasa.id
+                        ? `bg-gradient-to-r ${rasa.color}/30 border-2 border-white/40 shadow-lg`
+                        : "bg-white/5 hover:bg-white/10 border border-white/10"
                     }`}
                   >
-                    <span className="text-lg">{rasa.emoji}</span>
-                    <div>
-                      <p className="text-sm text-blue-100">{rasa.name}</p>
-                      <p className="text-xs text-blue-100/50">{rasa.meaning}</p>
+                    <span className="text-xl">{rasa.emoji}</span>
+                    <div className="min-w-0">
+                      <p className="text-sm text-blue-100 font-semibold">
+                        {rasa.name}
+                        {rasa.sanskrit && (
+                          <span className="ml-1.5 text-xs opacity-60 font-normal">
+                            {rasa.sanskrit}
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-xs text-blue-100/50 truncate">
+                        {rasa.meaning}
+                      </p>
                     </div>
+                    {currentRasa === rasa.id && (
+                      <FaHeart className="ml-auto text-amber-400 flex-shrink-0" />
+                    )}
                   </button>
                 ))}
               </div>
@@ -363,7 +381,7 @@ const VibrationMatcher = ({ onConnect }) => {
           </div>
         ) : (
           <div className="text-center py-6">
-            <p className="text-4xl mb-2">🔮</p>
+            <GiCrystalBall className="text-4xl mb-2 mx-auto text-purple-300/50" />
             <p className="text-sm text-blue-100/60">
               Set your vibration to find similar souls
             </p>

@@ -7,6 +7,7 @@ import {
   IoEye,
   IoTrash,
 } from "react-icons/io5";
+import useLockBodyScroll from "../../../../utils/useLockBodyScroll";
 
 /**
  * SavedConversationsModal - Modal for viewing and managing saved conversations
@@ -18,6 +19,7 @@ const SavedConversationsModal = ({
   onLoadConversation,
   onDeleteConversation,
 }) => {
+  useLockBodyScroll(isOpen);
   if (!isOpen) return null;
 
   return (
@@ -25,13 +27,13 @@ const SavedConversationsModal = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-hidden overscroll-contain"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="backdrop-blur-md bg-gradient-to-br from-white/20 to-white/10 rounded-2xl shadow-2xl p-6 w-full max-w-3xl max-h-[80vh] overflow-hidden border border-white/30"
+        className="backdrop-blur-md bg-gradient-to-br from-white/20 to-white/10 rounded-2xl shadow-2xl p-6 w-full max-w-3xl max-h-[calc(var(--app-height)*0.8)] overflow-hidden border border-white/30"
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-amber-200 flex items-center gap-2">
@@ -45,7 +47,7 @@ const SavedConversationsModal = ({
           </button>
         </div>
 
-        <div className="overflow-y-auto max-h-[60vh] space-y-3">
+        <div className="overflow-y-auto max-h-[calc(var(--app-height)*0.6)] space-y-3">
           {savedConversations.length === 0 ? (
             <div className="text-center py-12">
               <IoBookmarkOutline className="text-5xl text-blue-100/40 mx-auto mb-4" />

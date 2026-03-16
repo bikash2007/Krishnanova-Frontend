@@ -17,6 +17,7 @@ import {
   IoSparkles,
   IoClose,
 } from "react-icons/io5";
+import useLockBodyScroll from "../../../../utils/useLockBodyScroll";
 
 // Emotional states with appropriate responses
 const EMOTIONAL_STATES = {
@@ -412,6 +413,7 @@ export const useSmartPresence = ({
 
 // Emotion Picker Component
 export const EmotionPicker = ({ isOpen, onSelect, onClose, isMobile }) => {
+  useLockBodyScroll(isOpen);
   if (!isOpen) return null;
 
   return (
@@ -419,11 +421,11 @@ export const EmotionPicker = ({ isOpen, onSelect, onClose, isMobile }) => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-hidden overscroll-contain"
       onClick={onClose}
     >
       <motion.div
-        className="bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-blue-900/95 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-white/20"
+        className="bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-blue-900/95 rounded-2xl p-6 max-w-md w-full shadow-2xl border border-white/20 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         initial={{ y: 20 }}
         animate={{ y: 0 }}

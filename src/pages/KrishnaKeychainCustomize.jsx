@@ -17,8 +17,24 @@ import {
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
-import Navigation from "../components/Navigation/Navigation";
 import GoogleAuth from "../components/GoogleAuth";
+import {
+  FaOm,
+  FaCrown,
+  FaStar,
+  FaFire,
+  FaMusic,
+  FaScroll,
+  FaPray,
+  FaTheaterMasks,
+  FaFilm,
+  FaEye,
+  FaEyeSlash,
+  FaVolumeUp,
+  FaVolumeMute,
+} from "react-icons/fa";
+import { GiPrayerBeads, GiLotus, GiCandleLight } from "react-icons/gi";
+import { IoSparkles, IoDiamond, IoWater, IoEarOutline } from "react-icons/io5";
 
 // Audio imports
 import bellsound from "../Audio/bell.mp3";
@@ -192,10 +208,10 @@ const ParticleSystem = ({ type = "divine", intensity = 20 }) => {
 
   const getParticleSymbol = () => {
     const symbols = {
-      divine: ["✨", "⭐"],
-      fire: ["🔥", "✨"],
-      water: ["💧", "💎"],
-      celebration: ["🎊", "🎉", "✨"],
+      divine: [<IoSparkles />, <FaStar />],
+      fire: [<FaFire />, <IoSparkles />],
+      water: [<IoWater />, <IoDiamond />],
+      celebration: [<IoSparkles />, <FaStar />, <GiLotus />],
     };
     const typeSymbols = symbols[type] || symbols.divine;
     return typeSymbols[Math.floor(Math.random() * typeSymbols.length)];
@@ -308,7 +324,7 @@ const SacredLoader = ({ text = "Loading sacred elements..." }) => (
         className="w-full h-full border-4 border-orange-300 border-t-orange-600 rounded-full"
       />
       <div className="absolute inset-0 flex items-center justify-center text-2xl">
-        🕉️
+        <FaOm />
       </div>
     </div>
     <p className="text-orange-200 font-medium">{text}</p>
@@ -805,7 +821,7 @@ export default function KrishnaKeychainCustomize() {
               transition={{ duration: 3, repeat: Infinity }}
               className="text-8xl mb-6 filter drop-shadow-[0_0_30px_rgba(251,146,60,0.5)]"
             >
-              🕉️
+              <FaOm />
             </motion.div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-200 drop-shadow-lg">
@@ -826,7 +842,9 @@ export default function KrishnaKeychainCustomize() {
                   whileTap={{ scale: 0.95 }}
                   className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg hover:shadow-orange-500/25 flex items-center justify-center mx-auto gap-3"
                 >
-                  <span className="text-2xl">🎵</span>
+                  <span className="text-2xl">
+                    <FaMusic />
+                  </span>
                   <span>Play Sacred Mantra</span>
                 </motion.button>
               )}
@@ -901,7 +919,7 @@ export default function KrishnaKeychainCustomize() {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="absolute inset-0 flex items-center justify-center text-6xl filter drop-shadow-[0_0_20px_rgba(251,146,60,0.8)]"
               >
-                🔥
+                <FaFire />
               </motion.div>
             </div>
 
@@ -933,7 +951,9 @@ export default function KrishnaKeychainCustomize() {
                   whileHover={{ scale: 1.05 }}
                   className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center mx-auto gap-3"
                 >
-                  <span className="text-2xl">🎵</span>
+                  <span className="text-2xl">
+                    <FaMusic />
+                  </span>
                   <span>Recite Invocation Mantra</span>
                 </motion.button>
               )}
@@ -1024,7 +1044,7 @@ export default function KrishnaKeychainCustomize() {
                     top: "50%",
                   }}
                 >
-                  💧
+                  <IoWater />
                 </motion.div>
               ))}
             </div>
@@ -1057,7 +1077,9 @@ export default function KrishnaKeychainCustomize() {
                   whileHover={{ scale: 1.05 }}
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center mx-auto gap-3"
                 >
-                  <span className="text-2xl">🎵</span>
+                  <span className="text-2xl">
+                    <FaMusic />
+                  </span>
                   <span>Chant Purification Mantra</span>
                 </motion.button>
               )}
@@ -1158,13 +1180,13 @@ export default function KrishnaKeychainCustomize() {
                   className="text-center"
                 >
                   <div className="text-6xl mb-4 filter drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]">
-                    👶🏽
+                    <GiLotus />
                   </div>
                   <div className="text-4xl my-4 filter drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
-                    🤲🏽
+                    <FaPray />
                   </div>
                   <div className="text-6xl filter drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]">
-                    👑
+                    <FaCrown />
                   </div>
                   <p className="text-purple-200 text-lg mt-4">
                     Sacred Transfer in Progress...
@@ -1203,7 +1225,7 @@ export default function KrishnaKeychainCustomize() {
           >
             <div className="text-center space-y-4">
               <div className="text-6xl mb-4 filter drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]">
-                📜
+                <FaScroll />
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-indigo-200 drop-shadow-lg">
                 Choose the Sacred Name
@@ -1221,7 +1243,9 @@ export default function KrishnaKeychainCustomize() {
                   whileHover={{ scale: 1.05 }}
                   className="mx-auto bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center gap-3"
                 >
-                  <span className="text-2xl">🎵</span>
+                  <span className="text-2xl">
+                    <FaMusic />
+                  </span>
                   <span>Chant Name Selection Mantra</span>
                 </motion.button>
               )}
@@ -1326,7 +1350,7 @@ export default function KrishnaKeychainCustomize() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="text-5xl mb-3 text-center filter drop-shadow-[0_0_20px_rgba(99,102,241,0.5)]">
-                      ✨
+                      <IoSparkles />
                     </div>
                     <h3 className="text-2xl font-bold text-indigo-100 mb-2">
                       {showNameMeaning}
@@ -1388,7 +1412,7 @@ export default function KrishnaKeychainCustomize() {
             className="text-center space-y-8"
           >
             <div className="text-6xl mb-4 filter drop-shadow-[0_0_20px_rgba(34,197,94,0.5)]">
-              👂🏽
+              <IoEarOutline />
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-200 drop-shadow-lg">
               Whispering the Sacred Name
@@ -1401,7 +1425,7 @@ export default function KrishnaKeychainCustomize() {
 
             <div className="backdrop-blur-lg bg-green-950/40 p-10 rounded-2xl max-w-2xl mx-auto border border-green-800/30">
               <div className="text-6xl mb-4 filter drop-shadow-[0_0_30px_rgba(34,197,94,0.5)]">
-                🕉️
+                <FaOm />
               </div>
               <h3 className="text-3xl font-bold text-green-100 mb-2">
                 {finalKrishnaName}
@@ -1418,7 +1442,9 @@ export default function KrishnaKeychainCustomize() {
                   whileHover={{ scale: 1.05 }}
                   className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center mx-auto gap-3"
                 >
-                  <span className="text-2xl">🎵</span>
+                  <span className="text-2xl">
+                    <FaMusic />
+                  </span>
                   <span>Whisper Sacred Name</span>
                 </motion.button>
               )}
@@ -1488,7 +1514,7 @@ export default function KrishnaKeychainCustomize() {
             className="text-center space-y-8"
           >
             <div className="text-6xl mb-4 filter drop-shadow-[0_0_20px_rgba(251,146,60,0.5)]">
-              🙏
+              <FaPray />
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-amber-200 drop-shadow-lg">
               Divine Blessings
@@ -1516,14 +1542,14 @@ export default function KrishnaKeychainCustomize() {
                       }deg) translateX(100px) translateY(-15px)`,
                     }}
                   >
-                    ✨
+                    <IoSparkles />
                   </div>
                 ))}
               </motion.div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-6xl mb-2 filter drop-shadow-[0_0_30px_rgba(251,146,60,0.5)]">
-                    👑
+                    <FaCrown />
                   </div>
                   <div className="text-2xl font-bold text-amber-100">
                     {finalKrishnaName}
@@ -1539,7 +1565,9 @@ export default function KrishnaKeychainCustomize() {
                   whileHover={{ scale: 1.05 }}
                   className="bg-gradient-to-r from-amber-600 to-orange-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg flex items-center justify-center mx-auto gap-3"
                 >
-                  <span className="text-2xl">🎵</span>
+                  <span className="text-2xl">
+                    <FaMusic />
+                  </span>
                   <span>Recite Blessing Mantra</span>
                 </motion.button>
               )}
@@ -1612,7 +1640,7 @@ export default function KrishnaKeychainCustomize() {
               transition={{ duration: 2, repeat: Infinity }}
               className="text-7xl mb-4 filter drop-shadow-[0_0_30px_rgba(236,72,153,0.5)]"
             >
-              🎉
+              <IoSparkles />
             </motion.div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-pink-200 drop-shadow-lg">
@@ -1629,7 +1657,7 @@ export default function KrishnaKeychainCustomize() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="backdrop-blur-lg bg-pink-950/40 rounded-full p-12 text-center border border-pink-800/30">
                   <div className="text-6xl mb-2 filter drop-shadow-[0_0_30px_rgba(236,72,153,0.5)]">
-                    🏺
+                    <GiCandleLight />
                   </div>
                   <div className="text-3xl font-bold text-pink-100">
                     {finalKrishnaName}
@@ -1708,8 +1736,6 @@ export default function KrishnaKeychainCustomize() {
       <div className="min-h-screen relative overflow-hidden">
         <CinematicBackground step={currentStep} showVideo={showVideo} />
 
-        <Navigation />
-
         <div className="relative z-10 container mx-auto px-4 py-8 mt-16">
           <AnimatePresence mode="wait">
             {/* Authentication Step */}
@@ -1730,7 +1756,7 @@ export default function KrishnaKeychainCustomize() {
                       transition={{ delay: 0.3, type: "spring" }}
                       className="text-5xl mb-4 filter drop-shadow-[0_0_30px_rgba(251,146,60,0.5)]"
                     >
-                      🕉️
+                      <FaOm />
                     </motion.div>
                     <h1 className="text-3xl font-bold text-orange-100 mb-2">
                       Begin Your Sacred Journey
@@ -1745,7 +1771,7 @@ export default function KrishnaKeychainCustomize() {
                   <div className="p-6 bg-gradient-to-r from-orange-950/40 to-red-950/40 backdrop-blur-sm">
                     <div className="text-center space-y-3">
                       <div className="text-2xl filter drop-shadow-[0_0_15px_rgba(251,146,60,0.5)]">
-                        🎭
+                        <FaTheaterMasks />
                       </div>
                       <h3 className="font-bold text-orange-200 text-lg">
                         Ancient Vedic Tradition
@@ -1843,7 +1869,7 @@ export default function KrishnaKeychainCustomize() {
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-400 hover:text-orange-300"
                         >
-                          {showPassword ? "👁️‍🗨️" : "👁️"}
+                          {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                       </div>
                       {errors.password && (
@@ -1957,7 +1983,7 @@ export default function KrishnaKeychainCustomize() {
                   transition={{ duration: 3, repeat: Infinity }}
                   className="text-7xl mb-6 filter drop-shadow-[0_0_40px_rgba(251,146,60,0.5)]"
                 >
-                  🏺
+                  <GiCandleLight />
                 </motion.div>
 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-200 drop-shadow-lg mb-6">
@@ -1983,12 +2009,12 @@ export default function KrishnaKeychainCustomize() {
                   </h2>
                   <div className="grid md:grid-cols-2 gap-6 text-left">
                     {[
-                      { icon: "🔥", text: "Sacred Fire Ceremony" },
-                      { icon: "💧", text: "Purification Ritual" },
-                      { icon: "📿", text: "Vedic Name Selection" },
-                      { icon: "🎬", text: "Divine Transfer Video" },
-                      { icon: "👂🏽", text: "Sacred Whispering" },
-                      { icon: "✨", text: "Divine Blessings" },
+                      { icon: <FaFire />, text: "Sacred Fire Ceremony" },
+                      { icon: <IoWater />, text: "Purification Ritual" },
+                      { icon: <GiPrayerBeads />, text: "Vedic Name Selection" },
+                      { icon: <FaFilm />, text: "Divine Transfer Video" },
+                      { icon: <IoEarOutline />, text: "Sacred Whispering" },
+                      { icon: <IoSparkles />, text: "Divine Blessings" },
                     ].map((item) => (
                       <div
                         key={item.text}
@@ -2083,7 +2109,7 @@ export default function KrishnaKeychainCustomize() {
           } text-white text-xl backdrop-blur-sm`}
           title={isSoundEnabled ? "Mute sounds" : "Unmute sounds"}
         >
-          {isSoundEnabled ? "🔊" : "🔇"}
+          {isSoundEnabled ? <FaVolumeUp /> : <FaVolumeMute />}
         </motion.button>
       </div>
     </GoogleOAuthProvider>

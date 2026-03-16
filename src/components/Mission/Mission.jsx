@@ -1,5 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaOm } from "react-icons/fa";
+import { GiFeather, GiCandleLight, GiPrayerBeads } from "react-icons/gi";
 
 const Mission = () => {
   const sectionRef = useRef(null);
@@ -15,25 +17,25 @@ const Mission = () => {
 
   const missionPillars = [
     {
-      icon: "🕉️",
+      icon: <FaOm />,
       title: "Heritage",
       description: "Ancient wisdom preserved",
       gradient: "from-amber-400 to-orange-500",
     },
     {
-      icon: "🦚",
+      icon: <GiFeather />,
       title: "Connection",
       description: "Sacred daily touch",
       gradient: "from-cyan-400 to-blue-500",
     },
     {
-      icon: "🪔",
+      icon: <GiCandleLight />,
       title: "Sangha",
       description: "Global unity",
       gradient: "from-purple-400 to-indigo-500",
     },
     {
-      icon: "📿",
+      icon: <GiPrayerBeads />,
       title: "Artifacts",
       description: "Divine energy infusion",
       gradient: "from-amber-400 to-yellow-500",
@@ -115,7 +117,7 @@ const Mission = () => {
                   <div
                     className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${p.gradient} bg-opacity-10 flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-110 transition-transform duration-500`}
                   >
-                    <span className="drop-shadow-md">{p.icon}</span>
+                    <div className="drop-shadow-md">{p.icon}</div>
                   </div>
                   <h3 className="text-xl font-bold text-amber-100 mb-2 group-hover:text-amber-200 transition-colors">
                     {p.title}

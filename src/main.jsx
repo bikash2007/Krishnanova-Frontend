@@ -13,6 +13,66 @@ import { CartProvider } from "./Context/CartContext.jsx";
 import Layout from "./components/Layout/Layout.jsx";
 
 // ============================================
+// iOS Safari viewport fix
+// - Updates CSS var --vh based on the *actual* visible viewport height.
+// - Our CSS maps Tailwind `min-h-screen`/`h-screen` to `var(--app-height)`.
+// ============================================
+const installViewportUnitFix = () => {
+  if (typeof window === "undefined") return;
+
+  let raf = 0;
+  let lastHeight = 0;
+  const update = () => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const height = window.visualViewport?.height ?? window.innerHeight;
+      if (Math.abs(height - lastHeight) < 1) return;
+      lastHeight = height;
+      const vh = height * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
+  };
+
+  update();
+
+  window.addEventListener("resize", update, { passive: true });
+  window.addEventListener("orientationchange", update, { passive: true });
+  window.visualViewport?.addEventListener("resize", update, { passive: true });
+};
+
+const installBrowserPerformanceMode = () => {
+  if (typeof window === "undefined") return;
+
+  const ua = navigator.userAgent;
+  const isWindows = /Windows/i.test(ua);
+  const isChromium = /Chrome|Chromium|Edg\//i.test(ua);
+
+  // Brave exposes navigator.brave in Chromium builds.
+  const isBrave = typeof navigator.brave !== "undefined";
+
+  if (isWindows && isChromium) {
+    document.documentElement.classList.add("windows-chromium");
+    if (isBrave) {
+      document.documentElement.classList.add("brave-browser");
+    }
+  }
+
+  let scrollTimer = 0;
+  const onScroll = () => {
+    document.documentElement.classList.add("is-scrolling");
+    if (scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      document.documentElement.classList.remove("is-scrolling");
+    }, 120);
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+};
+
+installViewportUnitFix();
+installBrowserPerformanceMode();
+
+// ============================================
 // PERFORMANCE OPTIMIZATION: Lazy load all routes
 // This reduces initial bundle size significantly
 // ============================================

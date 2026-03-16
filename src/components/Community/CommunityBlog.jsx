@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useAuth } from "../../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useApi } from "../../Context/baseUrl";
-import Navigation from "../Navigation/NavigationGSAP";
 import axios from "axios";
 import { gsap } from "gsap";
 import Modal from "../UI/Modal";
@@ -31,7 +30,13 @@ import {
   FaUpload,
   FaCheck,
   FaSpinner,
+  FaMusic,
+  FaShieldAlt,
+  FaDove,
+  FaUtensils,
 } from "react-icons/fa";
+import { GiMeditation } from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 
 // Sanga System Imports
 import {
@@ -49,29 +54,35 @@ import {
 
 const API = import.meta.env.VITE_API_URL;
 
-// Floating Sacred Elements
+// Helper function - Backend now returns full URLs, so just handle nulls
+const getFullUrl = (url) => {
+  return url || null;
+};
+
+// Generate fallback avatar URL
+const getFallbackAvatar = (name) => {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=random&size=128`;
+};
+
+// Transform post data - Backend now sends full URLs already
+const transformPostData = (post) => {
+  return post; // No transformation needed - backend sends full URLs
+};
+
+// Floating Sacred Elements - Deep Purple Theme
 const FloatingSacredElements = () => {
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-[0.12]"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
           backgroundSize: "30px 30px",
-          animation: "float 30s linear infinite",
         }}
       />
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #fbbf24 1px, transparent 1px),
-            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
+      {/* Ambient Fuchsia Glows */}
+      <div className="absolute top-[-10%] left-[-5%] w-[40vw] h-[40vw] bg-[#d946ef] opacity-[0.07] blur-[100px] rounded-full" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] bg-[#d946ef] opacity-[0.07] blur-[100px] rounded-full" />
     </div>
   );
 };
@@ -79,15 +90,15 @@ const FloatingSacredElements = () => {
 // User Badge Component
 const UserBadge = ({ user, size = "md" }) => {
   const sizeClasses = {
-    sm: "px-1.5 py-0.5 text-[10px]",
-    md: "px-2 py-0.5 text-xs",
+    sm: "px-2 py-0.5 text-[10px]",
+    md: "px-2.5 py-1 text-xs",
     lg: "px-3 py-1 text-sm",
   };
 
   if (user?.role === "admin") {
     return (
       <div
-        className={`inline-flex items-center space-x-1 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 font-bold rounded-full ${sizeClasses[size]}`}
+        className={`inline-flex items-center space-x-1 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white font-bold rounded-full shadow-sm shadow-fuchsia-500/20 ${sizeClasses[size]}`}
       >
         <FaCrown size={size === "sm" ? 8 : 10} />
         <span className="hidden sm:inline">ADMIN</span>
@@ -97,7 +108,7 @@ const UserBadge = ({ user, size = "md" }) => {
 
   return (
     <div
-      className={`inline-flex items-center space-x-1 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 text-cyan-300 border border-cyan-400/30 font-semibold rounded-full ${sizeClasses[size]}`}
+      className={`inline-flex items-center space-x-1 bg-cyan-500/15 text-cyan-200 border border-cyan-400/25 font-semibold rounded-full ${sizeClasses[size]}`}
     >
       <FaPray size={size === "sm" ? 8 : 10} />
       <span className="hidden sm:inline">DEVOTEE</span>
@@ -118,7 +129,7 @@ const Avatar = ({ user, size = "w-10 h-10", baseUrl }) => {
 
   return (
     <div
-      className={`${size} rounded-full overflow-hidden border-2 border-amber-400/30 flex-shrink-0`}
+      className={`${size} rounded-full overflow-hidden border-2 border-fuchsia-400/30 flex-shrink-0`}
     >
       <img
         src={getAvatarUrl()}
@@ -137,17 +148,17 @@ const Avatar = ({ user, size = "w-10 h-10", baseUrl }) => {
 // Enhanced Tab Navigation with Sanga tabs
 const TabNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
-    { id: "lilas", label: "Modern Lilas", icon: FaBook, emoji: "📖" },
-    { id: "events", label: "Sacred Events", icon: FaCalendarAlt, emoji: "🎉" },
-    { id: "sanga", label: "My Sanga", icon: FaHandsHelping, emoji: "🙏" },
-    { id: "hotspots", label: "Hotspots", icon: FaMapMarkerAlt, emoji: "📍" },
+    { id: "lilas", label: "Posts", icon: FaBook },
+    { id: "events", label: "Events", icon: FaCalendarAlt },
+    { id: "sanga", label: "My Sanga", icon: FaHandsHelping },
+    { id: "hotspots", label: "Hotspots", icon: FaMapMarkerAlt },
   ];
 
   return (
     <div className="mb-6 sm:mb-8 px-4">
       <div className="flex justify-center">
-        <div className="backdrop-blur-md bg-white/10 rounded-full p-1 border border-white/20 w-full sm:w-auto">
-          <div className="flex">
+        <div className="backdrop-blur-xl bg-[#170726]/60 rounded-2xl p-1.5 border border-white/10 w-full sm:w-auto shadow-xl shadow-black/20">
+          <div className="flex gap-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -155,17 +166,15 @@ const TabNavigation = ({ activeTab, setActiveTab }) => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base ${
+                  className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base ${
                     isActive
-                      ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
-                      : "text-blue-100 hover:text-amber-300"
+                      ? "bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white shadow-lg shadow-fuchsia-500/25"
+                      : "text-slate-300 hover:text-fuchsia-300 hover:bg-white/5"
                   }`}
                 >
                   <Icon size={16} className="sm:w-5 sm:h-5" />
                   <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">
-                    {tab.emoji || tab.label.split(" ")[0]}
-                  </span>
+                  <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
                 </button>
               );
             })}
@@ -188,14 +197,26 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
   const fileInputRef = useRef(null);
 
   const RASAS = [
-    { id: "shanta", name: "Shanta", emoji: "🕊️", meaning: "Peace" },
-    { id: "dasya", name: "Dasya", emoji: "🙏", meaning: "Service" },
-    { id: "sakhya", name: "Sakhya", emoji: "🤝", meaning: "Friendship" },
-    { id: "vatsalya", name: "Vatsalya", emoji: "💛", meaning: "Parental Love" },
-    { id: "madhurya", name: "Madhurya", emoji: "💕", meaning: "Sweet Love" },
-    { id: "karuna", name: "Karuna", emoji: "💙", meaning: "Compassion" },
-    { id: "adbhuta", name: "Adbhuta", emoji: "✨", meaning: "Wonder" },
-    { id: "vira", name: "Vira", emoji: "⚔️", meaning: "Heroic" },
+    { id: "shanta", name: "Shanta", emoji: <FaDove />, meaning: "Peace" },
+    { id: "dasya", name: "Dasya", emoji: <FaPray />, meaning: "Service" },
+    {
+      id: "sakhya",
+      name: "Sakhya",
+      emoji: <FaHandsHelping />,
+      meaning: "Friendship",
+    },
+    {
+      id: "vatsalya",
+      name: "Vatsalya",
+      emoji: <FaHeart />,
+      meaning: "Parental Love",
+    },
+    {
+      id: "madhurya",
+      name: "Madhurya",
+      emoji: <FaHeart />,
+      meaning: "Sweet Love",
+    },
   ];
 
   const handleImageChange = (e) => {
@@ -268,17 +289,22 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
       </div>
 
       {/* Header - Sticky */}
-      <div className="sticky top-0 z-10 bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 border-b border-white/10">
+      <div
+        className="sticky top-0 z-10 p-4 border-b border-white/10"
+        style={{
+          background: "linear-gradient(135deg, #5b21b6, #7e22ce, #4c1d95)",
+        }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
-              <FaPen className="text-indigo-900" />
+            <div className="w-10 h-10 bg-gradient-to-r from-[#d946ef] to-[#63297D] rounded-xl flex items-center justify-center flex-shrink-0">
+              <FaPen className="text-white" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl font-bold text-amber-300 truncate">
-                Share Your Lila
+              <h2 className="text-lg sm:text-xl font-bold text-fuchsia-200 truncate">
+                Share Your Story
               </h2>
-              <p className="text-xs sm:text-sm text-blue-100/60">
+              <p className="text-xs sm:text-sm text-purple-200/60">
                 Share your divine story
               </p>
             </div>
@@ -292,48 +318,48 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
       </div>
 
-      {/* Form - Scrollable */}
+      {/* Form - Compact, Non-scrollable */}
       <form
         onSubmit={handleSubmit}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3"
       >
         {error && (
-          <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
+          <div className="p-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-xs sm:text-sm">
             {error}
           </div>
         )}
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-2">
-            Title of Your Lila
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
+            Title of Your Story
           </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g., The Day Krishna Answered My Prayer..."
-            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/20"
+            className="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm"
           />
         </div>
 
         {/* Content */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Your Divine Story
           </label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Share your experience of Krishna's grace in your life..."
-            rows={4}
-            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm resize-none"
+            rows={3}
+            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm resize-none"
           />
         </div>
 
         {/* Rasa Selection */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Spiritual Rasa (up to 3)
           </label>
           <div className="flex flex-wrap gap-1.5">
@@ -344,7 +370,7 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
                 onClick={() => handleRasaToggle(rasa.id)}
                 className={`px-2 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
                   selectedRasas.includes(rasa.id)
-                    ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
+                    ? "bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white"
                     : "bg-white/10 text-blue-100/70 active:bg-white/20"
                 }`}
               >
@@ -357,7 +383,7 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
 
         {/* Image Upload */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Add Image (optional)
           </label>
           <input
@@ -372,7 +398,7 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="w-full h-32 object-cover rounded-xl"
+                className="w-full max-h-64 object-contain rounded-xl bg-black/20"
               />
               <button
                 type="button"
@@ -380,7 +406,7 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
                   setImage(null);
                   setImagePreview(null);
                 }}
-                className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full"
+                className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full hover:bg-red-500 transition-colors"
               >
                 <FaTimes className="text-white" size={10} />
               </button>
@@ -389,22 +415,30 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-4 border-2 border-dashed border-white/20 rounded-xl active:border-amber-400/40 transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 border-2 border-dashed border-white/20 rounded-xl active:border-fuchsia-400/40 hover:border-white/30 transition-colors flex items-center justify-center gap-2"
             >
-              <FaImage className="text-xl text-blue-100/40" />
-              <span className="text-blue-100/60 text-sm">Upload image</span>
+              <FaImage className="text-base text-blue-100/40" />
+              <span className="text-blue-100/60 text-xs sm:text-sm">
+                Upload image
+              </span>
             </button>
           )}
         </div>
       </form>
 
       {/* Submit Button - Sticky at bottom */}
-      <div className="sticky bottom-0 p-4 bg-gradient-to-t from-indigo-900 via-indigo-900/95 to-transparent pt-6">
+      <div
+        className="sticky bottom-0 p-3 sm:p-4 pt-4 sm:pt-6 border-t border-white/10"
+        style={{
+          background:
+            "linear-gradient(to top, #4c1d95, #4c1d95ee, transparent)",
+        }}
+      >
         <button
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-xl font-bold text-base shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-xl font-bold text-sm sm:text-base shadow-lg shadow-fuchsia-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-fuchsia-500/30 transition-all"
         >
           {isSubmitting ? (
             <>
@@ -414,7 +448,7 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
           ) : (
             <>
               <FaFeatherAlt />
-              Share Lila
+              Share Story
             </>
           )}
         </button>
@@ -442,14 +476,14 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
   const fileInputRef = useRef(null);
 
   const EVENT_TYPES = [
-    { id: "kirtan", label: "Kirtan", emoji: "🎵" },
-    { id: "satsang", label: "Satsang", emoji: "🙏" },
-    { id: "prasadam", label: "Prasadam Distribution", emoji: "🍲" },
-    { id: "study", label: "Scripture Study", emoji: "📖" },
-    { id: "festival", label: "Festival", emoji: "🎉" },
-    { id: "seva", label: "Seva (Service)", emoji: "🤲" },
-    { id: "meditation", label: "Meditation", emoji: "🧘" },
-    { id: "other", label: "Other", emoji: "✨" },
+    { id: "kirtan", label: "Kirtan", emoji: <FaMusic /> },
+    { id: "satsang", label: "Satsang", emoji: <FaPray /> },
+    { id: "prasadam", label: "Prasadam Distribution", emoji: <FaUtensils /> },
+    { id: "study", label: "Scripture Study", emoji: <FaBook /> },
+    { id: "festival", label: "Festival", emoji: <IoSparkles /> },
+    { id: "seva", label: "Seva (Service)", emoji: <FaHandsHelping /> },
+    { id: "meditation", label: "Meditation", emoji: <GiMeditation /> },
+    { id: "other", label: "Other", emoji: <IoSparkles /> },
   ];
 
   const handleChange = (e) => {
@@ -533,17 +567,22 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
       </div>
 
       {/* Header - Sticky */}
-      <div className="sticky top-0 z-10 bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 border-b border-white/10">
+      <div
+        className="sticky top-0 z-10 p-4 border-b border-white/10"
+        style={{
+          background: "linear-gradient(135deg, #5b21b6, #7e22ce, #4c1d95)",
+        }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
-              <FaCalendarAlt className="text-indigo-900" />
+            <div className="w-10 h-10 bg-gradient-to-r from-[#d946ef] to-[#63297D] rounded-xl flex items-center justify-center flex-shrink-0">
+              <FaCalendarAlt className="text-white" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-lg sm:text-xl font-bold text-amber-300 truncate">
+              <h2 className="text-lg sm:text-xl font-bold text-fuchsia-200 truncate">
                 Create Event
               </h2>
-              <p className="text-xs sm:text-sm text-blue-100/60">
+              <p className="text-xs sm:text-sm text-purple-200/60">
                 Organize a gathering
               </p>
             </div>
@@ -557,20 +596,20 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
       </div>
 
-      {/* Form - Scrollable */}
+      {/* Form - Compact */}
       <form
         onSubmit={handleSubmit}
-        className="flex-1 overflow-y-auto p-4 space-y-3"
+        className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3"
       >
         {error && (
-          <div className="p-2.5 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
+          <div className="p-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-xs sm:text-sm">
             {error}
           </div>
         )}
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Event Title *
           </label>
           <input
@@ -579,13 +618,13 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
             value={formData.title}
             onChange={handleChange}
             placeholder="e.g., Sunday Kirtan Mela"
-            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm"
           />
         </div>
 
         {/* Event Type */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Event Type
           </label>
           <div className="grid grid-cols-4 gap-1.5">
@@ -598,7 +637,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
                 }
                 className={`px-1.5 py-2 rounded-lg text-xs font-medium transition-all flex flex-col items-center gap-0.5 ${
                   formData.eventType === type.id
-                    ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
+                    ? "bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white"
                     : "bg-white/10 text-blue-100/70 active:bg-white/20"
                 }`}
               >
@@ -613,7 +652,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Description *
           </label>
           <textarea
@@ -622,14 +661,14 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
             onChange={handleChange}
             placeholder="Describe your event..."
             rows={2}
-            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 resize-none text-sm"
+            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 resize-none text-sm"
           />
         </div>
 
         {/* Date & Duration - Side by side */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
               Date & Time *
             </label>
             <input
@@ -637,18 +676,18 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
               name="dateTime"
               value={formData.dateTime}
               onChange={handleChange}
-              className="w-full px-2 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-amber-400/50 text-sm"
+              className="w-full px-2 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-fuchsia-400/50 text-xs sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
               Duration
             </label>
             <select
               name="duration"
               value={formData.duration}
               onChange={handleChange}
-              className="w-full px-2 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-amber-400/50 text-sm"
+              className="w-full px-2 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 focus:outline-none focus:border-fuchsia-400/50 text-xs sm:text-sm"
             >
               <option value="30">30 min</option>
               <option value="60">1 hour</option>
@@ -661,9 +700,9 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
 
         {/* City & Max Participants */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
               City
             </label>
             <input
@@ -672,11 +711,11 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
               value={formData.city}
               onChange={handleChange}
               placeholder="Mumbai, NYC..."
-              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-amber-300 mb-1.5">
+            <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
               Max People
             </label>
             <input
@@ -685,14 +724,14 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
               value={formData.maxParticipants}
               onChange={handleChange}
               placeholder="Unlimited"
-              className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm"
             />
           </div>
         </div>
 
         {/* Address */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Address (optional)
           </label>
           <input
@@ -701,13 +740,13 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
             value={formData.address}
             onChange={handleChange}
             placeholder="Full venue address or 'Online'"
-            className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-amber-400/50 text-sm"
+            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm"
           />
         </div>
 
         {/* Image Upload - Compact */}
         <div>
-          <label className="block text-sm font-medium text-amber-300 mb-1.5">
+          <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Image (optional)
           </label>
           <input
@@ -722,7 +761,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="w-full h-24 object-cover rounded-xl"
+                className="w-full max-h-64 object-contain rounded-xl bg-black/20"
               />
               <button
                 type="button"
@@ -730,7 +769,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
                   setImage(null);
                   setImagePreview(null);
                 }}
-                className="absolute top-1.5 right-1.5 p-1.5 bg-red-500/80 rounded-full"
+                className="absolute top-1.5 right-1.5 p-1.5 bg-red-500/80 rounded-full hover:bg-red-500 transition-colors"
               >
                 <FaTimes className="text-white" size={10} />
               </button>
@@ -739,22 +778,30 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-3 border-2 border-dashed border-white/20 rounded-xl active:border-amber-400/40 transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 border-2 border-dashed border-white/20 rounded-xl active:border-fuchsia-400/40 hover:border-white/30 transition-colors flex items-center justify-center gap-2"
             >
-              <FaImage className="text-lg text-blue-100/40" />
-              <span className="text-blue-100/60 text-sm">Upload image</span>
+              <FaImage className="text-base text-blue-100/40" />
+              <span className="text-blue-100/60 text-xs sm:text-sm">
+                Upload image
+              </span>
             </button>
           )}
         </div>
       </form>
 
       {/* Submit Button - Sticky at bottom */}
-      <div className="sticky bottom-0 p-4 bg-gradient-to-t from-indigo-900 via-indigo-900/95 to-transparent pt-6">
+      <div
+        className="sticky bottom-0 p-3 sm:p-4 pt-4 sm:pt-6 border-t border-white/10"
+        style={{
+          background:
+            "linear-gradient(to top, #4c1d95, #4c1d95ee, transparent)",
+        }}
+      >
         <button
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-xl font-bold text-base shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-xl font-bold text-sm sm:text-base shadow-lg shadow-fuchsia-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-fuchsia-500/30 transition-all"
         >
           {isSubmitting ? (
             <>
@@ -787,10 +834,10 @@ const FloatingCreateButton = ({
     return (
       <button
         onClick={onCreateLila}
-        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-6 w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-xl shadow-amber-500/40 flex items-center justify-center z-[90] active:scale-90 transition-transform duration-150"
+        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-6 w-14 h-14 bg-gradient-to-r from-[#d946ef] to-[#63297D] rounded-full shadow-xl shadow-fuchsia-500/40 flex items-center justify-center z-[90] active:scale-90 transition-transform duration-150"
         style={{ touchAction: "manipulation" }}
       >
-        <FaPen className="text-indigo-900 text-xl" />
+        <FaPen className="text-white text-xl" />
       </button>
     );
   }
@@ -799,10 +846,10 @@ const FloatingCreateButton = ({
     return (
       <button
         onClick={onCreateEvent}
-        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-6 w-14 h-14 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-xl shadow-amber-500/40 flex items-center justify-center z-[90] active:scale-90 transition-transform duration-150"
+        className="fixed bottom-20 sm:bottom-8 right-4 sm:right-6 w-14 h-14 bg-gradient-to-r from-[#d946ef] to-[#63297D] rounded-full shadow-xl shadow-fuchsia-500/40 flex items-center justify-center z-[90] active:scale-90 transition-transform duration-150"
         style={{ touchAction: "manipulation" }}
       >
-        <FaPlus className="text-indigo-900 text-xl" />
+        <FaPlus className="text-white text-xl" />
       </button>
     );
   }
@@ -826,8 +873,8 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
 
   return (
     <div
-      className="animate-fadeInUp backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:border-amber-400/30 transition-all duration-300"
-      style={{ animationDelay: `${index * 0.1}s` }}
+      className="animate-fadeInUp backdrop-blur-xl bg-gradient-to-br from-white/[0.08] to-purple-900/40 rounded-2xl border border-white/[0.12] shadow-xl shadow-black/10 overflow-hidden hover:border-fuchsia-400/30 hover:shadow-fuchsia-500/5 transition-all duration-300"
+      style={{ animationDelay: `${index * 0.08}s` }}
     >
       {/* Header */}
       <div className="p-4 sm:p-6">
@@ -836,16 +883,16 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
             <Avatar
               user={post.author}
               baseUrl={baseUrl}
-              size="w-8 h-8 sm:w-10 sm:h-10"
+              size="w-9 h-9 sm:w-11 sm:h-11"
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2 flex-wrap">
-                <h3 className="font-bold text-amber-300 text-sm sm:text-base truncate">
+                <h3 className="font-semibold text-white text-sm sm:text-base truncate">
                   {post.author?.name || "Anonymous"}
                 </h3>
                 <UserBadge user={post.author} size="sm" />
               </div>
-              <div className="flex items-center space-x-2 text-blue-100/60 text-xs sm:text-sm">
+              <div className="flex items-center space-x-2 text-slate-400 text-xs sm:text-sm">
                 <FaClock size={10} />
                 <span>{formatTimeAgo(post.createdAt)}</span>
               </div>
@@ -855,10 +902,10 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
 
         {/* Content */}
         <div className="mt-4">
-          <h2 className="text-base sm:text-lg font-bold text-blue-100 mb-2">
+          <h2 className="text-base sm:text-lg font-bold text-white mb-2 leading-snug">
             {post.title}
           </h2>
-          <p className="text-blue-100/80 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-300 text-sm sm:text-[15px] leading-relaxed">
             {showFullContent || post.content.length <= 150
               ? post.content
               : `${post.content.substring(0, 150)}...`}
@@ -866,7 +913,7 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
           {post.content.length > 150 && (
             <button
               onClick={() => setShowFullContent(!showFullContent)}
-              className="text-amber-300 hover:text-amber-200 text-sm mt-2"
+              className="text-fuchsia-400 hover:text-fuchsia-300 text-sm mt-2 font-medium"
             >
               {showFullContent ? "Show less" : "Read more"}
             </button>
@@ -877,36 +924,34 @@ const PostCard = ({ post, user, onLike, baseUrl, index }) => {
         {post.image && (
           <div className="mt-4 -mx-4 sm:-mx-6">
             <img
-              src={
-                post.image.startsWith("http")
-                  ? post.image
-                  : baseUrl + post.image
-              }
+              src={post.image}
               alt="Post"
-              className="w-full h-48 sm:h-64 object-cover"
+              className="w-full object-contain max-h-96"
             />
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center space-x-4 sm:space-x-6 mt-4 pt-4 border-t border-white/10">
+        <div className="flex items-center space-x-1 sm:space-x-2 mt-4 pt-4 border-t border-white/[0.08]">
           <button
             onClick={() => onLike(post._id)}
             disabled={!user}
-            className={`flex items-center space-x-1 sm:space-x-2 text-sm ${
-              isLiked ? "text-red-500" : "text-blue-100/60"
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors duration-200 ${
+              isLiked
+                ? "text-rose-400 bg-rose-500/10"
+                : "text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
             }`}
           >
-            {isLiked ? <FaHeart size={16} /> : <FaRegHeart size={16} />}
-            <span>{post.likes?.length || 0}</span>
+            {isLiked ? <FaHeart size={15} /> : <FaRegHeart size={15} />}
+            <span className="font-medium">{post.likes?.length || 0}</span>
           </button>
-          <button className="flex items-center space-x-1 sm:space-x-2 text-blue-100/60 text-sm">
+          <button className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10 text-sm transition-colors duration-200">
             <FaComment size={14} />
-            <span>{post.comments?.length || 0}</span>
+            <span className="font-medium">{post.comments?.length || 0}</span>
           </button>
-          <button className="flex items-center space-x-1 sm:space-x-2 text-blue-100/60 text-sm">
+          <button className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 text-sm transition-colors duration-200">
             <FaShareAlt size={14} />
-            <span>Share</span>
+            <span className="font-medium">Share</span>
           </button>
         </div>
       </div>
@@ -960,7 +1005,7 @@ const EventCard = ({ event, user, baseUrl, index }) => {
         };
       case "ongoing":
         return {
-          text: "Join Live Event 🔴",
+          text: "Join Live Event",
           classes:
             "bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900 animate-pulse hover:shadow-green-500/30",
           disabled: false,
@@ -969,7 +1014,7 @@ const EventCard = ({ event, user, baseUrl, index }) => {
         return {
           text: "Join Event",
           classes:
-            "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 hover:shadow-amber-500/30",
+            "bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white hover:shadow-fuchsia-500/30",
           disabled: false,
         };
     }
@@ -979,8 +1024,8 @@ const EventCard = ({ event, user, baseUrl, index }) => {
 
   return (
     <div
-      className="animate-fadeInUp backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:border-amber-400/30 transition-all duration-300"
-      style={{ animationDelay: `${index * 0.1}s` }}
+      className="animate-fadeInUp backdrop-blur-xl bg-gradient-to-br from-white/[0.08] to-purple-900/40 rounded-2xl border border-white/[0.12] shadow-xl shadow-black/10 overflow-hidden hover:border-fuchsia-400/30 hover:shadow-fuchsia-500/5 transition-all duration-300"
+      style={{ animationDelay: `${index * 0.08}s` }}
     >
       <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between mb-4">
@@ -988,13 +1033,13 @@ const EventCard = ({ event, user, baseUrl, index }) => {
             <Avatar
               user={event.organizer}
               baseUrl={baseUrl}
-              size="w-8 h-8 sm:w-10 sm:h-10"
+              size="w-9 h-9 sm:w-11 sm:h-11"
             />
             <div>
-              <h4 className="font-semibold text-amber-300 text-sm sm:text-base">
+              <h4 className="font-semibold text-white text-sm sm:text-base">
                 {event.organizer?.name}
               </h4>
-              <p className="text-xs text-blue-100/60">Event Organizer</p>
+              <p className="text-xs text-slate-400">Event Organizer</p>
             </div>
           </div>
           {status === "ongoing" && (
@@ -1004,18 +1049,20 @@ const EventCard = ({ event, user, baseUrl, index }) => {
           )}
         </div>
 
-        <h3 className="text-base sm:text-lg font-bold text-blue-100 mb-2">
+        <h3 className="text-base sm:text-lg font-bold text-white mb-2 leading-snug">
           {event.title}
         </h3>
-        <p className="text-blue-100/80 text-sm mb-4">{event.description}</p>
+        <p className="text-slate-300 text-sm mb-4 leading-relaxed">
+          {event.description}
+        </p>
 
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center space-x-2 text-blue-100/70">
-            <FaCalendarAlt size={12} />
+        <div className="space-y-2.5 text-sm">
+          <div className="flex items-center space-x-2 text-slate-300">
+            <FaCalendarAlt size={12} className="text-fuchsia-400/70" />
             <span>{formatDate(event.dateTime)}</span>
           </div>
-          <div className="flex items-center space-x-2 text-blue-100/70">
-            <FaClock size={12} />
+          <div className="flex items-center space-x-2 text-slate-300">
+            <FaClock size={12} className="text-fuchsia-400/70" />
             <span>
               {event.duration ? `${event.duration} mins` : "Duration N/A"} •{" "}
               {status === "upcoming"
@@ -1025,12 +1072,12 @@ const EventCard = ({ event, user, baseUrl, index }) => {
                   : "Ended"}
             </span>
           </div>
-          <div className="flex items-center space-x-2 text-blue-100/70">
-            <FaMapMarkerAlt size={12} />
+          <div className="flex items-center space-x-2 text-slate-300">
+            <FaMapMarkerAlt size={12} className="text-cyan-400/70" />
             <span className="truncate">{event.location?.city || "Online"}</span>
           </div>
-          <div className="flex items-center space-x-2 text-blue-100/70">
-            <FaUsers size={12} />
+          <div className="flex items-center space-x-2 text-slate-300">
+            <FaUsers size={12} className="text-purple-400/70" />
             <span>{event.participants?.length || 0} participants</span>
           </div>
         </div>
@@ -1069,7 +1116,10 @@ function CommunityContent() {
     try {
       // Handle pagination structure
       const res = await axios.get(`${API}/blog?page=1&limit=20`); // Initial load
-      setPosts(res.data.posts || []);
+      const postsData = res.data.posts || [];
+      // Transform posts to have full URLs
+      const transformedPosts = postsData.map(transformPostData);
+      setPosts(transformedPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
       setPosts([]);
@@ -1136,47 +1186,62 @@ function CommunityContent() {
     }
   };
 
+  // Handle delete post
+  const handleDeletePost = (postId) => {
+    setPosts((prev) => prev.filter((p) => p._id !== postId));
+  };
+
+  // Handle edit post
+  const handleEditPost = (postId, updatedPost) => {
+    setPosts((prev) => prev.map((p) => (p._id === postId ? updatedPost : p)));
+  };
+
   if (loading || dataLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          background:
+            "radial-gradient(circle at center, #5b21b6 0%, #2e1065 50%, #170726 100%)",
+        }}
+      >
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-amber-300">Loading...</p>
+          <div className="w-10 h-10 border-3 border-fuchsia-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-300 text-sm">Loading community...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
-      <Navigation />
+    <div
+      className="min-h-screen"
+      style={{
+        background:
+          "radial-gradient(circle at center, #5b21b6 0%, #2e1065 50%, #170726 100%)",
+      }}
+    >
       <FloatingSacredElements />
 
       <div className="relative z-10 max-w-4xl mx-auto pt-20 sm:pt-24 pb-8">
         {/* Header */}
-        <div className="text-center mb-6 sm:mb-8 px-4">
-          <div className="inline-flex items-center space-x-2 sm:space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-3 sm:px-5 py-1.5 sm:py-2.5 mb-4 sm:mb-6">
-            <span className="text-amber-300 animate-pulse text-sm sm:text-lg">
-              ✦
-            </span>
-            <span className="text-amber-100 font-medium text-xs sm:text-sm">
+        <div className="text-center mb-8 sm:mb-10 px-4">
+          <div className="inline-flex items-center space-x-2 sm:space-x-3 bg-fuchsia-500/10 backdrop-blur-xl border border-fuchsia-400/20 rounded-full px-4 sm:px-5 py-2 sm:py-2.5 mb-5 sm:mb-6 shadow-lg shadow-fuchsia-500/5">
+            <span className="text-fuchsia-400 text-sm sm:text-base">✦</span>
+            <span className="text-fuchsia-200 font-medium text-xs sm:text-sm tracking-wide">
               कृष्णोवा समुदाय
             </span>
-            <span className="text-amber-300 animate-pulse text-sm sm:text-lg">
-              ✦
-            </span>
+            <span className="text-fuchsia-400 text-sm sm:text-base">✦</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-bold mb-2">
-            <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-              Krishna Sanga
-            </span>
+          <h1 className="text-3xl sm:text-5xl font-bold mb-3">
+            <span className="text-white">Krishna Sanga</span>
           </h1>
-          <p className="text-blue-100/80 text-sm sm:text-lg px-4">
+          <p className="text-slate-300 text-sm sm:text-lg px-4 max-w-xl mx-auto">
             {activeTab === "lilas"
-              ? "Share and discover modern divine stories"
+              ? "Share and discover divine stories"
               : activeTab === "events"
-                ? "Join sacred gatherings based on your level"
+                ? "Join sacred gatherings near you"
                 : activeTab === "sanga"
                   ? "Find souls on your spiritual wavelength"
                   : "Connect with devotees at sacred locations"}
@@ -1187,6 +1252,55 @@ function CommunityContent() {
         <div className="px-4 mb-6">
           <DevoteeLevelCard showProgress={true} />
         </div>
+
+        {/* Create Buttons - Premium Accessible Design */}
+        {user && (
+          <div className="px-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto">
+              <button
+                onClick={() => setShowCreateLila(true)}
+                className="group flex-1 relative overflow-hidden backdrop-blur-xl bg-gradient-to-r from-[#d946ef]/20 to-[#63297D]/20 hover:from-[#d946ef]/30 hover:to-[#63297D]/30 border border-fuchsia-400/30 hover:border-fuchsia-400/50 rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="absolute top-0 right-0 w-20 h-20 bg-fuchsia-400/10 rounded-full blur-2xl" />
+                <div className="relative flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#d946ef] to-[#63297D] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaPen className="text-white text-lg" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="text-white font-semibold text-base sm:text-lg">
+                      Share Your Story
+                    </h3>
+                    <p className="text-slate-300 text-xs sm:text-sm">
+                      Post a divine experience
+                    </p>
+                  </div>
+                  <IoSparkles className="text-fuchsia-400 text-xl opacity-60 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </button>
+
+              <button
+                onClick={() => setShowCreateEvent(true)}
+                className="group flex-1 relative overflow-hidden backdrop-blur-xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 hover:from-purple-500/30 hover:to-blue-500/30 border border-purple-400/30 hover:border-purple-400/50 rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <div className="absolute top-0 right-0 w-20 h-20 bg-purple-400/10 rounded-full blur-2xl" />
+                <div className="relative flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <FaCalendarAlt className="text-white text-lg" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="text-white font-semibold text-base sm:text-lg">
+                      Host Event
+                    </h3>
+                    <p className="text-slate-300 text-xs sm:text-sm">
+                      Organize a gathering
+                    </p>
+                  </div>
+                  <FaPray className="text-purple-400 text-xl opacity-60 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -1200,7 +1314,7 @@ function CommunityContent() {
               <div className="space-y-6 animate-fadeIn">
                 {/* Rasa Filter */}
                 <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/20 p-4">
-                  <h3 className="text-sm font-semibold text-amber-300 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-fuchsia-200 mb-3 flex items-center gap-2">
                     <FaBook />
                     Filter by Spiritual Rasa
                   </h3>
@@ -1231,18 +1345,20 @@ function CommunityContent() {
                         story={post}
                         user={user}
                         onLike={handleLike}
+                        onDelete={handleDeletePost}
+                        onEdit={handleEditPost}
                         baseUrl={baseUrl}
                         index={index}
                       />
                     ))
                 ) : (
-                  <div className="text-center py-12">
-                    <div className="text-6xl mb-4">📖</div>
-                    <p className="text-amber-300 text-lg">
-                      No Lilas shared yet
+                  <div className="text-center py-16">
+                    <FaBook className="text-5xl mb-4 mx-auto text-fuchsia-400/30" />
+                    <p className="text-white text-lg font-medium">
+                      No posts shared yet
                     </p>
-                    <p className="text-blue-100/60 mt-2">
-                      Be the first to share your divine story!
+                    <p className="text-slate-400 mt-2">
+                      Be the first to share your story!
                     </p>
                   </div>
                 )}
@@ -1264,13 +1380,13 @@ function CommunityContent() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12">
-                    <div className="text-6xl mb-4">📅</div>
-                    <p className="text-amber-300 text-lg">
+                  <div className="text-center py-16">
+                    <FaCalendarAlt className="text-5xl mb-4 mx-auto text-fuchsia-400/30" />
+                    <p className="text-white text-lg font-medium">
                       No events scheduled
                     </p>
-                    <p className="text-blue-100/60 mt-2">
-                      Check back soon for divine gatherings!
+                    <p className="text-slate-400 mt-2">
+                      Check back soon for upcoming events!
                     </p>
                   </div>
                 )}

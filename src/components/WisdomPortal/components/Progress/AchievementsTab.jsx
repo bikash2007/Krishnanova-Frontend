@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import YogaPracticeCards from "./YogaPracticeCards";
 import BhaktiPillars, { BHAKTI_PILLARS, DEVOTEE_STAGES } from "./BhaktiPillars";
 import LilaMap from "./LilaMap";
@@ -54,12 +53,12 @@ const AchievementsTab = ({
           <button
             key={view.id}
             onClick={() => setActiveView(view.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all active:scale-95 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all min-h-[44px] active:scale-95 ${
               activeView === view.id
                 ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg"
-                : "bg-white/10 text-blue-100/70 hover:bg-white/20"
+                : "bg-white/10 text-blue-100/70 md:hover:bg-white/20"
             }`}
-            style={{ touchAction: 'manipulation' }}
+            style={{ touchAction: "manipulation" }}
           >
             <Icon className="text-lg" />
             {view.label}
@@ -70,13 +69,7 @@ const AchievementsTab = ({
   );
 
   return (
-    <motion.div
-      key="achievements"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-4 md:space-y-6"
-    >
+    <div className="space-y-4 md:space-y-6" style={{ touchAction: "pan-y" }}>
       {/* Header with total progress */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -103,61 +96,40 @@ const AchievementsTab = ({
       <ViewToggle />
 
       {/* Content based on active view */}
-      <AnimatePresence mode="wait">
-        {activeView === "journey" && (
-          <motion.div
-            key="journey-view"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-          >
-            <LilaMap
-              totalProgress={
-                totalBhaktiProgress ||
-                Object.values(mappedBhaktiProgress).reduce((a, b) => a + b, 0)
-              }
-              isMobile={isMobile}
-            />
-          </motion.div>
-        )}
+      {activeView === "journey" && (
+        <div>
+          <LilaMap
+            totalProgress={
+              totalBhaktiProgress ||
+              Object.values(mappedBhaktiProgress).reduce((a, b) => a + b, 0)
+            }
+            isMobile={isMobile}
+          />
+        </div>
+      )}
 
-        {activeView === "pillars" && (
-          <motion.div
-            key="pillars-view"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-          >
-            <BhaktiPillars
-              progress={
-                Object.keys(mappedBhaktiProgress).length > 0
-                  ? mappedBhaktiProgress
-                  : bhaktiProgress
-              }
-              isMobile={isMobile}
-            />
-          </motion.div>
-        )}
+      {activeView === "pillars" && (
+        <div>
+          <BhaktiPillars
+            progress={
+              Object.keys(mappedBhaktiProgress).length > 0
+                ? mappedBhaktiProgress
+                : bhaktiProgress
+            }
+            isMobile={isMobile}
+          />
+        </div>
+      )}
 
-        {activeView === "legacy" && (
-          <motion.div
-            key="legacy-view"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-          >
-            <YogaPracticeCards practices={practices} isMobile={isMobile} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {activeView === "legacy" && (
+        <div>
+          <YogaPracticeCards practices={practices} isMobile={isMobile} />
+        </div>
+      )}
 
       {/* Achievements Grid */}
       {userStats.achievements.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-4 md:p-6"
-        >
+        <div className="bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl shadow-2xl border border-white/20 p-4 md:p-6">
           <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent mb-3 md:mb-4">
             Unlocked Achievements
           </h3>
@@ -165,8 +137,7 @@ const AchievementsTab = ({
             {userStats.achievements.map((achievement, index) => (
               <div
                 key={achievement.id || index}
-                className="text-center p-3 md:p-4 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-lg md:rounded-xl border border-amber-400/30 transition-transform hover:scale-105"
-                style={{ touchAction: 'manipulation' }}
+                className="text-center p-3 md:p-4 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-lg md:rounded-xl border border-amber-400/30 transition-transform md:hover:scale-105"
               >
                 <div className="text-2xl md:text-3xl mb-1 md:mb-2">
                   {achievement.icon}
@@ -187,9 +158,9 @@ const AchievementsTab = ({
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GiPrayerBeads } from "react-icons/gi";
+import { GiPrayerBeads, GiFeather, GiLotusFlower } from "react-icons/gi";
 import { IoCheckmark, IoArrowForward, IoArrowBack } from "react-icons/io5";
-import { FaOm } from "react-icons/fa";
+import { FaOm, FaPray, FaHeart } from "react-icons/fa";
 
 const MantraSetup = ({ onStart, onBack }) => {
   const [step, setStep] = useState(1); // 1: mantra type, 2: select mantra, 3: deity
@@ -28,9 +28,9 @@ const MantraSetup = ({ onStart, onBack }) => {
   ];
 
   const deities = [
-    { id: "krishna", name: "Krishna", emoji: "🦚" },
-    { id: "radha", name: "Radha", emoji: "🌺" },
-    { id: "radha-krishna", name: "Radha-Krishna", emoji: "💑" },
+    { id: "krishna", name: "Krishna", icon: <GiFeather /> },
+    { id: "radha", name: "Radha", icon: <GiLotusFlower /> },
+    { id: "radha-krishna", name: "Radha-Krishna", icon: <FaHeart /> },
   ];
 
   const canProceed = () => {
@@ -58,7 +58,7 @@ const MantraSetup = ({ onStart, onBack }) => {
   };
 
   return (
-    <div className="min-h-[60vh] max-h-[90vh] bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col overflow-hidden">
+    <div className="min-h-[calc(var(--app-height)*0.6)] max-h-[calc(var(--app-height)*0.9)] bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="bg-black/20 px-4 py-3 flex items-center justify-between border-b border-white/10">
         <button
@@ -159,7 +159,7 @@ const MantraSetup = ({ onStart, onBack }) => {
                     <div
                       className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl ${config.hasPersonalMantra ? "bg-amber-400/30" : "bg-white/10"}`}
                     >
-                      🙏
+                      <FaPray className="text-amber-300 text-2xl" />
                     </div>
                     <div className="flex-1">
                       <p className="font-semibold text-white text-lg">
@@ -235,7 +235,7 @@ const MantraSetup = ({ onStart, onBack }) => {
                         <div
                           className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 ${config.mantra === mantra.text ? "bg-amber-400/30" : "bg-white/10"}`}
                         >
-                          📿
+                          <GiPrayerBeads className="text-amber-300" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-white">
@@ -287,7 +287,7 @@ const MantraSetup = ({ onStart, onBack }) => {
                     whileTap={{ scale: 0.95 }}
                   >
                     <div className="text-5xl sm:text-6xl mb-3">
-                      {deity.emoji}
+                      {deity.icon}
                     </div>
                     <p
                       className={`font-semibold text-sm ${config.deity === deity.id ? "text-amber-200" : "text-white"}`}

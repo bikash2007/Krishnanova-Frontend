@@ -1,5 +1,36 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { PeacockFeatherSVG } from "../UI/Svg";
+import {
+  FaOm,
+  FaHeart,
+  FaMoon,
+  FaMusic,
+  FaMountain,
+  FaChild,
+  FaStar,
+  FaGlobe,
+  FaShieldAlt,
+  FaPray,
+  FaCrown,
+  FaRunning,
+  FaLandmark,
+  FaHome,
+  FaSearch,
+  FaTheaterMasks,
+  FaDharmachakra,
+  FaCloudRain,
+} from "react-icons/fa";
+import {
+  GiFlute,
+  GiFeather,
+  GiLotusFlower,
+  GiCandleLight,
+  GiPrayerBeads,
+  GiCow,
+  GiRopeCoil,
+  GiBowArrow,
+} from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 
 const KrishnaNames = () => {
   const sectionRef = useRef(null);
@@ -11,7 +42,6 @@ const KrishnaNames = () => {
     }
     return "grid";
   });
-  const [selectedName, setSelectedName] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
@@ -56,7 +86,7 @@ const KrishnaNames = () => {
       sanskrit: "गोविन्द",
       description: "The divine protector who tends to all beings with love",
       mantra: "ॐ गोविन्दाय नमः",
-      icon: "🐄",
+      icon: <GiCow />,
       category: "divine",
     },
     {
@@ -66,7 +96,7 @@ const KrishnaNames = () => {
       sanskrit: "लड्डू गोपाल",
       description: "The adorable child form who loves sweet offerings",
       mantra: "ॐ बाल गोपालाय नमः",
-      icon: "🍯",
+      icon: <FaHeart />,
       category: "child",
     },
     {
@@ -76,7 +106,7 @@ const KrishnaNames = () => {
       sanskrit: "राधा रमण",
       description: "The eternal lover, embodiment of divine romance",
       mantra: "ॐ राधा रमणाय नमः",
-      icon: "💕",
+      icon: <FaHeart />,
       category: "love",
     },
     {
@@ -86,7 +116,7 @@ const KrishnaNames = () => {
       sanskrit: "कन्हैया",
       description: "The mischievous divine child full of joy",
       mantra: "ॐ कन्हैयाय नमः",
-      icon: "🎭",
+      icon: <FaTheaterMasks />,
       category: "child",
     },
     {
@@ -96,7 +126,7 @@ const KrishnaNames = () => {
       sanskrit: "कान्हा",
       description: "The enchanting dark-complexioned lord",
       mantra: "ॐ कान्हाय नमः",
-      icon: "🌙",
+      icon: <FaMoon />,
       category: "beauty",
     },
     {
@@ -106,7 +136,7 @@ const KrishnaNames = () => {
       sanskrit: "हरि",
       description: "The compassionate one who removes all suffering",
       mantra: "ॐ हरये नमः",
-      icon: "✨",
+      icon: <IoSparkles />,
       category: "divine",
     },
     {
@@ -116,7 +146,7 @@ const KrishnaNames = () => {
       sanskrit: "बांके बिहारी",
       description: "The graceful one with the iconic tribhanga pose",
       mantra: "ॐ बांके बिहारीये नमः",
-      icon: "🪈",
+      icon: <GiFlute />,
       category: "divine",
     },
     {
@@ -126,7 +156,7 @@ const KrishnaNames = () => {
       sanskrit: "श्याम",
       description: "The mesmerizing dark-hued divine beauty",
       mantra: "ॐ श्यामाय नमः",
-      icon: "🦚",
+      icon: <GiFeather />,
       category: "beauty",
     },
     {
@@ -136,7 +166,7 @@ const KrishnaNames = () => {
       sanskrit: "माधव",
       description: "The spring of sweetness and divine nectar",
       mantra: "ॐ माधवाय नमः",
-      icon: "🌺",
+      icon: <GiLotusFlower />,
       category: "divine",
     },
     // Additional Names
@@ -147,7 +177,7 @@ const KrishnaNames = () => {
       sanskrit: "मुरलीधर",
       description: "The divine musician whose flute enchants all creation",
       mantra: "ॐ मुरलीधराय नमः",
-      icon: "🎵",
+      icon: <FaMusic />,
       category: "divine",
     },
     {
@@ -157,7 +187,7 @@ const KrishnaNames = () => {
       sanskrit: "गिरिधर",
       description: "The one who lifted Govardhan to protect devotees",
       mantra: "ॐ गिरिधराय नमः",
-      icon: "⛰️",
+      icon: <FaMountain />,
       category: "divine",
     },
     {
@@ -167,7 +197,7 @@ const KrishnaNames = () => {
       sanskrit: "दामोदर",
       description: "Bound by mother Yashoda's love and devotion",
       mantra: "ॐ दामोदराय नमः",
-      icon: "🪢",
+      icon: <GiRopeCoil />,
       category: "child",
     },
     {
@@ -177,7 +207,7 @@ const KrishnaNames = () => {
       sanskrit: "गोपाल",
       description: "The divine cowherd who protects and nurtures",
       mantra: "ॐ गोपालाय नमः",
-      icon: "🐮",
+      icon: <GiCow />,
       category: "child",
     },
     {
@@ -187,7 +217,7 @@ const KrishnaNames = () => {
       sanskrit: "नन्दकुमार",
       description: "The beloved son who brought joy to Nanda",
       mantra: "ॐ नन्दकुमाराय नमः",
-      icon: "👶",
+      icon: <FaChild />,
       category: "child",
     },
     {
@@ -197,7 +227,7 @@ const KrishnaNames = () => {
       sanskrit: "वासुदेव",
       description: "The supreme being, son of Vasudeva",
       mantra: "ॐ वासुदेवाय नमः",
-      icon: "🌟",
+      icon: <FaStar />,
       category: "divine",
     },
     {
@@ -207,7 +237,7 @@ const KrishnaNames = () => {
       sanskrit: "जगन्नाथ",
       description: "The supreme lord of all creation",
       mantra: "ॐ जगन्नाथाय नमः",
-      icon: "🌍",
+      icon: <FaGlobe />,
       category: "divine",
     },
     {
@@ -217,7 +247,7 @@ const KrishnaNames = () => {
       sanskrit: "माखन चोर",
       description: "The mischievous child who steals butter and hearts",
       mantra: "ॐ माखन चोराय नमः",
-      icon: "🧈",
+      icon: <FaChild />,
       category: "child",
     },
     {
@@ -227,7 +257,7 @@ const KrishnaNames = () => {
       sanskrit: "मोहन",
       description: "The one who enchants and captivates all minds",
       mantra: "ॐ मोहनाय नमः",
-      icon: "💫",
+      icon: <IoSparkles />,
       category: "beauty",
     },
     {
@@ -237,7 +267,7 @@ const KrishnaNames = () => {
       sanskrit: "केशव",
       description: "The lord with beautiful, flowing locks",
       mantra: "ॐ केशवाय नमः",
-      icon: "💇",
+      icon: <FaStar />,
       category: "beauty",
     },
     {
@@ -247,7 +277,7 @@ const KrishnaNames = () => {
       sanskrit: "अच्युत",
       description: "The one who never fails or falls",
       mantra: "ॐ अच्युताय नमः",
-      icon: "🛡️",
+      icon: <FaShieldAlt />,
       category: "divine",
     },
     {
@@ -257,7 +287,7 @@ const KrishnaNames = () => {
       sanskrit: "नारायण",
       description: "The ultimate refuge and shelter for all souls",
       mantra: "ॐ नारायणाय नमः",
-      icon: "🙏",
+      icon: <FaPray />,
       category: "divine",
     },
     {
@@ -267,7 +297,7 @@ const KrishnaNames = () => {
       sanskrit: "पुरुषोत्तम",
       description: "The highest among all beings",
       mantra: "ॐ पुरुषोत्तमाय नमः",
-      icon: "👑",
+      icon: <FaCrown />,
       category: "divine",
     },
     {
@@ -277,7 +307,7 @@ const KrishnaNames = () => {
       sanskrit: "रणछोड़",
       description: "The strategic one who fled battle to protect devotees",
       mantra: "ॐ रणछोड़ाय नमः",
-      icon: "🏃",
+      icon: <FaRunning />,
       category: "divine",
     },
     {
@@ -287,7 +317,7 @@ const KrishnaNames = () => {
       sanskrit: "द्वारकाधीश",
       description: "The majestic ruler of the golden city Dwarka",
       mantra: "ॐ द्वारकाधीशाय नमः",
-      icon: "🏰",
+      icon: <FaLandmark />,
       category: "divine",
     },
     {
@@ -297,7 +327,7 @@ const KrishnaNames = () => {
       sanskrit: "पार्थसारथी",
       description: "The divine guide who drove Arjuna's chariot",
       mantra: "ॐ पार्थसारथये नमः",
-      icon: "🏹",
+      icon: <GiBowArrow />,
       category: "divine",
     },
     {
@@ -307,7 +337,7 @@ const KrishnaNames = () => {
       sanskrit: "गोकुलनाथ",
       description: "The beloved lord of Gokul village",
       mantra: "ॐ गोकुलनाथाय नमः",
-      icon: "🏡",
+      icon: <FaHome />,
       category: "child",
     },
     {
@@ -317,7 +347,7 @@ const KrishnaNames = () => {
       sanskrit: "रासबिहारी",
       description: "The one who performs the divine Raas Leela",
       mantra: "ॐ रासबिहारीये नमः",
-      icon: "💃",
+      icon: <FaMusic />,
       category: "love",
     },
     {
@@ -327,7 +357,7 @@ const KrishnaNames = () => {
       sanskrit: "राधेश्याम",
       description: "The eternal consort of Radha",
       mantra: "ॐ राधेश्यामाय नमः",
-      icon: "💑",
+      icon: <FaHeart />,
       category: "love",
     },
     {
@@ -337,7 +367,7 @@ const KrishnaNames = () => {
       sanskrit: "घनश्याम",
       description: "Beautiful as the dark monsoon clouds",
       mantra: "ॐ घनश्यामाय नमः",
-      icon: "🌧️",
+      icon: <FaCloudRain />,
       category: "beauty",
     },
     {
@@ -347,7 +377,7 @@ const KrishnaNames = () => {
       sanskrit: "पीताम्बर",
       description: "The resplendent one in golden yellow garments",
       mantra: "ॐ पीताम्बराय नमः",
-      icon: "💛",
+      icon: <FaStar />,
       category: "beauty",
     },
     {
@@ -357,7 +387,7 @@ const KrishnaNames = () => {
       sanskrit: "मुरारी",
       description: "The victorious one who defeated demon Mura",
       mantra: "ॐ मुरारये नमः",
-      icon: "⚔️",
+      icon: <FaShieldAlt />,
       category: "divine",
     },
     {
@@ -367,7 +397,7 @@ const KrishnaNames = () => {
       sanskrit: "नन्दलाला",
       description: "The cherished darling child of Nanda",
       mantra: "ॐ नन्दलालाय नमः",
-      icon: "🌸",
+      icon: <GiLotusFlower />,
       category: "child",
     },
     {
@@ -377,7 +407,7 @@ const KrishnaNames = () => {
       sanskrit: "यशोदा नन्दन",
       description: "The beloved son who brought joy to mother Yashoda",
       mantra: "ॐ यशोदानन्दनाय नमः",
-      icon: "👩‍👦",
+      icon: <FaHeart />,
       category: "child",
     },
     {
@@ -387,7 +417,7 @@ const KrishnaNames = () => {
       sanskrit: "वृन्दावनचन्द्र",
       description: "The luminous moon who lights up Vrindavan",
       mantra: "ॐ वृन्दावनचन्द्राय नमः",
-      icon: "🌕",
+      icon: <FaMoon />,
       category: "beauty",
     },
     {
@@ -397,7 +427,7 @@ const KrishnaNames = () => {
       sanskrit: "मदन मोहन",
       description: "The one whose beauty enchants even Kamadeva",
       mantra: "ॐ मदनमोहनाय नमः",
-      icon: "💘",
+      icon: <FaHeart />,
       category: "love",
     },
     {
@@ -407,17 +437,17 @@ const KrishnaNames = () => {
       sanskrit: "चक्रधारी",
       description: "The wielder of the divine Sudarshana Chakra",
       mantra: "ॐ चक्रधारीणे नमः",
-      icon: "☸️",
+      icon: <FaDharmachakra />,
       category: "divine",
     },
   ];
 
   const categories = [
-    { id: "all", label: "All Names", icon: "🕉️" },
-    { id: "divine", label: "Divine Forms", icon: "✨" },
-    { id: "child", label: "Child Krishna", icon: "👶" },
-    { id: "beauty", label: "Beauty", icon: "🦚" },
-    { id: "love", label: "Divine Love", icon: "💕" },
+    { id: "all", label: "All Names", icon: <FaOm /> },
+    { id: "divine", label: "Divine Forms", icon: <IoSparkles /> },
+    { id: "child", label: "Child Krishna", icon: <FaChild /> },
+    { id: "beauty", label: "Beauty", icon: <GiFeather /> },
+    { id: "love", label: "Divine Love", icon: <FaHeart /> },
   ];
 
   const filteredNames = useMemo(() => {
@@ -441,13 +471,6 @@ const KrishnaNames = () => {
       mobileIcon: "⊞",
     },
     {
-      id: "circle",
-      icon: "☸",
-      label: "Mandala",
-      fullLabel: "Mandala View",
-      mobileIcon: "☸",
-    },
-    {
       id: "list",
       icon: "☰",
       label: "List",
@@ -457,15 +480,14 @@ const KrishnaNames = () => {
   ];
 
   return (
-    <section className="relative  min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden">
-      {/* Animated Mandala Background - simplified on mobile */}
+    <section className="relative md:min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden">
+      {/* Static Mandala Background */}
       <div
         className="absolute inset-0 opacity-10 sm:opacity-15 md:opacity-20"
         style={{
           backgroundImage:
             "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
           backgroundSize: isMobile ? "20px 20px" : "30px 30px",
-          animation: isMobile ? "none" : "float 20s linear infinite",
         }}
       />
 
@@ -483,41 +505,29 @@ const KrishnaNames = () => {
         />
       )} */}
 
-      {/* Floating Orbs - reduced on mobile */}
-      <div className="absolute inset-0">
-        {[...Array(isMobile ? 2 : 5)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-float-slow"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${i * 2}s`,
-            }}
-          >
-            <div
-              className={`${
-                isMobile ? "w-20 h-20" : "w-32 h-32"
-              } bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-full blur-xl`}
-            />
-          </div>
-        ))}
+      {/* Static Orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute w-32 h-32 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-full blur-xl"
+          style={{ left: "10%", top: "20%" }}
+        />
+        <div
+          className="absolute w-32 h-32 bg-gradient-to-br from-amber-400/10 to-orange-500/10 rounded-full blur-xl"
+          style={{ left: "80%", top: "60%" }}
+        />
       </div>
 
       <div className="relative z-10 container mx-auto px-3 sm:px-6 py-4 sm:py-8">
+        <PeacockFeatherSVG className="absolute w-48 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-30" />
         {/* Header Section */}
         <div className="text-center mb-4 sm:mb-8 md:mb-12">
           {/* Sacred Badge */}
           <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 shadow-lg mb-3 sm:mb-5">
-            <span className="text-amber-300 animate-pulse text-xs sm:text-sm">
-              ✦
-            </span>
+            <span className="text-amber-300 text-xs sm:text-sm">✦</span>
             <span className="text-amber-100 font-medium tracking-wide text-[11px] sm:text-sm">
               {filteredNames.length} Divine Names
             </span>
-            <span className="text-amber-300 animate-pulse text-xs sm:text-sm">
-              ✦
-            </span>
+            <span className="text-amber-300 text-xs sm:text-sm">✦</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3 leading-tight">
@@ -531,7 +541,7 @@ const KrishnaNames = () => {
           </p>
 
           <div className="flex items-center justify-center space-x-2 text-amber-200/60 text-[10px] sm:text-xs mt-2 sm:mt-3">
-            <span>🪔</span>
+            <GiCandleLight className="inline" />
             <span className="italic hidden sm:inline">
               "Sahasranāmatatulyam Rāmanāma Varānane" - Vishnu Sahasranama
             </span>
@@ -549,9 +559,7 @@ const KrishnaNames = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2.5 sm:py-3 pl-10 sm:pl-12 bg-white/10 backdrop-blur-md border border-amber-400/30 rounded-full text-amber-100 placeholder-amber-200/50 focus:outline-none focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/20 transition-all duration-300 text-xs sm:text-sm"
             />
-            <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-amber-300 text-sm sm:text-base">
-              🔍
-            </span>
+            <FaSearch className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-amber-300 text-sm sm:text-base" />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
@@ -620,24 +628,24 @@ const KrishnaNames = () => {
         {/* Stats bar */}
         <div className="flex justify-center items-center gap-3 sm:gap-6 mb-3 sm:mb-5 text-[10px] sm:text-xs">
           <div className="flex items-center gap-1.5 text-amber-200/60">
-            <span className="text-amber-400 text-sm">📿</span>
+            <GiPrayerBeads className="text-amber-400 text-sm" />
             <span>{krishnaNames.length} Total Names</span>
           </div>
           {searchQuery || activeCategory !== "all" ? (
             <div className="flex items-center gap-2 text-cyan-300/60">
-              <span>🔍</span>
+              <FaSearch className="inline" />
               <span>{filteredNames.length} Showing</span>
             </div>
           ) : null}
         </div>
 
         {/* Names Display */}
-        <AnimatePresence>
+        <>
           {viewMode === "grid" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
               {filteredNames.length === 0 ? (
                 <div className="col-span-full text-center py-12">
-                  <span className="text-4xl mb-4 block">🔍</span>
+                  <FaSearch className="text-4xl mb-4 mx-auto text-amber-300/60" />
                   <p className="text-amber-200/60">
                     No names found. Try a different search.
                   </p>
@@ -650,9 +658,8 @@ const KrishnaNames = () => {
                   ).map((item, index) => (
                     <div
                       key={item.id}
-                      className="group relative backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-5 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 cursor-pointer overflow-hidden will-change-transform hover:scale-[1.02] hover:-translate-y-1"
+                      className="group relative backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-5 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden will-change-transform hover:scale-[1.02] hover:-translate-y-1"
                       style={{ transform: "translate3d(0, 0, 0)" }}
-                      onClick={() => setSelectedName(item)}
                     >
                       {/* Glow effect on hover */}
                       <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 will-change-opacity" />
@@ -709,7 +716,7 @@ const KrishnaNames = () => {
                           onClick={() => setShowAllNames(true)}
                           className="px-8 py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/40 rounded-xl text-amber-200 font-medium text-sm flex items-center gap-2 hover:border-amber-400/60 hover:scale-105 transition-all duration-300"
                         >
-                          <span>📿</span>
+                          <GiPrayerBeads className="inline" />
                           <span>
                             View All {filteredNames.length} Divine Names
                           </span>
@@ -736,92 +743,11 @@ const KrishnaNames = () => {
             </div>
           )}
 
-          {viewMode === "circle" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="relative h-[320px] sm:h-[450px] lg:h-[550px] flex items-center justify-center"
-            >
-              {/* Center Krishna Symbol */}
-              <div className="absolute w-20 h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-gradient-to-br from-indigo-900/90 via-purple-900/90 to-blue-900/90 backdrop-blur-xl rounded-full shadow-2xl flex flex-col items-center justify-center border-2 border-amber-400/50 z-20">
-                <span className="text-3xl sm:text-5xl lg:text-6xl">🦚</span>
-                <span className="text-amber-200 font-sanskrit text-xs sm:text-base lg:text-lg mt-0.5 sm:mt-1">
-                  कृष्ण
-                </span>
-                <span className="text-amber-200/60 text-[9px] sm:text-xs mt-0.5">
-                  {filteredNames.length} names
-                </span>
-              </div>
-
-              {/* Rotating circles */}
-              <div className="absolute w-52 sm:w-80 lg:w-[420px] h-52 sm:h-80 lg:h-[420px] rounded-full border border-amber-400/20 animate-spin-very-slow" />
-              <div className="absolute w-44 sm:w-64 lg:w-80 h-44 sm:h-64 lg:h-80 rounded-full border border-cyan-400/20 animate-spin-reverse-slow" />
-
-              {/* Names in circle - show first 12 for mandala view */}
-              {filteredNames.slice(0, isMobile ? 8 : 12).map((item, index) => {
-                const totalItems = isMobile ? 8 : 12;
-                const angle = (index * 360) / totalItems - 90;
-                const radius = isMobile
-                  ? 115
-                  : window.innerWidth < 768
-                    ? 160
-                    : 200;
-                const x = Math.cos((angle * Math.PI) / 180) * radius;
-                const y = Math.sin((angle * Math.PI) / 180) * radius;
-
-                return (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      x,
-                      y,
-                    }}
-                    transition={{
-                      delay: index * 0.1,
-                      type: "spring",
-                      stiffness: 100,
-                    }}
-                    className="absolute w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-full shadow-xl p-1.5 sm:p-2 border border-white/20 hover:border-amber-400/50 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center group will-change-transform hover:scale-110 hover:z-30"
-                    style={{ transform: "translate3d(0, 0, 0)" }}
-                    onClick={() => setSelectedName(item)}
-                  >
-                    <span className="text-lg sm:text-xl lg:text-2xl group-hover:scale-110 transition-transform duration-200 will-change-transform">
-                      {item.icon}
-                    </span>
-                    <span className="text-amber-300 font-bold text-[8px] sm:text-[10px] hidden sm:block">
-                      {item.sanskrit}
-                    </span>
-                    <span className="text-blue-100 text-[8px] sm:text-[10px] mt-0.5 leading-tight">
-                      {item.name}
-                    </span>
-                  </motion.div>
-                );
-              })}
-
-              {/* Note if more names available */}
-              {filteredNames.length > (isMobile ? 8 : 12) && (
-                <div className="absolute bottom-0 text-center text-amber-200/60 text-sm">
-                  Switch to Grid or List view to see all {filteredNames.length}{" "}
-                  names
-                </div>
-              )}
-            </motion.div>
-          )}
-
           {viewMode === "list" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="max-w-4xl mx-auto space-y-2 sm:space-y-3"
-            >
+            <div className="max-w-4xl mx-auto space-y-2 sm:space-y-3">
               {filteredNames.length === 0 ? (
                 <div className="text-center py-12">
-                  <span className="text-4xl mb-4 block">🔍</span>
+                  <FaSearch className="text-4xl mb-4 mx-auto text-amber-300/60" />
                   <p className="text-amber-200/60">
                     No names found. Try a different search.
                   </p>
@@ -832,13 +758,9 @@ const KrishnaNames = () => {
                     ? filteredNames
                     : filteredNames.slice(0, 5)
                   ).map((item, index) => (
-                    <motion.div
+                    <div
                       key={item.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                      className="group backdrop-blur-sm bg-gradient-to-r from-white/10 to-white/5 rounded-xl p-3 sm:p-4 border border-white/20 hover:border-amber-400/50 transition-all duration-300 cursor-pointer flex items-center gap-3 sm:gap-4"
-                      onClick={() => setSelectedName(item)}
+                      className="group backdrop-blur-sm bg-gradient-to-r from-white/10 to-white/5 rounded-xl p-3 sm:p-4 border border-white/20 hover:border-amber-400/50 transition-all duration-300 flex items-center gap-3 sm:gap-4"
                     >
                       {/* Number */}
                       <div className="flex-shrink-0 w-7 h-7 sm:w-9 sm:h-9 bg-amber-400/20 rounded-full flex items-center justify-center text-amber-300 font-bold text-xs sm:text-sm">
@@ -864,68 +786,48 @@ const KrishnaNames = () => {
                           {item.meaning}
                         </p>
                       </div>
-
-                      {/* Arrow */}
-                      <div className="flex-shrink-0 text-amber-300/50 group-hover:text-amber-300 group-hover:translate-x-1 transition-all duration-300 text-sm">
-                        →
-                      </div>
-                    </motion.div>
+                    </div>
                   ))}
 
                   {/* View All Names Button - Works on all screen sizes */}
                   {filteredNames.length > 5 && !showAllNames && (
-                    <motion.button
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
+                    <button
                       onClick={() => setShowAllNames(true)}
                       className="w-full mt-3 py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/40 rounded-xl text-amber-200 font-medium text-sm flex items-center justify-center gap-2 hover:border-amber-400/60 transition-all duration-300"
                     >
-                      <span>📿</span>
+                      <GiPrayerBeads className="inline" />
                       <span>View All {filteredNames.length} Divine Names</span>
                       <span>↓</span>
-                    </motion.button>
+                    </button>
                   )}
 
                   {/* Collapse button when showing all */}
                   {showAllNames && filteredNames.length > 5 && (
-                    <motion.button
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
+                    <button
                       onClick={() => setShowAllNames(false)}
                       className="w-full mt-3 py-3 bg-gradient-to-r from-purple-500/20 to-indigo-500/20 backdrop-blur-md border border-purple-400/40 rounded-xl text-purple-200 font-medium text-sm flex items-center justify-center gap-2 hover:border-purple-400/60 transition-all duration-300"
                     >
                       <span>↑</span>
                       <span>Show Less</span>
-                    </motion.button>
+                    </button>
                   )}
                 </>
               )}
-            </motion.div>
+            </div>
           )}
 
           {viewMode === "cards" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="max-w-4xl mx-auto"
-            >
+            <div className="max-w-4xl mx-auto">
               {filteredNames.length === 0 ? (
                 <div className="text-center py-12">
-                  <span className="text-4xl mb-4 block">🔍</span>
+                  <FaSearch className="text-4xl mb-4 mx-auto text-amber-300/60" />
                   <p className="text-amber-200/60">
                     No names found. Try a different search.
                   </p>
                 </div>
               ) : (
                 filteredNames.map((item, index) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.15 }}
-                    className="mb-4 sm:mb-5 md:mb-6"
-                  >
+                  <div key={item.id} className="mb-4 sm:mb-5 md:mb-6">
                     <div
                       className="group relative backdrop-blur-sm bg-gradient-to-br from-white/10 to-white/5 rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-6 md:p-8 border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden will-change-transform"
                       style={{ transform: "translate3d(0, 0, 0)" }}
@@ -963,7 +865,7 @@ const KrishnaNames = () => {
                           </p>
 
                           <div className="flex items-center gap-2 text-amber-200/60 text-xs sm:text-sm">
-                            <span>📿</span>
+                            <GiPrayerBeads className="inline" />
                             <span className="font-sanskrit italic">
                               {item.mantra}
                             </span>
@@ -971,105 +873,13 @@ const KrishnaNames = () => {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))
               )}
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
-
-        {/* Selected Name Modal */}
-        <AnimatePresence>
-          {selectedName && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4 sm:p-6"
-              onClick={() => setSelectedName(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                className="bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-md w-full border-2 border-amber-400/50 shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="text-center">
-                  <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">
-                    {selectedName.icon}
-                  </div>
-                  <h2 className="text-3xl sm:text-4xl font-bold text-amber-300 mb-1.5 sm:mb-2">
-                    {selectedName.sanskrit}
-                  </h2>
-                  <h3 className="text-xl sm:text-2xl text-blue-100 mb-3 sm:mb-4">
-                    {selectedName.name}
-                  </h3>
-                  <p className="text-cyan-300 text-base sm:text-lg mb-3 sm:mb-4">
-                    {selectedName.meaning}
-                  </p>
-                  <p className="text-blue-200/80 mb-4 sm:mb-6 text-sm sm:text-base">
-                    {selectedName.description}
-                  </p>
-                  <div className="bg-white/5 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
-                    <p className="text-amber-200 font-sanskrit text-base sm:text-lg">
-                      {selectedName.mantra}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setSelectedName(null)}
-                    className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 font-bold rounded-full hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300 text-sm sm:text-base"
-                  >
-                    Close
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </>
       </div>
-
-      {/* Custom CSS for animations */}
-      <style jsx="true">{`
-        @keyframes float {
-          0% {
-            transform: translate(0, 0);
-          }
-          100% {
-            transform: translate(30px, 30px);
-          }
-        }
-
-        @keyframes spin-very-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @keyframes spin-reverse-slow {
-          from {
-            transform: rotate(360deg);
-          }
-          to {
-            transform: rotate(0deg);
-          }
-        }
-
-        .animate-spin-very-slow {
-          animation: spin-very-slow 60s linear infinite;
-        }
-
-        .animate-spin-reverse-slow {
-          animation: spin-reverse-slow 45s linear infinite;
-        }
-
-        .animate-float-slow {
-          animation: float 20s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
 };

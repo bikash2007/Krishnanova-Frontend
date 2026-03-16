@@ -34,7 +34,7 @@ const GitaManager = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#151922] to-[#1a1f2e] p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -43,29 +43,29 @@ const GitaManager = () => {
             animate={{ scale: 1 }}
             className="inline-block mb-4"
           >
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-2xl">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#01abfd] to-[#10b981] flex items-center justify-center shadow-2xl">
               <GiWhiteBook className="text-4xl text-white" />
             </div>
           </motion.div>
-          <h1 className="text-4xl md:text-5xl font-bold text-amber-200 mb-3">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#01abfd] to-[#10b981] bg-clip-text text-transparent mb-3">
             Bhagavad Gita Manager
           </h1>
-          <p className="text-blue-100/80 text-lg">
+          <p className="text-gray-400 text-lg">
             Manage all 700 verses of the Bhagavad Gita
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex justify-center gap-4 mb-8 flex-wrap">
           <motion.button
             onClick={() => {
               setActiveTab("table");
               setEditingVerse(null);
             }}
-            className={`px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all ${
+            className={`px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all ${
               activeTab === "table"
-                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white"
-                : "bg-white/10 text-blue-100 hover:bg-white/20"
+                ? "bg-gradient-to-r from-[#01abfd] to-[#10b981] text-white shadow-lg shadow-[#01abfd]/25"
+                : "bg-[#1e2139] text-gray-300 hover:bg-[#252842] border border-gray-700"
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -79,10 +79,10 @@ const GitaManager = () => {
               setActiveTab("add");
               setEditingVerse(null);
             }}
-            className={`px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all ${
+            className={`px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all ${
               activeTab === "add"
-                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white"
-                : "bg-white/10 text-blue-100 hover:bg-white/20"
+                ? "bg-gradient-to-r from-[#01abfd] to-[#10b981] text-white shadow-lg shadow-[#01abfd]/25"
+                : "bg-[#1e2139] text-gray-300 hover:bg-[#252842] border border-gray-700"
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -93,10 +93,10 @@ const GitaManager = () => {
 
           <motion.button
             onClick={() => setActiveTab("upload")}
-            className={`px-6 py-3 rounded-full font-semibold flex items-center gap-2 transition-all ${
+            className={`px-6 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all ${
               activeTab === "upload"
-                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white"
-                : "bg-white/10 text-blue-100 hover:bg-white/20"
+                ? "bg-gradient-to-r from-[#01abfd] to-[#10b981] text-white shadow-lg shadow-[#01abfd]/25"
+                : "bg-[#1e2139] text-gray-300 hover:bg-[#252842] border border-gray-700"
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

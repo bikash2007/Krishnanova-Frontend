@@ -5,7 +5,7 @@ import { IoSparkles, IoHeart, IoArrowForward } from "react-icons/io5";
 
 const MeditationIntro = ({ onContinue }) => {
   return (
-    <div className="min-h-[60vh] max-h-[85vh] bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex flex-col py-8 px-6 relative">
+    <div className="min-h-[calc(var(--app-height)*0.6)] max-h-[calc(var(--app-height)*0.85)] bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex flex-col py-8 px-6 relative">
       {/* Animated Background Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div

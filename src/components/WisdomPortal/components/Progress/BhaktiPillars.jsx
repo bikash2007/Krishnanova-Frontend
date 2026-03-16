@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   GiSoundWaves,
   GiMeditation,
@@ -204,15 +203,18 @@ const PillarCard = ({
   }, [progress, currentMilestone, nextMilestone]);
 
   return (
-    <motion.div
+    <div
       onClick={() => onPillarClick?.(pillarKey)}
-      className="relative bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all cursor-pointer group overflow-hidden active:scale-[0.98]"
-      style={{ touchAction: 'manipulation' }}
-      whileTap={{ scale: 0.98 }}
+      className="relative bg-gradient-to-br from-white/15 to-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-2xl border border-white/20 md:hover:border-amber-400/50 transition-all cursor-pointer group overflow-hidden min-h-[44px]"
+      style={{
+        touchAction: "manipulation",
+        WebkitTapHighlightColor: "transparent",
+        cursor: "pointer",
+      }}
     >
       {/* Background glow effect */}
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"
+        className="absolute inset-0 opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 rounded-xl"
         style={{
           background: `radial-gradient(circle at center, ${pillar.bgGlow}, transparent 70%)`,
         }}
@@ -227,7 +229,7 @@ const PillarCard = ({
           >
             <Icon className="text-2xl md:text-3xl text-white" />
           </div>
-          <ElementIcon className="text-xl text-white/40 group-hover:text-white/70 transition-colors" />
+          <ElementIcon className="text-xl text-white/40 md:group-hover:text-white/70 transition-colors" />
         </div>
 
         {/* Name and Sanskrit */}
@@ -255,11 +257,9 @@ const PillarCard = ({
 
           {/* Progress bar */}
           <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-            <motion.div
-              className={`h-full bg-gradient-to-r ${pillar.color}`}
-              initial={{ width: 0 }}
-              animate={{ width: `${progressToNext}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
+            <div
+              className={`h-full bg-gradient-to-r ${pillar.color} transition-[width] duration-1000 ease-out`}
+              style={{ width: `${progressToNext}%` }}
             />
           </div>
 
@@ -275,7 +275,7 @@ const PillarCard = ({
           {pillar.meaning}
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -292,18 +292,14 @@ const PillarDetailModal = ({
   const Icon = pillar.icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 p-4"
+      style={{ touchAction: "none" }}
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-white/20"
+      <div
+        className="bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-white/20 max-h-[85vh] overflow-y-auto"
+        style={{ touchAction: "pan-y" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -379,12 +375,16 @@ const PillarDetailModal = ({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-500 hover:to-orange-600 transition-all"
+          className="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-semibold rounded-lg md:hover:from-amber-500 md:hover:to-orange-600 transition-all min-h-[44px]"
+          style={{
+            touchAction: "manipulation",
+            WebkitTapHighlightColor: "transparent",
+          }}
         >
           Continue Journey
         </button>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
@@ -436,11 +436,7 @@ const BhaktiPillarsConnected = ({
   return (
     <div className="space-y-6">
       {/* Current Stage Display */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-amber-400/15 to-orange-500/15 rounded-xl p-4 md:p-6 border border-amber-400/30"
-      >
+      <div className="bg-gradient-to-br from-amber-400/15 to-orange-500/15 rounded-xl p-4 md:p-6 border border-amber-400/30">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h2 className="text-lg md:text-xl font-bold text-amber-200">
@@ -472,11 +468,9 @@ const BhaktiPillarsConnected = ({
               </span>
             </div>
             <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-amber-400 to-orange-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressToNextStage}%` }}
-                transition={{ duration: 1 }}
+              <div
+                className="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-[width] duration-1000 ease-out"
+                style={{ width: `${progressToNextStage}%` }}
               />
             </div>
           </div>
@@ -495,7 +489,7 @@ const BhaktiPillarsConnected = ({
             ))}
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Four Pillars Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -515,17 +509,15 @@ const BhaktiPillarsConnected = ({
       </div>
 
       {/* Pillar Detail Modal */}
-      <AnimatePresence>
-        {selectedPillar && (
-          <PillarDetailModal
-            pillarKey={selectedPillar}
-            pillar={getPillarWithUI(selectedPillar)}
-            progress={bhaktiPillars[selectedPillar]?.progress || 0}
-            onClose={() => setSelectedPillar(null)}
-            isMobile={isMobile}
-          />
-        )}
-      </AnimatePresence>
+      {selectedPillar && (
+        <PillarDetailModal
+          pillarKey={selectedPillar}
+          pillar={getPillarWithUI(selectedPillar)}
+          progress={bhaktiPillars[selectedPillar]?.progress || 0}
+          onClose={() => setSelectedPillar(null)}
+          isMobile={isMobile}
+        />
+      )}
     </div>
   );
 };
@@ -573,11 +565,7 @@ const BhaktiPillars = ({
   return (
     <div className="space-y-6">
       {/* Current Stage Display */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-amber-400/15 to-orange-500/15 rounded-xl p-4 md:p-6 border border-amber-400/30"
-      >
+      <div className="bg-gradient-to-br from-amber-400/15 to-orange-500/15 rounded-xl p-4 md:p-6 border border-amber-400/30">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h2 className="text-lg md:text-xl font-bold text-amber-200">
@@ -611,11 +599,9 @@ const BhaktiPillars = ({
               </span>
             </div>
             <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-amber-400 to-orange-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressToNextStage}%` }}
-                transition={{ duration: 1 }}
+              <div
+                className="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-[width] duration-1000 ease-out"
+                style={{ width: `${progressToNextStage}%` }}
               />
             </div>
           </div>
@@ -632,7 +618,7 @@ const BhaktiPillars = ({
             </span>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Four Pillars Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
@@ -649,17 +635,15 @@ const BhaktiPillars = ({
       </div>
 
       {/* Pillar Detail Modal */}
-      <AnimatePresence>
-        {selectedPillar && (
-          <PillarDetailModal
-            pillarKey={selectedPillar}
-            pillar={BHAKTI_PILLARS[selectedPillar]}
-            progress={progress[selectedPillar] || 0}
-            onClose={() => setSelectedPillar(null)}
-            isMobile={isMobile}
-          />
-        )}
-      </AnimatePresence>
+      {selectedPillar && (
+        <PillarDetailModal
+          pillarKey={selectedPillar}
+          pillar={BHAKTI_PILLARS[selectedPillar]}
+          progress={progress[selectedPillar] || 0}
+          onClose={() => setSelectedPillar(null)}
+          isMobile={isMobile}
+        />
+      )}
     </div>
   );
 };

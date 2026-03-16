@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   GiTempleGate,
   GiLotusFlower,
@@ -20,7 +19,15 @@ import {
   IoCheckmarkCircle,
   IoStar,
 } from "react-icons/io5";
-import { FaSpinner } from "react-icons/fa";
+import {
+  FaSpinner,
+  FaHome,
+  FaWater,
+  FaTree,
+  FaMountain,
+  FaLandmark,
+  FaShieldAlt,
+} from "react-icons/fa";
 
 // Icon mapping for locations
 const LOCATION_ICONS = {
@@ -57,13 +64,13 @@ const LOCATION_POSITIONS = {
 
 // Background images for locations
 const LOCATION_IMAGES = {
-  gokula: "🏡",
-  yamuna: "🌊",
-  vrindavan: "🌳",
-  govardhan: "⛰️",
-  mathura: "🏛️",
-  kurukshetra: "⚔️",
-  goloka: "✨",
+  gokula: <FaHome />,
+  yamuna: <FaWater />,
+  vrindavan: <FaTree />,
+  govardhan: <FaMountain />,
+  mathura: <FaLandmark />,
+  kurukshetra: <FaShieldAlt />,
+  goloka: <IoSparkles />,
 };
 
 // Unlocks for each location
@@ -90,7 +97,7 @@ const LILA_LOCATIONS = [
     requiredProgress: 0,
     color: "from-green-400 to-emerald-500",
     unlocks: ["Basic wisdom access", "Simple mantras"],
-    bgImage: "🏡",
+    bgImage: <FaHome />,
   },
   {
     id: "yamuna",
@@ -103,7 +110,7 @@ const LILA_LOCATIONS = [
     requiredProgress: 50,
     color: "from-blue-400 to-cyan-500",
     unlocks: ["Deeper meditations", "Water element practices"],
-    bgImage: "🌊",
+    bgImage: <FaWater />,
   },
   {
     id: "vrindavan",
@@ -116,7 +123,7 @@ const LILA_LOCATIONS = [
     requiredProgress: 150,
     color: "from-purple-400 to-violet-500",
     unlocks: ["Rasa teachings", "Advanced chanting"],
-    bgImage: "🌳",
+    bgImage: <FaTree />,
   },
   {
     id: "govardhan",
@@ -129,7 +136,7 @@ const LILA_LOCATIONS = [
     requiredProgress: 300,
     color: "from-amber-400 to-orange-500",
     unlocks: ["Protection mantras", "Surrender practices"],
-    bgImage: "⛰️",
+    bgImage: <FaMountain />,
   },
   {
     id: "mathura",
@@ -142,7 +149,7 @@ const LILA_LOCATIONS = [
     requiredProgress: 500,
     color: "from-rose-400 to-pink-500",
     unlocks: ["Dharma teachings", "Sacred stories"],
-    bgImage: "🏛️",
+    bgImage: <FaLandmark />,
   },
   {
     id: "kurukshetra",
@@ -155,7 +162,7 @@ const LILA_LOCATIONS = [
     requiredProgress: 800,
     color: "from-red-400 to-rose-500",
     unlocks: ["Full Gita access", "Warrior wisdom"],
-    bgImage: "⚔️",
+    bgImage: <FaShieldAlt />,
   },
   {
     id: "goloka",
@@ -168,7 +175,7 @@ const LILA_LOCATIONS = [
     requiredProgress: 1200,
     color: "from-yellow-300 to-amber-400",
     unlocks: ["Eternal wisdom", "Divine presence"],
-    bgImage: "✨",
+    bgImage: <IoSparkles />,
   },
 ];
 
@@ -179,7 +186,7 @@ const enrichLocation = (location) => {
     icon: LOCATION_ICONS[location.id] || GiTempleGate,
     color: LOCATION_COLORS[location.id] || "from-gray-400 to-gray-500",
     position: LOCATION_POSITIONS[location.id] || { x: 50, y: 50 },
-    bgImage: LOCATION_IMAGES[location.id] || "✨",
+    bgImage: LOCATION_IMAGES[location.id] || <IoSparkles />,
     unlocks: LOCATION_UNLOCKS[location.id] || [],
   };
 };
@@ -211,19 +218,19 @@ const LocationNode = ({
   );
 
   return (
-    <motion.div
-      className="absolute cursor-pointer group active:scale-95"
+    <div
+      className="absolute flex items-center justify-center"
       style={{
         left: `${location.position.x}%`,
         top: `${location.position.y}%`,
         transform: "translate(-50%, -50%)",
-        touchAction: 'manipulation',
+        minWidth: 44,
+        minHeight: 44,
+        touchAction: "manipulation",
+        cursor: "pointer",
+        zIndex: 10,
       }}
-      whileTap={{ scale: 0.95 }}
       onClick={() => onClick(location)}
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 0.1 * LILA_LOCATIONS.indexOf(location) }}
     >
       {/* Static glow effect for current location - no infinite animation for iOS */}
       {isCurrent && (
@@ -297,10 +304,9 @@ const LocationNode = ({
       {isNext && !isUnlocked && (
         <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-16">
           <div className="h-1 bg-gray-600 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-amber-400 to-orange-500"
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercent}%` }}
+            <div
+              className="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-[width] duration-700 ease-out"
+              style={{ width: `${progressPercent}%` }}
             />
           </div>
           <p className="text-xs text-center text-amber-300 mt-1">
@@ -308,11 +314,11 @@ const LocationNode = ({
           </p>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 
-// Path Line Component
+// Path Line Component - plain SVG, no animations
 const PathLine = ({ from, to, isUnlocked, isMobile }) => {
   const fromLoc = LILA_LOCATIONS.find((l) => l.id === from);
   const toLoc = LILA_LOCATIONS.find((l) => l.id === to);
@@ -324,7 +330,7 @@ const PathLine = ({ from, to, isUnlocked, isMobile }) => {
       className="absolute inset-0 w-full h-full pointer-events-none"
       style={{ zIndex: 0 }}
     >
-      <motion.line
+      <line
         x1={`${fromLoc.position.x}%`}
         y1={`${fromLoc.position.y}%`}
         x2={`${toLoc.position.x}%`}
@@ -334,16 +340,12 @@ const PathLine = ({ from, to, isUnlocked, isMobile }) => {
         }
         strokeWidth={isMobile ? 2 : 3}
         strokeDasharray={isUnlocked ? "0" : "8,8"}
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 1.5, ease: "easeInOut" }}
       />
-      {/* Removed infinite moving circle animation for iOS performance */}
     </svg>
   );
 };
 
-// Location Detail Modal
+// Location Detail Modal - plain div, no framer-motion, no body scroll lock
 const LocationDetailModal = ({
   location,
   isUnlocked,
@@ -359,20 +361,16 @@ const LocationDetailModal = ({
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 p-4"
+      style={{ touchAction: "none" }}
       onClick={onClose}
     >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+      <div
         className={`bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-blue-900/95 rounded-2xl p-6 max-w-md w-full shadow-2xl border ${
           isUnlocked ? "border-amber-400/50" : "border-gray-500/50"
-        }`}
+        } max-h-[85vh] overflow-y-auto`}
+        style={{ touchAction: "pan-y" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -418,10 +416,9 @@ const LocationDetailModal = ({
               </span>
             </div>
             <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-amber-400 to-orange-500"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercent}%` }}
+              <div
+                className="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-[width] duration-700 ease-out"
+                style={{ width: `${progressPercent}%` }}
               />
             </div>
             <p className="text-xs text-gray-500 mt-2">
@@ -433,7 +430,7 @@ const LocationDetailModal = ({
         {/* Unlocks */}
         <div className="mb-4">
           <h3 className="text-sm font-semibold text-amber-200 mb-2">
-            {isUnlocked ? "✓ Unlocked Blessings" : "🔒 Blessings Awaiting"}
+            {isUnlocked ? "✓ Unlocked Blessings" : "Blessings Awaiting"}
           </h3>
           <div className="flex flex-wrap gap-2">
             {location.unlocks.map((unlock, idx) => (
@@ -462,8 +459,8 @@ const LocationDetailModal = ({
         >
           {isUnlocked ? "Continue Journey" : "Keep Practicing"}
         </button>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
@@ -502,13 +499,10 @@ const LilaMap = ({ totalProgress = 0, onLocationClick, isMobile = false }) => {
 
   return (
     <div className="relative">
-      {/* Map Container - removed backdrop-blur for iOS performance */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+      {/* Map Container */}
+      <div
         className={`relative ${isMobile ? "h-64" : "h-96"} bg-gradient-to-br from-indigo-900/80 via-purple-900/80 to-blue-900/80 rounded-2xl border border-white/20 overflow-hidden`}
       >
-        {/* Static background decoration - no animations for iOS performance */}
         <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
           <div
             className="absolute w-1 h-1 bg-white rounded-full"
@@ -578,59 +572,52 @@ const LilaMap = ({ totalProgress = 0, onLocationClick, isMobile = false }) => {
             <span className="text-blue-100/60">Locked</span>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Current location info card - removed backdrop-blur for iOS */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-4 p-4 bg-gradient-to-r from-amber-400/15 to-orange-500/15 rounded-xl border border-amber-400/30"
-      >
+      {/* Current location info card */}
+      <div className="mt-4 p-4 bg-gradient-to-r from-amber-400/15 to-orange-500/15 rounded-xl border border-amber-400/30">
         <div className="flex items-center gap-3">
           <div
-            className={`w-12 h-12 rounded-full bg-gradient-to-br ${currentLocation.color} flex items-center justify-center`}
+            className={`w-11 h-11 rounded-full bg-gradient-to-br ${currentLocation.color} flex items-center justify-center flex-shrink-0`}
           >
             {React.createElement(currentLocation.icon, {
-              className: "text-xl text-white",
+              className: "text-lg text-white",
             })}
           </div>
-          <div className="flex-1">
-            <h3 className="font-bold text-amber-200">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-amber-200 text-sm">
               You are at {currentLocation.name}
             </h3>
-            <p className="text-xs text-blue-100/60">
+            <p className="text-xs text-blue-100/60 truncate">
               {currentLocation.description}
             </p>
           </div>
           {nextLocation && (
-            <div className="text-right">
+            <div className="text-right flex-shrink-0">
               <p className="text-xs text-gray-400">Next stop</p>
               <p className="text-sm text-amber-300">{nextLocation.name}</p>
               <p className="text-xs text-cyan-300">
-                {nextLocation.requiredProgress - totalProgress} points away
+                {nextLocation.requiredProgress - totalProgress} pts away
               </p>
             </div>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Location Detail Modal */}
-      <AnimatePresence>
-        {selectedLocation && (
-          <LocationDetailModal
-            location={selectedLocation}
-            isUnlocked={isLocationUnlocked(selectedLocation)}
-            onClose={() => setSelectedLocation(null)}
-            totalProgress={totalProgress}
-          />
-        )}
-      </AnimatePresence>
+      {selectedLocation && (
+        <LocationDetailModal
+          location={selectedLocation}
+          isUnlocked={isLocationUnlocked(selectedLocation)}
+          onClose={() => setSelectedLocation(null)}
+          totalProgress={totalProgress}
+        />
+      )}
     </div>
   );
 };
 
 // Connected version that uses backend data via context
-// Import the context at the top of your component tree and use LilaMapConnected
 import { useBhaktiProgress } from "./BhaktiProgressContext";
 
 const LilaMapConnected = ({ onLocationClick, isMobile = false }) => {
@@ -697,13 +684,10 @@ const LilaMapConnected = ({ onLocationClick, isMobile = false }) => {
 
   return (
     <div className="relative">
-      {/* Map Container - removed backdrop-blur for iOS performance */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+      {/* Map Container */}
+      <div
         className={`relative ${isMobile ? "h-64" : "h-96"} bg-gradient-to-br from-indigo-900/80 via-purple-900/80 to-blue-900/80 rounded-2xl border border-white/20 overflow-hidden`}
       >
-        {/* Static background decoration - no animations for iOS performance */}
         <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
           <div
             className="absolute w-1 h-1 bg-white rounded-full"
@@ -774,53 +758,47 @@ const LilaMapConnected = ({ onLocationClick, isMobile = false }) => {
             <span className="text-blue-100/60">Locked</span>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Current location info card - removed backdrop-blur for iOS */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mt-4 p-4 bg-gradient-to-r from-amber-400/15 to-orange-500/15 rounded-xl border border-amber-400/30"
-      >
+      {/* Current location info card */}
+      <div className="mt-4 p-4 bg-gradient-to-r from-amber-400/15 to-orange-500/15 rounded-xl border border-amber-400/30">
         <div className="flex items-center gap-3">
           <div
-            className={`w-12 h-12 rounded-full bg-gradient-to-br ${currentLocation.color} flex items-center justify-center`}
+            className={`w-11 h-11 rounded-full bg-gradient-to-br ${currentLocation.color} flex items-center justify-center flex-shrink-0`}
           >
             {React.createElement(currentLocation.icon, {
-              className: "text-xl text-white",
+              className: "text-lg text-white",
             })}
           </div>
-          <div className="flex-1">
-            <h3 className="font-bold text-amber-200">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-amber-200 text-sm">
               You are at {currentLocation.name}
             </h3>
-            <p className="text-xs text-blue-100/60">
+            <p className="text-xs text-blue-100/60 truncate">
               {currentLocation.description}
             </p>
           </div>
           {nextLocation && (
-            <div className="text-right">
+            <div className="text-right flex-shrink-0">
               <p className="text-xs text-gray-400">Next stop</p>
               <p className="text-sm text-amber-300">{nextLocation.name}</p>
               <p className="text-xs text-cyan-300">
-                {nextLocation.requiredProgress - totalProgress} points away
+                {nextLocation.requiredProgress - totalProgress} pts away
               </p>
             </div>
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Location Detail Modal */}
-      <AnimatePresence>
-        {selectedLocation && (
-          <LocationDetailModal
-            location={selectedLocation}
-            isUnlocked={isLocationUnlocked(selectedLocation)}
-            onClose={() => setSelectedLocation(null)}
-            totalProgress={totalProgress}
-          />
-        )}
-      </AnimatePresence>
+      {selectedLocation && (
+        <LocationDetailModal
+          location={selectedLocation}
+          isUnlocked={isLocationUnlocked(selectedLocation)}
+          onClose={() => setSelectedLocation(null)}
+          totalProgress={totalProgress}
+        />
+      )}
     </div>
   );
 };

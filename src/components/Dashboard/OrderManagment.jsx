@@ -1,29 +1,38 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
+import {
+  FaTruck,
+  FaCheck,
+  FaTimes,
+  FaPause,
+  FaCreditCard,
+  FaUndo,
+  FaHourglass,
+} from "react-icons/fa";
 
 // Status Badge Component
 const StatusBadge = ({ status }) => {
   const statusConfig = {
     processing: {
       color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-      icon: "⏳",
+      icon: <FaHourglass />,
     },
     shipped: {
       color: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-      icon: "🚚",
+      icon: <FaTruck />,
     },
     delivered: {
       color: "bg-green-500/20 text-green-400 border-green-500/30",
-      icon: "✅",
+      icon: <FaCheck />,
     },
     cancelled: {
       color: "bg-red-500/20 text-red-400 border-red-500/30",
-      icon: "❌",
+      icon: <FaTimes />,
     },
     pending: {
       color: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-      icon: "⏸️",
+      icon: <FaPause />,
     },
   };
 
@@ -44,19 +53,19 @@ const PaymentBadge = ({ status }) => {
   const config = {
     paid: {
       color: "bg-green-500/20 text-green-400 border-green-500/30",
-      icon: "💳",
+      icon: <FaCreditCard />,
     },
     pending: {
       color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-      icon: "⏳",
+      icon: <FaHourglass />,
     },
     failed: {
       color: "bg-red-500/20 text-red-400 border-red-500/30",
-      icon: "❌",
+      icon: <FaTimes />,
     },
     refunded: {
       color: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-      icon: "↩️",
+      icon: <FaUndo />,
     },
   };
 
@@ -85,7 +94,7 @@ const OrderDetailsModal = ({ order, isOpen, onClose, onStatusUpdate }) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-[#1e2139] to-[#23263a] rounded-2xl shadow-2xl border border-gray-700/50 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gradient-to-br from-[#1e2139] to-[#23263a] rounded-2xl shadow-2xl border border-gray-700/50 max-w-4xl w-full max-h-[calc(var(--app-height)*0.9)] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
           <div>
@@ -331,7 +340,7 @@ export default function OrderManagement() {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
         setOrders(response.data.orders || response.data);
       } catch (error) {
@@ -351,10 +360,10 @@ export default function OrderManagement() {
         { status },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+        },
       );
       setOrders((prev) =>
-        prev.map((o) => (o._id === orderId ? { ...o, status } : o))
+        prev.map((o) => (o._id === orderId ? { ...o, status } : o)),
       );
     } catch (error) {
       console.error("Error updating status:", error);

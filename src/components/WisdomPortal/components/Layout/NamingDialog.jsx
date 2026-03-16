@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { IoSparkles } from "react-icons/io5";
 import { GiTempleGate } from "react-icons/gi";
 import kpng from "../../../../Media/k.png";
+import useLockBodyScroll from "../../../../utils/useLockBodyScroll";
 
 /**
  * NamingDialog - Initial modal for setting Krishna and spiritual names
@@ -15,6 +16,7 @@ const NamingDialog = ({
   setYourName,
   onSave,
 }) => {
+  useLockBodyScroll(isOpen);
   if (!isOpen) return null;
 
   return (
@@ -23,7 +25,7 @@ const NamingDialog = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-hidden overscroll-contain"
       >
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}

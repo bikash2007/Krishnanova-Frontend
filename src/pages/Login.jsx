@@ -5,8 +5,17 @@ import gsap from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
 import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
-import Navigation from "../components/Navigation/Navigation";
 import GoogleAuth from "../components/GoogleAuth";
+import {
+  FaOm,
+  FaLock,
+  FaShieldAlt,
+  FaUser,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
+import { GiFeather, GiFlute, GiCandleLight } from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 
 // Register GSAP plugins
 gsap.registerPlugin(TextPlugin);
@@ -245,7 +254,6 @@ export default function Login() {
         import.meta.env.VITE_GOOGLE_CLIENT_ID || "your-google-client-id"
       }
     >
-      <Navigation />
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center px-4 relative overflow-hidden">
         {/* Background Patterns */}
         <div
@@ -268,16 +276,16 @@ export default function Login() {
         />
 
         {/* Floating Krishna Elements */}
-        <div className="floating-element absolute top-20 left-10 text-6xl opacity-20 animate-spin-slow">
-          🦚
+        <div className="floating-element absolute top-20 left-10 text-6xl opacity-20 animate-spin-slow text-amber-300">
+          <GiFeather />
         </div>
 
-        <div className="floating-element absolute bottom-20 right-10 text-6xl opacity-20 animate-bounce-slow">
-          🪈
+        <div className="floating-element absolute bottom-20 right-10 text-6xl opacity-20 animate-bounce-slow text-amber-300">
+          <GiFlute />
         </div>
 
-        <div className="floating-element absolute top-40 right-20 text-5xl opacity-15 animate-pulse">
-          🪔
+        <div className="floating-element absolute top-40 right-20 text-5xl opacity-15 animate-pulse text-amber-300">
+          <GiCandleLight />
         </div>
 
         {/* Floating Orbs */}
@@ -299,8 +307,11 @@ export default function Login() {
                 }}
               />
 
-              <div ref={titleRef} className="text-5xl mb-4 relative z-10">
-                🕉️
+              <div
+                ref={titleRef}
+                className="text-5xl mb-4 relative z-10 flex justify-center text-white"
+              >
+                <FaOm />
               </div>
 
               {/* Sacred Badge */}
@@ -350,7 +361,7 @@ export default function Login() {
                     placeholder="Enter your username or email"
                   />
                   <span className="absolute left-4 top-3.5 text-amber-300 text-xl group-focus-within:scale-110 transition-transform">
-                    👤
+                    <FaUser />
                   </span>
                 </div>
                 {errors.identifier && (
@@ -379,14 +390,14 @@ export default function Login() {
                     placeholder="Enter your password"
                   />
                   <span className="absolute left-4 top-3.5 text-amber-300 text-xl group-focus-within:scale-110 transition-transform">
-                    🔒
+                    <FaLock />
                   </span>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-3.5 text-amber-300 hover:text-amber-400 transition-colors"
                   >
-                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                    {showPassword ? <FaEye /> : <FaEyeSlash />}
                   </button>
                 </div>
                 {errors.password && (
@@ -445,7 +456,7 @@ export default function Login() {
                     </>
                   ) : (
                     <>
-                      <span className="mr-2">🪔</span>
+                      <GiCandleLight className="mr-2 inline" />
                       Sign In to Krishna's Realm
                     </>
                   )}
@@ -487,15 +498,15 @@ export default function Login() {
               {/* Trust Badges */}
               <div className="flex justify-center space-x-4 pt-4">
                 <div className="text-xs text-cyan-300/60 flex items-center space-x-1 hover:scale-110 transition-transform">
-                  <span>🔒</span>
+                  <FaLock />
                   <span>Secure</span>
                 </div>
                 <div className="text-xs text-cyan-300/60 flex items-center space-x-1 hover:scale-110 transition-transform">
-                  <span>🛡️</span>
+                  <FaShieldAlt />
                   <span>Protected</span>
                 </div>
                 <div className="text-xs text-cyan-300/60 flex items-center space-x-1 hover:scale-110 transition-transform">
-                  <span>✨</span>
+                  <IoSparkles />
                   <span>Blessed</span>
                 </div>
               </div>

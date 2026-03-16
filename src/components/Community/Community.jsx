@@ -3,6 +3,30 @@ import { Link } from "react-router-dom";
 import { useApi } from "../../Context/baseUrl";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaCrown,
+  FaPray,
+  FaFire,
+  FaHeart,
+  FaRegHeart,
+  FaStar,
+  FaBook,
+  FaOm,
+  FaGlobe,
+  FaEye,
+  FaClock,
+  FaUsers,
+  FaPen,
+  FaLandmark,
+  FaTicketAlt,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaHandshake,
+  FaShareAlt,
+  FaCommentDots,
+} from "react-icons/fa";
+import { GiMeditation } from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 
 // Import Sanga components for the preview
 import {
@@ -11,6 +35,21 @@ import {
   RasaTag,
   DevoteeInlineBadge,
 } from "./SangaSystem";
+
+// Helper function - Backend now returns full URLs
+const getFullUrl = (url) => {
+  return url || null;
+};
+
+// Generate fallback avatar URL
+const getFallbackAvatar = (name) => {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=random&size=128`;
+};
+
+// Transform post data - Backend now sends full URLs already
+const transformPostData = (post) => {
+  return post; // No transformation needed - backend sends full URLs
+};
 
 // Avatar component with Krishnova theme
 const Avatar = ({ user, size = "w-12 h-12", baseUrl, showOnline = false }) => {
@@ -32,19 +71,19 @@ const Avatar = ({ user, size = "w-12 h-12", baseUrl, showOnline = false }) => {
           <img
             src={avatarUrl}
             alt={user?.name || "User"}
-            className={`${size} rounded-full object-cover border-2 border-amber-400/30`}
+            className={`${size} rounded-full object-cover border-2 border-fuchsia-400/30`}
             onError={() => setImageError(true)}
           />
         ) : (
           <div
-            className={`${size} rounded-full border-2 border-amber-400/30 flex items-center justify-center bg-gradient-to-br from-amber-400 to-orange-500 text-indigo-900 font-bold`}
+            className={`${size} rounded-full border-2 border-fuchsia-400/30 flex items-center justify-center bg-gradient-to-br from-[#d946ef] to-[#63297D] text-white font-bold`}
           >
             {initial}
           </div>
         )}
       </motion.div>
       {showOnline && (
-        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-indigo-900 rounded-full animate-pulse" />
+        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 border-2 border-indigo-900 rounded-full" />
       )}
     </div>
   );
@@ -59,11 +98,17 @@ const UserBadge = ({ user, size = "sm" }) => {
         size === "sm" ? "px-2 py-0.5 text-xs" : "px-3 py-1 text-sm"
       } rounded-full ${
         isAdmin
-          ? "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900"
-          : "bg-gradient-to-r from-cyan-400/20 to-blue-400/20 text-cyan-300 border border-cyan-400/30"
+          ? "bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white"
+          : "bg-cyan-500/15 text-cyan-200 border border-cyan-400/25"
       } font-semibold`}
     >
-      <span>{isAdmin ? "👑" : "🙏"}</span>
+      <span>
+        {isAdmin ? (
+          <FaCrown className="inline" />
+        ) : (
+          <FaPray className="inline" />
+        )}
+      </span>
       <span>{isAdmin ? "ADMIN" : "DEVOTEE"}</span>
     </div>
   );
@@ -107,19 +152,19 @@ const CountdownTimer = ({ targetDate, onComplete }) => {
     <div className="flex items-center gap-2 text-xs">
       {timeLeft.days > 0 && (
         <div className="flex items-center gap-1">
-          <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+          <span className="px-2 py-1 bg-fuchsia-400/20 rounded text-fuchsia-300 font-bold">
             {timeLeft.days}d
           </span>
         </div>
       )}
       <div className="flex items-center gap-1">
-        <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+        <span className="px-2 py-1 bg-fuchsia-400/20 rounded text-fuchsia-300 font-bold">
           {String(timeLeft.hours || 0).padStart(2, "0")}h
         </span>
-        <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+        <span className="px-2 py-1 bg-fuchsia-400/20 rounded text-fuchsia-300 font-bold">
           {String(timeLeft.minutes || 0).padStart(2, "0")}m
         </span>
-        <span className="px-2 py-1 bg-amber-400/20 rounded text-amber-300 font-bold">
+        <span className="px-2 py-1 bg-fuchsia-400/20 rounded text-fuchsia-300 font-bold">
           {String(timeLeft.seconds || 0).padStart(2, "0")}s
         </span>
       </div>
@@ -129,25 +174,19 @@ const CountdownTimer = ({ targetDate, onComplete }) => {
 
 // Stats Card Component
 const StatsCard = ({ icon, value, label, gradient, delay }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ delay }}
-    whileHover={{ scale: 1.05, y: -5 }}
-  >
-    <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-xl p-4 md:p-6 border border-white/20 hover:border-amber-400/50 transition-all duration-300 text-center">
+  <div>
+    <div className="bg-white/[0.06] rounded-2xl shadow-xl shadow-black/10 p-4 md:p-6 border border-white/[0.1] hover:border-fuchsia-400/20 transition-all duration-300 text-center">
       <div
         className={`w-10 h-10 md:w-14 md:h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-xl md:text-2xl shadow-lg`}
       >
         {icon}
       </div>
-      <div className="text-xl md:text-2xl font-bold text-amber-300 mb-1">
+      <div className="text-xl md:text-2xl font-bold text-white mb-1">
         {value}
       </div>
-      <div className="text-sm text-blue-100/60">{label}</div>
+      <div className="text-sm text-slate-400">{label}</div>
     </div>
-  </motion.div>
+  </div>
 );
 
 // Social Post Card Component
@@ -169,15 +208,9 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
     text.length <= max ? text : text.slice(0, max) + "...";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, y: -5 }}
-      className="group"
-    >
-      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden">
-        <div className="p-6">
+    <div className="group">
+      <div className="backdrop-blur-xl bg-white/[0.06] rounded-2xl shadow-xl shadow-black/10 border border-white/[0.1] hover:border-fuchsia-400/20 transition-all duration-300 overflow-hidden">
+        <div className="p-5 sm:p-6">
           {/* Author Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -189,7 +222,7 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-semibold text-amber-300">
+                  <h4 className="font-semibold text-white">
                     {post.author?.name || "Anonymous Devotee"}
                   </h4>
                   <DevoteeInlineBadge
@@ -197,10 +230,12 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
                     points={post.author?.spiritualPoints}
                   />
                 </div>
-                <div className="flex items-center gap-2 text-xs text-blue-100/60">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
                   <span>{formatTimeAgo(post.createdAt)}</span>
                   <span>•</span>
-                  <span>🌍 Public</span>
+                  <span className="flex items-center gap-1">
+                    <FaGlobe className="inline text-[10px]" /> Public
+                  </span>
                 </div>
               </div>
             </div>
@@ -213,25 +248,25 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
               </div>
             )}
             {(post.likes?.length || 0) > 10 && !post.rasas?.length && (
-              <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-orange-400 to-red-500 text-white">
-                🔥 Trending
+              <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white">
+                <FaFire className="inline" /> Trending
               </span>
             )}
           </div>
 
           {/* Post Content */}
           <Link to={`/blog/${post._id}`}>
-            <h3 className="font-bold text-xl mb-3 text-blue-100 hover:text-amber-300 transition-colors cursor-pointer">
+            <h3 className="font-bold text-xl mb-3 text-white hover:text-fuchsia-300 transition-colors cursor-pointer">
               {post.title}
             </h3>
           </Link>
 
-          <p className="text-blue-100/80 text-sm mb-4 leading-relaxed">
+          <p className="text-slate-300 text-sm mb-4 leading-relaxed">
             {showFullText ? post.content : truncate(post.content, 100)}
             {post.content.length > 100 && (
               <button
                 onClick={() => setShowFullText(!showFullText)}
-                className="text-amber-300 hover:text-amber-200 ml-1 font-medium"
+                className="text-fuchsia-400 hover:text-fuchsia-300 ml-1 font-medium"
               >
                 {showFullText ? "Show less" : "Read more"}
               </button>
@@ -252,8 +287,8 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
                   className="w-full h-48 object-cover group-hover/image:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/50 to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center">
-                  <div className="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full text-indigo-900 font-bold text-sm flex items-center gap-2">
-                    <span>👁️</span>
+                  <div className="px-4 py-2 bg-gradient-to-r from-[#d946ef] to-[#63297D] rounded-full text-white font-bold text-sm flex items-center gap-2">
+                    <FaEye className="inline" />
                     <span>Read Full Post</span>
                   </div>
                 </div>
@@ -262,39 +297,45 @@ const SocialPostCard = ({ post, baseUrl, index }) => {
           )}
 
           {/* Engagement Bar */}
-          <div className="flex items-center justify-between pt-4 border-t border-white/10">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsLiked(!isLiked)}
-                className={`flex items-center gap-1 transition-colors ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-colors duration-200 ${
                   isLiked
-                    ? "text-red-500"
-                    : "text-blue-100/60 hover:text-red-500"
+                    ? "text-rose-400 bg-rose-500/10"
+                    : "text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
                 }`}
               >
-                <span>{isLiked ? "❤️" : "🤍"}</span>
+                <span>
+                  {isLiked ? (
+                    <FaHeart className="inline" />
+                  ) : (
+                    <FaRegHeart className="inline" />
+                  )}
+                </span>
                 <span className="text-sm font-medium">
                   {post.likes?.length || 0}
                 </span>
               </button>
-              <button className="flex items-center gap-1 text-blue-100/60 hover:text-cyan-300 transition-colors">
-                <span>💬</span>
+              <button className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/10 transition-colors duration-200">
+                <FaCommentDots className="inline" />
                 <span className="text-sm font-medium">
                   {post.comments?.length || 0}
                 </span>
               </button>
-              <button className="flex items-center gap-1 text-blue-100/60 hover:text-purple-300 transition-colors">
-                <span>🔄</span>
+              <button className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-colors duration-200">
+                <FaShareAlt className="inline" />
                 <span className="text-sm font-medium">Share</span>
               </button>
             </div>
-            <button className="text-blue-100/60 hover:text-yellow-400 transition-colors">
-              <span>⭐</span>
+            <button className="text-slate-400 hover:text-fuchsia-400 transition-colors duration-200 p-1.5 rounded-lg hover:bg-fuchsia-400/10">
+              <FaStar className="inline" />
             </button>
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -312,12 +353,21 @@ const EventCard = ({ event, baseUrl, index }) => {
     });
 
   const typeConfig = {
-    meditation: { icon: "🧘", gradient: "from-purple-400 to-indigo-500" },
-    prayer: { icon: "🙏", gradient: "from-amber-400 to-orange-500" },
-    discourse: { icon: "📖", gradient: "from-cyan-400 to-blue-500" },
-    festival: { icon: "🎉", gradient: "from-yellow-400 to-amber-500" },
-    community_service: { icon: "🤝", gradient: "from-green-400 to-cyan-500" },
-    other: { icon: "📅", gradient: "from-purple-400 to-pink-500" },
+    meditation: {
+      icon: <GiMeditation />,
+      gradient: "from-purple-400 to-indigo-500",
+    },
+    prayer: { icon: <FaPray />, gradient: "from-[#d946ef] to-[#63297D]" },
+    discourse: { icon: <FaBook />, gradient: "from-cyan-400 to-blue-500" },
+    festival: {
+      icon: <IoSparkles />,
+      gradient: "from-fuchsia-400 to-purple-500",
+    },
+    community_service: {
+      icon: <FaHandshake />,
+      gradient: "from-green-400 to-cyan-500",
+    },
+    other: { icon: <FaCalendarAlt />, gradient: "from-purple-400 to-pink-500" },
   };
 
   const config = typeConfig[event.eventType] || typeConfig.other;
@@ -357,13 +407,14 @@ const EventCard = ({ event, baseUrl, index }) => {
     switch (eventStatus) {
       case "ongoing":
         return (
-          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900 animate-pulse">
-            🔴 ONGOING
+          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900">
+            <span className="w-2 h-2 bg-red-500 rounded-full inline-block mr-1"></span>{" "}
+            ONGOING
           </span>
         );
       case "upcoming":
         return (
-          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-indigo-900">
+          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-fuchsia-400 to-purple-500 text-white">
             UPCOMING
           </span>
         );
@@ -373,15 +424,9 @@ const EventCard = ({ event, baseUrl, index }) => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, y: -5 }}
-      className="group"
-    >
-      <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl shadow-2xl border border-white/20 hover:border-amber-400/50 transition-all duration-300 overflow-hidden">
-        <div className="p-6">
+    <div className="group">
+      <div className="bg-white/[0.06] rounded-2xl shadow-xl shadow-black/10 border border-white/[0.1] hover:border-fuchsia-400/20 transition-all duration-300 overflow-hidden">
+        <div className="p-5 sm:p-6">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
               <div
@@ -391,26 +436,24 @@ const EventCard = ({ event, baseUrl, index }) => {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-semibold text-amber-300">
+                  <h4 className="font-semibold text-white">
                     {event.organizer?.name}
                   </h4>
                   <UserBadge user={event.organizer} size="sm" />
                 </div>
-                <p className="text-xs text-blue-100/60">Event Organizer</p>
+                <p className="text-xs text-slate-400">Event Organizer</p>
               </div>
             </div>
             {getStatusBadge()}
           </div>
 
-          <h3 className="font-bold text-lg mb-3 text-blue-100">
-            {event.title}
-          </h3>
+          <h3 className="font-bold text-lg mb-3 text-white">{event.title}</h3>
 
           {showTimer && eventStatus === "upcoming" && (
-            <div className="mb-3 p-2 bg-gradient-to-r from-amber-400/10 to-orange-400/10 rounded-lg border border-amber-400/30">
+            <div className="mb-3 p-2 bg-gradient-to-r from-fuchsia-400/10 to-purple-400/10 rounded-lg border border-fuchsia-400/30">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-amber-300 font-semibold">
-                  ⏰ Registration closes in:
+                <span className="text-xs text-fuchsia-300 font-semibold">
+                  <FaClock className="inline mr-1" /> Registration closes in:
                 </span>
                 <CountdownTimer
                   targetDate={event.dateTime}
@@ -420,17 +463,17 @@ const EventCard = ({ event, baseUrl, index }) => {
             </div>
           )}
 
-          <div className="space-y-2 mb-4">
-            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
-              <span className="text-amber-300">📅</span>
+          <div className="space-y-2.5 mb-4">
+            <div className="flex items-center gap-2 text-slate-300 text-sm">
+              <FaCalendarAlt className="text-fuchsia-400/70" />
               <span>{formatDate(event.dateTime)}</span>
             </div>
-            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
-              <span className="text-cyan-300">📍</span>
+            <div className="flex items-center gap-2 text-slate-300 text-sm">
+              <FaMapMarkerAlt className="text-cyan-400/70" />
               <span>{event.location?.city}</span>
             </div>
-            <div className="flex items-center gap-2 text-blue-100/70 text-sm">
-              <span className="text-purple-300">👥</span>
+            <div className="flex items-center gap-2 text-slate-300 text-sm">
+              <FaUsers className="text-purple-400/70" />
               <span>{event.participants?.length || 0} devotees joined</span>
             </div>
           </div>
@@ -454,20 +497,20 @@ const EventCard = ({ event, baseUrl, index }) => {
             <button
               className={`w-full py-3 rounded-xl font-bold shadow-lg transition-all duration-300 flex items-center justify-center gap-2 ${
                 eventStatus === "ongoing"
-                  ? "bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900 hover:shadow-green-500/30 animate-pulse"
-                  : "bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 hover:shadow-amber-500/30"
+                  ? "bg-gradient-to-r from-green-400 to-cyan-400 text-indigo-900 hover:shadow-green-500/30"
+                  : "bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white hover:shadow-fuchsia-500/30"
               }`}
               disabled={eventStatus === "ended"}
             >
               {eventStatus === "ongoing" ? (
                 <>
-                  <span>🔴</span>
+                  <span className="w-2 h-2 bg-red-500 rounded-full inline-block"></span>
                   <span>Join Live Event</span>
                   <span>→</span>
                 </>
               ) : (
                 <>
-                  <span>🎫</span>
+                  <FaTicketAlt className="inline" />
                   <span>Register for Event</span>
                   <span>→</span>
                 </>
@@ -476,7 +519,7 @@ const EventCard = ({ event, baseUrl, index }) => {
           </Link>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -558,7 +601,11 @@ const Community = () => {
             .catch(() => ({ data: [] })),
         ]);
 
-        setTopPosts(postsRes.data.posts || []);
+        const postsData = postsRes.data.posts || [];
+        // Transform posts to have full URLs
+        const transformedPosts = postsData.map(transformPostData);
+
+        setTopPosts(transformedPosts);
         setEvents(eventsRes.data);
         setStats({
           members: Math.floor(Math.random() * 5000) + 5000,
@@ -576,100 +623,73 @@ const Community = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden flex">
+    <section
+      className="relative min-h-screen py-6 overflow-hidden flex"
+      style={{
+        background:
+          "radial-gradient(circle at center, #5b21b6 0%, #2e1065 50%, #170726 100%)",
+      }}
+    >
       <div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-[0.10]"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)",
           backgroundSize: "30px 30px",
         }}
       />
 
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #fbbf24 1px, transparent 1px),
-            linear-gradient(to bottom, #fbbf24 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
+      {/* Subtle Background Glow */}
+      <div className="absolute top-[-10%] left-[-5%] w-[30vw] h-[30vw] bg-[#d946ef] opacity-[0.04] blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[30vw] h-[30vw] bg-[#d946ef] opacity-[0.04] blur-[80px] rounded-full pointer-events-none" />
 
+      {/* Floating particles removed to prevent automatic animations */}
       <div className="absolute inset-0">
-        {[...Array(10)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 15 + Math.random() * 10,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            <div className="w-2 h-2 bg-amber-400/20 rounded-full blur-sm" />
-          </motion.div>
-        ))}
+        {/* Particles will only show on user interaction */}
       </div>
 
-      <div className="relative z-10 scale-90 md:scale-75 container mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 shadow-lg mb-8">
-            <span className="text-amber-300 animate-pulse text-lg">✦</span>
-            <span className="text-amber-100 font-medium tracking-wide text-sm">
+      <div className="relative z-10 container mx-auto px-6">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center space-x-3 bg-fuchsia-500/10 border border-fuchsia-400/20 rounded-full px-5 py-2.5 shadow-lg shadow-fuchsia-500/5 mb-8">
+            <span className="text-fuchsia-400 text-base">✦</span>
+            <span className="text-fuchsia-200 font-medium tracking-wide text-sm">
               Krishnova community
             </span>
-            <span className="text-amber-300 animate-pulse text-lg">✦</span>
+            <span className="text-fuchsia-400 text-base">✦</span>
           </div>
 
           <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-200 bg-clip-text text-transparent">
-              Divine Community Hub
-            </span>
+            <span className="text-white">Divine Community Hub</span>
           </h1>
 
-          <p className="text-md md:text-xl text-blue-100/80 max-w-3xl mx-auto">
+          <p className="text-md md:text-xl text-slate-300 max-w-3xl mx-auto">
             Connect with like-minded souls on the path of Krishna consciousness
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
           <StatsCard
-            icon="👥"
+            icon={<FaUsers />}
             value={`${stats.members}+`}
             label="Devotees"
-            gradient="from-amber-400 to-orange-500"
+            gradient="from-[#d946ef] to-[#63297D]"
             delay={0}
           />
           <StatsCard
-            icon="📝"
+            icon={<FaPen />}
             value={`${stats.posts}+`}
             label="Stories"
             gradient="from-cyan-400 to-blue-500"
             delay={0.1}
           />
           <StatsCard
-            icon="🏛️"
+            icon={<FaLandmark />}
             value={`${stats.cities}`}
             label="Sacred Cities"
             gradient="from-purple-400 to-indigo-500"
             delay={0.2}
           />
           <StatsCard
-            icon="🎉"
+            icon={<IoSparkles />}
             value={`${stats.events}+`}
             label="Events"
             gradient="from-green-400 to-cyan-500"
@@ -678,17 +698,11 @@ const Community = () => {
         </div>
 
         {filteredEvents.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-16"
-          >
+          <div className="mb-16">
             <div className="flex items-center md:justify-between flex-wrap justify-center mb-8">
-              <h2 className="text-3xl font-bold text-amber-300">
-                Upcoming Sacred Events
-              </h2>
+              <h2 className="text-3xl font-bold text-white">Upcoming Events</h2>
               <Link to="/communityblog">
-                <button className="px-3 flex min-w-44 md:px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-full font-bold hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300">
+                <button className="px-3 flex min-w-44 md:px-6 py-3 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-full font-bold hover:shadow-lg hover:shadow-fuchsia-500/20 transition-all duration-300">
                   View All Events →
                 </button>
               </Link>
@@ -703,19 +717,14 @@ const Community = () => {
                 />
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <div>
           <div className="flex items-center md:justify-between flex-wrap justify-center mb-8 gap-2">
-            <h2 className="text-3xl font-bold text-amber-300">
-              Community Stories
-            </h2>
+            <h2 className="text-3xl font-bold text-white">Community Stories</h2>
             <Link to="/communityblog">
-              <button className="px-6 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-indigo-900 rounded-full font-bold hover:shadow-lg hover:shadow-amber-500/30 transition-all duration-300">
+              <button className="px-6 py-3 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-full font-bold hover:shadow-lg hover:shadow-fuchsia-500/20 transition-all duration-300">
                 View All Stories →
               </button>
             </Link>
@@ -726,7 +735,7 @@ const Community = () => {
               ? [...Array(4)].map((_, i) => (
                   <div
                     key={i}
-                    className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/20 animate-pulse"
+                    className="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/20"
                   >
                     <div className="h-40 bg-white/10 rounded-xl" />
                   </div>
@@ -741,17 +750,13 @@ const Community = () => {
                 ))}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center"
-          >
+          <div className="text-center">
             <Link to="/communityblog">
               <button className="group relative px-8 py-4 overflow-hidden rounded-full shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <span className="relative z-10 text-indigo-900 font-bold tracking-wide flex items-center gap-2">
-                  <span>🕉️</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#d946ef] to-[#63297D]"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-400 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <span className="relative z-10 text-white font-bold tracking-wide flex items-center gap-2">
+                  <FaOm className="inline" />
                   Join Our Sacred Community
                   <span className="group-hover:translate-x-1 transition-transform">
                     →
@@ -759,11 +764,11 @@ const Community = () => {
                 </span>
               </button>
             </Link>
-            <p className="mt-4 text-blue-100/60">
+            <p className="mt-4 text-slate-400">
               Connect with {stats.members}+ souls on the divine path
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

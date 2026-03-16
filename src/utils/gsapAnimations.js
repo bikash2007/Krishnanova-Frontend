@@ -4,6 +4,16 @@
  */
 import { gsap } from "gsap";
 
+const supportsHoverAndFinePointer = () => {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
+    return false;
+  }
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+};
+
 // Animation presets for common patterns
 export const animations = {
   // Fade in from bottom
@@ -77,6 +87,8 @@ export const animations = {
 
   // Hover scale effect
   hoverScale: (element, scale = 1.05) => {
+    if (!supportsHoverAndFinePointer()) return () => {};
+
     const handleEnter = () =>
       gsap.to(element, { scale, duration: 0.2, ease: "power2.out" });
     const handleLeave = () =>
@@ -143,17 +155,21 @@ export const animations = {
 
   // Button press effect
   buttonPress: (element) => {
+    if (!supportsHoverAndFinePointer()) return () => {};
+
     const handleDown = () => gsap.to(element, { scale: 0.95, duration: 0.1 });
     const handleUp = () => gsap.to(element, { scale: 1, duration: 0.1 });
 
-    element.addEventListener("mousedown", handleDown);
-    element.addEventListener("mouseup", handleUp);
-    element.addEventListener("mouseleave", handleUp);
+    element.addEventListener("pointerdown", handleDown, { passive: true });
+    element.addEventListener("pointerup", handleUp);
+    element.addEventListener("pointercancel", handleUp);
+    element.addEventListener("pointerleave", handleUp);
 
     return () => {
-      element.removeEventListener("mousedown", handleDown);
-      element.removeEventListener("mouseup", handleUp);
-      element.removeEventListener("mouseleave", handleUp);
+      element.removeEventListener("pointerdown", handleDown);
+      element.removeEventListener("pointerup", handleUp);
+      element.removeEventListener("pointercancel", handleUp);
+      element.removeEventListener("pointerleave", handleUp);
     };
   },
 };

@@ -13,6 +13,9 @@ import {
 import confetti from "canvas-confetti";
 import { useApi } from "../../Context/baseUrl";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaOm, FaStar, FaCalendarAlt, FaPray, FaBolt } from "react-icons/fa";
+import { GiCandleLight, GiLotusFlower, GiFeather } from "react-icons/gi";
+import { IoSparkles } from "react-icons/io5";
 
 const Festival = () => {
   const [events, setEvents] = useState([]);
@@ -20,13 +23,11 @@ const Festival = () => {
   const [countdown, setCountdown] = useState("");
   const [viewMonth, setViewMonth] = useState(new Date());
   const [modalEvent, setModalEvent] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [tithiData, setTithiData] = useState({});
   const [hoveredDay, setHoveredDay] = useState(null);
   const [hoveredEvent, setHoveredEvent] = useState(null);
 
   const baseUrl = useApi();
-  const calendarRef = useRef(null);
 
   // Calculate Hindu Tithi locally (no external API - faster & reliable)
   const calculateTithi = (date) => {
@@ -147,15 +148,10 @@ const Festival = () => {
       if (diff <= 0) {
         const hoursPassed = Math.abs(Math.floor(diff / 3600));
         if (hoursPassed < 24) {
-          setCountdown("🎉 Happening Today!");
-          confetti({
-            colors: ["#fbbf24", "#f59e0b", "#f97316", "#fb923c"],
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-          });
+          setCountdown("Happening Today!");
+          // Confetti removed - can be triggered manually by clicking
         } else {
-          setCountdown("📅 Past Event");
+          setCountdown("Past Event");
         }
         return;
       }
@@ -175,17 +171,6 @@ const Festival = () => {
 
   const changeMonth = (direction) => {
     setViewMonth(addMonths(viewMonth, direction));
-  };
-
-  // Mouse tracking
-  const handleMouseMove = (e) => {
-    if (calendarRef.current) {
-      const rect = calendarRef.current.getBoundingClientRect();
-      setMousePosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-    }
   };
 
   const renderCalendar = () => {
@@ -263,9 +248,8 @@ const Festival = () => {
         }
 
         days.push(
-          <motion.div
+          <div
             key={currentDate.toString()}
-            whileTap={{ scale: 0.92 }}
             onClick={() => eventForDay && setModalEvent(eventForDay)}
             onMouseEnter={() =>
               setHoveredDay({
@@ -280,8 +264,8 @@ const Festival = () => {
           >
             {/* Ekadashi Special Indicator */}
             {isEkadashi && (
-              <div className="absolute top-0.5 right-0.5 text-[10px] sm:text-xs">
-                🌟
+              <div className="absolute top-0.5 right-0.5 text-[10px] sm:text-xs text-amber-300">
+                <FaStar />
               </div>
             )}
 
@@ -301,7 +285,7 @@ const Festival = () => {
             {hasTithi && !isEkadashi && !eventForDay && (
               <div className="absolute bottom-1 w-1 h-1 rounded-full bg-orange-400/60" />
             )}
-          </motion.div>,
+          </div>,
         );
         day = addDays(day, 1);
       }
@@ -318,66 +302,20 @@ const Festival = () => {
 
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-6 sm:py-12 lg:py-20">
-      {/* Animated Mandala Background */}
+      {/* Background Pattern */}
       <div
-        className="absolute inset-0 opacity-10 sm:opacity-20"
+        className="absolute inset-0 opacity-10"
         style={{
           backgroundImage:
             "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
           backgroundSize: "24px 24px",
-          animation: "float 30s linear infinite",
-        }}
-      />
-
-      {/* Floating Elements - Hidden on mobile for performance */}
-      <div className="absolute inset-0 hidden sm:block">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute"
-            style={{
-              left: `${i * 20 + 10}%`,
-              top: `${i * 18 + 5}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 20 + i * 5,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            <div className="text-2xl opacity-20">
-              {["🪔", "🌺", "🦚", "✨", "🕉️"][i]}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Mouse Glow Effect - Desktop only */}
-      <div
-        className="pointer-events-none absolute w-[600px] h-[600px] hidden lg:block"
-        style={{
-          background: `radial-gradient(circle at center, rgba(251, 191, 36, 0.12) 0%, transparent 50%)`,
-          transform: `translate3d(${mousePosition.x - 300}px, ${
-            mousePosition.y - 300
-          }px, 0)`,
-          transition: "transform 150ms ease-out",
-          willChange: "transform",
         }}
       />
 
       <div className="relative z-10 w-full px-4 sm:px-6 lg:container lg:mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-6 sm:mb-10 lg:mb-12"
-        >
-          {/* Sacred Badge */}
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-md border border-amber-400/30 rounded-full px-4 py-2 shadow-lg mb-4 sm:mb-6">
+        <div className="text-center mb-6 sm:mb-10 lg:mb-12">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-full px-4 py-2 shadow-lg mb-4 sm:mb-6">
             <span className="text-amber-300 text-sm sm:text-base">✦</span>
             <span className="text-amber-100 font-medium tracking-wide text-xs sm:text-sm">
               Divine Festival Calendar
@@ -394,28 +332,21 @@ const Festival = () => {
           <p className="text-sm sm:text-lg lg:text-xl text-blue-100/80 max-w-2xl mx-auto px-4">
             Never miss a divine celebration with Krishnova
           </p>
-        </motion.div>
+        </div>
         <div className="flex flex-col lg:flex-row w-full gap-6 lg:gap-8">
-          {/* Calendar Section - Shows first on mobile for quick glance */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full lg:w-5/12 order-1 lg:order-2"
-          >
+          {/* Calendar Section */}
+          <div className="w-full lg:w-5/12 order-1 lg:order-2">
             <div className="relative">
               {/* Subtle Glow */}
               <div className="absolute -inset-1 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-2xl blur-xl opacity-50" />
 
-              <div
-                ref={calendarRef}
-                onMouseMove={handleMouseMove}
-                className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/15 shadow-xl p-4 sm:p-5"
-              >
+              <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-white/15 shadow-xl p-4 sm:p-5">
                 {/* Calendar Header */}
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg sm:text-xl font-bold text-amber-300 flex items-center gap-2">
-                    <span className="text-xl sm:text-2xl">📆</span>
+                    <span className="text-xl sm:text-2xl">
+                      <FaCalendarAlt />
+                    </span>
                     <span>Calendar</span>
                   </h3>
                 </div>
@@ -482,15 +413,16 @@ const Festival = () => {
                       className="mt-4 p-3 sm:p-4 bg-gradient-to-br from-indigo-900/95 to-purple-900/95 border border-amber-400/40 rounded-xl shadow-xl"
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-base sm:text-lg">📅</span>
+                        <FaCalendarAlt className="text-base sm:text-lg text-amber-300" />
                         <span className="text-sm font-bold text-white">
                           {format(hoveredDay.date, "MMMM d, yyyy")}
                         </span>
                       </div>
                       {hoveredDay.event && (
                         <div className="mb-2 pb-2 border-b border-white/20">
-                          <p className="text-sm font-bold text-amber-300">
-                            🎊 {hoveredDay.event.name}
+                          <p className="text-sm font-bold text-amber-300 flex items-center gap-1">
+                            <IoSparkles className="inline" />{" "}
+                            {hoveredDay.event.name}
                           </p>
                           {hoveredDay.event.description && (
                             <p className="text-xs text-blue-100/80 mt-1">
@@ -501,11 +433,14 @@ const Festival = () => {
                       )}
                       {hoveredDay.tithi && (
                         <div>
-                          <p className="text-sm text-cyan-300 font-semibold">
-                            🙏 {hoveredDay.tithi.tithi}
+                          <p className="text-sm text-cyan-300 font-semibold flex items-center gap-1">
+                            <FaPray className="inline" />{" "}
+                            {hoveredDay.tithi.tithi}
                             {hoveredDay.tithi.tithi
                               ?.toLowerCase()
-                              .includes("ekadashi") && " ⚡"}
+                              .includes("ekadashi") && (
+                              <FaBolt className="inline ml-1" />
+                            )}
                           </p>
                           <p className="text-xs text-blue-200/80">
                             {hoveredDay.tithi.paksha} Paksha
@@ -535,24 +470,19 @@ const Festival = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Events Section - Full width cards below calendar on mobile */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="w-full lg:w-7/12 order-2 lg:order-1"
-          >
+          {/* Events Section */}
+          <div className="w-full lg:w-7/12 order-2 lg:order-1">
             <div className="relative">
               {/* Subtle Glow */}
               <div className="absolute -inset-1 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-2xl blur-xl opacity-50" />
 
-              <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-amber-400/20 shadow-xl p-4 sm:p-6">
+              <div className="relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl border border-amber-400/20 shadow-xl p-4 sm:p-6">
                 {/* Section Header */}
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="text-xl sm:text-2xl font-bold text-amber-300 flex items-center gap-2">
-                    <span className="text-2xl">🎊</span>
+                    <IoSparkles className="text-2xl" />
                     <span>Sacred Events</span>
                   </h2>
                   <div className="px-3 py-1.5 bg-amber-500/20 rounded-full border border-amber-400/30">
@@ -564,15 +494,11 @@ const Festival = () => {
 
                 {/* Next Event Countdown - Featured Card */}
                 {closestEvent && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-5"
-                  >
+                  <div className="mb-5">
                     <div className="relative overflow-hidden bg-gradient-to-br from-amber-500/20 to-orange-600/20 rounded-xl p-4 sm:p-5 border border-amber-400/30">
                       {/* Featured Badge */}
                       <div className="inline-flex items-center gap-2 bg-amber-900/40 px-3 py-1 rounded-full mb-3">
-                        <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
+                        <span className="w-2 h-2 bg-amber-400 rounded-full" />
                         <span className="text-xs font-semibold text-amber-200 uppercase tracking-wider">
                           Featured Event
                         </span>
@@ -612,23 +538,19 @@ const Festival = () => {
                         <p className="text-xs text-amber-200/80 mb-1.5 font-medium">
                           Time Remaining
                         </p>
-                        <motion.div
-                          className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent font-mono"
-                          animate={{ scale: [1, 1.02, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
+                        <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent font-mono">
                           {countdown}
-                        </motion.div>
+                        </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
 
                 {/* All Events List */}
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-lg sm:text-xl font-bold text-amber-300 flex items-center gap-2">
-                      <span className="text-xl">📅</span>
+                      <FaCalendarAlt className="text-xl" />
                       Upcoming Celebrations
                     </h3>
                   </div>
@@ -636,7 +558,7 @@ const Festival = () => {
                   <div className="space-y-3 max-h-[400px] sm:max-h-[500px] overflow-y-auto pr-1 scrollbar-custom">
                     {events.length === 0 ? (
                       <div className="text-center py-8 bg-white/5 rounded-xl border border-white/10">
-                        <div className="text-4xl mb-3">🕉️</div>
+                        <FaOm className="text-4xl mb-3 mx-auto text-amber-300/60" />
                         <p className="text-blue-100/60 text-sm sm:text-base">
                           No events available. Stay tuned!
                         </p>
@@ -650,7 +572,7 @@ const Festival = () => {
                         .sort((a, b) => parseISO(a.date) - parseISO(b.date))
                         .length === 0 ? (
                       <div className="text-center py-8 bg-white/5 rounded-xl border border-white/10">
-                        <div className="text-4xl mb-3">🕉️</div>
+                        <FaOm className="text-4xl mb-3 mx-auto text-amber-300/60" />
                         <p className="text-blue-100/60 text-sm sm:text-base">
                           No upcoming events. Stay tuned!
                         </p>
@@ -676,11 +598,8 @@ const Festival = () => {
                           const isToday = isSameDay(eventDate, now);
 
                           return (
-                            <motion.div
+                            <div
                               key={event._id || i}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: i * 0.05 }}
                               onMouseEnter={() => setHoveredEvent(event)}
                               onMouseLeave={() => setHoveredEvent(null)}
                               className={`relative p-4 rounded-xl border transition-all duration-200 ${
@@ -692,7 +611,7 @@ const Festival = () => {
                               {/* Status Badge */}
                               <div className="absolute top-3 right-3">
                                 {isToday ? (
-                                  <span className="px-2 py-0.5 bg-green-500/30 border border-green-400/50 rounded-full text-xs font-bold text-green-300 animate-pulse">
+                                  <span className="px-2 py-0.5 bg-green-500/30 border border-green-400/50 rounded-full text-xs font-bold text-green-300">
                                     TODAY
                                   </span>
                                 ) : (
@@ -767,7 +686,7 @@ const Festival = () => {
                                   )}
                                 </div>
                               </div>
-                            </motion.div>
+                            </div>
                           );
                         })
                     )}
@@ -775,24 +694,19 @@ const Festival = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Bottom Quote */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center mt-8 sm:mt-12"
-        >
+        <div className="text-center mt-8 sm:mt-12">
           <div className="flex items-center justify-center gap-2 text-amber-200/50 text-xs sm:text-sm px-4">
-            <span>🪔</span>
+            <GiCandleLight />
             <span className="italic text-center">
               "Celebrate the divine with Krishnova"
             </span>
-            <span>🪔</span>
+            <GiCandleLight />
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Custom CSS */}

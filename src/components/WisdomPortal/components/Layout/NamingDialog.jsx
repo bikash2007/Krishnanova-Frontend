@@ -2,7 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IoSparkles } from "react-icons/io5";
 import { GiTempleGate } from "react-icons/gi";
-import kpng from "../../../../Media/k.png";
+import kpng from "../../../../Media/k.webp";
 import useLockBodyScroll from "../../../../utils/useLockBodyScroll";
 
 /**

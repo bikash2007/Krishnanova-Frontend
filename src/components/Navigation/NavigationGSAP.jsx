@@ -11,13 +11,13 @@ import {
 } from "react-icons/fa";
 import { useApi } from "../../Context/baseUrl";
 import { useCart } from "../../Context/CartContext";
-import logo from "../../Media/krishnovalogo.png";
+const logo = `${import.meta.env.BASE_URL}krishnova.webp`;
 
 // Section nav items
 const sectionNavItems = [
   { id: "home", label: "Home" },
-  { id: "wisdom", label: "Wisdom Portal" },
-  { id: "products", label: "Products" },
+  { id: "wisdom", label: "Talk to Krishna" },
+  { id: "products", label: "Spiritual Anchors" },
   { id: "community", label: "Community" },
   { id: "festival", label: "Festivals" },
   { id: "contact", label: "Contact" },

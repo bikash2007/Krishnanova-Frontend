@@ -17,7 +17,7 @@ import {
 import { GiCandleLight } from "react-icons/gi";
 import { useAuth } from "../../Context/AuthContext";
 import { useApi } from "../../Context/baseUrl";
-import logo from "../../../public/logo.png";
+const logo = `${import.meta.env.BASE_URL}logo.webp`;
 
 const Footer = () => {
   const footerRef = useRef(null);

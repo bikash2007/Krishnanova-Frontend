@@ -52,13 +52,17 @@ const AchievementsTab = ({
         return (
           <button
             key={view.id}
+            type="button"
             onClick={() => setActiveView(view.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all min-h-[44px] active:scale-95 ${
               activeView === view.id
                 ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg"
                 : "bg-white/10 text-blue-100/70 md:hover:bg-white/20"
             }`}
-            style={{ touchAction: "manipulation" }}
+            style={{
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
+            }}
           >
             <Icon className="text-lg" />
             {view.label}
@@ -69,7 +73,7 @@ const AchievementsTab = ({
   );
 
   return (
-    <div className="space-y-4 md:space-y-6" style={{ touchAction: "pan-y" }}>
+    <div className="space-y-4 md:space-y-6">
       {/* Header with total progress */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>

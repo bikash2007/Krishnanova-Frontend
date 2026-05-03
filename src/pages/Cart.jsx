@@ -34,7 +34,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, index }) => {
 
   const handleRemove = () => {
     setIsRemoving(true);
-    setTimeout(() => onRemove(item.productId), 300);
+    setTimeout(() => onRemove(item.cartItemId), 300);
   };
 
   return (
@@ -65,7 +65,24 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, index }) => {
               <h3 className="text-base md:text-lg font-bold text-white truncate pr-4">
                 {item.title}
               </h3>
-              <p className="text-xs md:text-sm text-blue-200/60">
+              
+              {/* Variant and Color Display */}
+              {(item.selectedVariant || item.selectedColor) && (
+                <div className="flex flex-wrap gap-2 mt-1 mb-1">
+                  {item.selectedVariant && (
+                    <span className="px-2 py-0.5 rounded-md bg-white/10 text-[10px] text-amber-200 uppercase tracking-wider font-semibold">
+                      Var: {item.selectedVariant}
+                    </span>
+                  )}
+                  {item.selectedColor && (
+                    <span className="px-2 py-0.5 rounded-md bg-white/10 text-[10px] text-amber-200 uppercase tracking-wider font-semibold">
+                      Col: {item.selectedColor}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <p className="text-xs md:text-sm text-blue-200/60 mt-1">
                 Unit Price: ${(item.price || 0).toFixed(2)}
               </p>
             </div>
@@ -94,10 +111,10 @@ const CartItem = ({ item, onUpdateQuantity, onRemove, index }) => {
             <QuantitySelector
               quantity={item.quantity}
               onIncrease={() =>
-                onUpdateQuantity(item.productId, item.quantity + 1)
+                onUpdateQuantity(item.cartItemId, item.quantity + 1)
               }
               onDecrease={() =>
-                onUpdateQuantity(item.productId, item.quantity - 1)
+                onUpdateQuantity(item.cartItemId, item.quantity - 1)
               }
             />
             <p className="text-lg md:text-xl font-bold text-amber-300">
@@ -221,7 +238,7 @@ export default function Cart() {
               <AnimatePresence>
                 {cart.map((item, index) => (
                   <CartItem
-                    key={item.productId}
+                    key={item.cartItemId}
                     item={item}
                     index={index}
                     onUpdateQuantity={(id, qty) =>

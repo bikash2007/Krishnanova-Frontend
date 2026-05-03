@@ -48,14 +48,7 @@ const Mission = () => {
       className="relative min-h-screen flex items-center bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-12 md:py-0"
     >
       {/* Subtle Background - Matching Hero */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
-          backgroundSize: "30px 30px",
-        }}
-      />
+
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-indigo-900/80 pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-6 md:px-12 h-full flex flex-col justify-center">

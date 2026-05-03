@@ -16,21 +16,33 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React - always needed
-          vendor: ["react", "react-dom"],
-          // Router - needed for navigation
-          router: ["react-router-dom"],
-          // Animation libraries - GSAP only (removed framer-motion for performance)
-          animations: ["gsap"],
-          // UI components
-          ui: ["react-icons", "lucide-react"],
-          // Charts - only loaded when needed
-          charts: ["chart.js", "react-chartjs-2"],
-          // Auth - separate chunk
-          auth: ["@react-oauth/google", "jwt-decode"],
-          // Stripe - only on checkout
-          stripe: ["@stripe/react-stripe-js", "@stripe/stripe-js"],
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            // Group core React and routing libraries
+            if (
+              id.includes("node_modules/react/") ||
+              id.includes("node_modules/react-dom/") ||
+              id.includes("node_modules/react-router-dom/") ||
+              id.includes("node_modules/@remix-run/")
+            ) {
+              return "vendor-core";
+            }
+            // Separate heavy animation and charting engines
+            if (id.includes("gsap")) return "vendor-gsap";
+            if (id.includes("chart.js") || id.includes("react-chartjs-2")) {
+              return "vendor-charts";
+            }
+            // Feature-specific libraries (exclude from initial vendor)
+            if (
+              id.includes("react-markdown") ||
+              id.includes("remark-gfm") ||
+              id.includes("react-pageflip")
+            ) {
+              return; // Let Vite code-split these automatically
+            }
+            // Everything else into shared vendor
+            return "vendor";
+          }
         },
       },
     },

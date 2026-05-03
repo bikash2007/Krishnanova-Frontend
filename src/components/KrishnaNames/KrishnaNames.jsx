@@ -482,14 +482,6 @@ const KrishnaNames = () => {
   return (
     <section className="relative md:min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden">
       {/* Static Mandala Background */}
-      <div
-        className="absolute inset-0 opacity-10 sm:opacity-15 md:opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
-          backgroundSize: isMobile ? "20px 20px" : "30px 30px",
-        }}
-      />
 
       {/* Grid Pattern - hidden on mobile */}
       {/* {!isMobile && (

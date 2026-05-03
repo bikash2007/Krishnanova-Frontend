@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import gsap from "gsap";
-import { TextPlugin } from "gsap/TextPlugin";
 import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
 import GoogleAuth from "../components/GoogleAuth";
@@ -16,9 +14,7 @@ import {
 } from "react-icons/fa";
 import { GiFeather, GiFlute, GiCandleLight } from "react-icons/gi";
 import { IoSparkles } from "react-icons/io5";
-
-// Register GSAP plugins
-gsap.registerPlugin(TextPlugin);
+import gsap from "gsap";
 
 export default function Login() {
   const navigate = useNavigate();

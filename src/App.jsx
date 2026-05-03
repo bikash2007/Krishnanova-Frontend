@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useLayoutEffect } from "react";
+import React, { useEffect, useRef, useLayoutEffect, Suspense, lazy } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -9,7 +9,8 @@ import KrishnaNames from "./components/KrishnaNames/KrishnaNames";
 
 import Community from "./components/Community/Community";
 import Festival from "./components/Festival/Festival";
-import Meditation from "./components/Meditation/Meditation";
+
+const Meditation = lazy(() => import("./components/Meditation/Meditation"));
 
 import {
   FeatherSVG,
@@ -18,8 +19,20 @@ import {
   PeacockFeatherSVG,
 } from "./components/UI/Svg";
 import { useLocation } from "react-router-dom";
-import WisdomPortalPath from "./components/WisdomPortal/WisdomPortalPath";
-import CarouselSlider from "./components/Products/CarouselSlider";
+
+const WisdomPortalPath = lazy(() => import("./components/WisdomPortal/WisdomPortalPath"));
+const CarouselSlider = lazy(() => import("./components/Products/CarouselSlider"));
+
+const SectionSkeleton = () => (
+  <div className="w-full min-h-[50vh] animate-pulse bg-transparent flex flex-col items-center justify-center p-8">
+    <div className="h-12 bg-white/10 rounded-xl w-1/3 mb-12"></div>
+    <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="h-64 bg-white/5 rounded-2xl"></div>
+      <div className="h-64 bg-white/5 rounded-2xl"></div>
+      <div className="h-64 bg-white/5 rounded-2xl"></div>
+    </div>
+  </div>
+);
 
 import HomeSection from "./components/Hero/HomeSection";
 import Footer from "./components/Footer/Footer";
@@ -181,14 +194,18 @@ const App = () => {
         {/* 🌟 Main Content */}
         <div className="relative z-10">
           <div id="wisdom" className="relative z-10 ">
-            <WisdomPortalPath />
+            <Suspense fallback={<SectionSkeleton />}>
+              <WisdomPortalPath />
+            </Suspense>
           </div>
           <div id="products">
-            <CarouselSlider />
+            <Suspense fallback={<SectionSkeleton />}>
+              <CarouselSlider />
+            </Suspense>
           </div>
 
           <div id="mission">
-            <Mission />
+            {/* <Mission /> */}
           </div>
 
           <div id="krishna-names">
@@ -202,7 +219,9 @@ const App = () => {
             <Festival />
           </div>
           <div className="relative" id="meditation">
-            <Meditation />
+            <Suspense fallback={<SectionSkeleton />}>
+              {/* <Meditation /> */}
+            </Suspense>
           </div>
           <div id="contact">
             <Footer />

@@ -505,7 +505,7 @@ h3 {
 .gita-page {
     background:
         radial-gradient(ellipse at 25% 15%, var(--gita-page-highlight) 0%, transparent 65%),
-        url('/vagwatbg.png') center / cover no-repeat,
+        url('/vagwatbg.webp') center / cover no-repeat,
         linear-gradient(172deg, var(--gita-page-bg) 0%, var(--gita-page-bg2) 100%);
     border: 1px solid var(--gita-border);
     border-radius: 0.5rem;
@@ -873,7 +873,7 @@ h3 {
     flex-direction: column;
     background:
         radial-gradient(ellipse at 50% 40%, rgba(60, 40, 18, 0.55) 0%, transparent 70%),
-        url('/vagwatbg.png') center / cover no-repeat,
+        url('/vagwatbg.webp') center / cover no-repeat,
         linear-gradient(170deg, #2c1e0e 0%, #1a120a 40%, #0f0a05 100%);
     transition: background 0.4s ease;
 }
@@ -1053,7 +1053,7 @@ h3 {
         /* Subtle paper texture grain */
         radial-gradient(ellipse at 20% 80%, rgba(180, 150, 100, 0.08) 0%, transparent 40%),
         /* Warm aged parchment base using the sacred bg image */
-        url('/vagwatbg.png') center / cover no-repeat,
+        url('/vagwatbg.webp') center / cover no-repeat,
         /* Fallback parchment gradient */
         linear-gradient(172deg, #f5edd5 0%, #ede0c0 30%, #e8d8b0 60%, #e2d0a5 100%);
     padding: 1.5rem 1.25rem;
@@ -1151,7 +1151,7 @@ h3 {
 .book-page-title {
     background:
         radial-gradient(ellipse at 50% 30%, rgba(212, 175, 55, 0.06) 0%, transparent 60%),
-        url('/vagwatbg.png') center / cover no-repeat,
+        url('/vagwatbg.webp') center / cover no-repeat,
         linear-gradient(172deg, #f2e8d0 0%, #e8d8b5 50%, #ddc8a0 100%);
     border-right: 1px solid rgba(160, 120, 60, 0.2);
 }
@@ -1405,7 +1405,7 @@ h3 {
 .book-page-closing {
     background:
         radial-gradient(ellipse at 50% 60%, rgba(212, 175, 55, 0.06) 0%, transparent 60%),
-        url('/vagwatbg.png') center / cover no-repeat,
+        url('/vagwatbg.webp') center / cover no-repeat,
         linear-gradient(172deg, #f2e8d0 0%, #e8d8b5 50%, #ddc8a0 100%);
 }
 

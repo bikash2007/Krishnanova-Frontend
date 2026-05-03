@@ -1,6 +1,5 @@
 // src/components/Dashboard/AdminDashboard.jsx
-import React, { useEffect, useState, useMemo } from "react";
-import { Line } from "react-chartjs-2";
+import React, { useEffect, useState, useMemo, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../Context/AuthContext";
@@ -15,26 +14,8 @@ import {
   FaExclamationTriangle,
   FaChartLine,
 } from "react-icons/fa";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-  Filler,
-} from "chart.js";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-  Filler,
-);
+const AdminChart = lazy(() => import("./AdminChart"));
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
@@ -578,7 +559,13 @@ export default function AdminDashboard() {
                   </p>
                 </div>
               ) : (
-                <Line data={chartData} options={chartOptions} />
+                <Suspense fallback={
+                  <div className="w-full h-full animate-pulse bg-gray-700/50 rounded-xl border border-gray-600/30 flex items-center justify-center">
+                    <FaChartLine className="text-gray-500 text-4xl opacity-50" />
+                  </div>
+                }>
+                  <AdminChart data={chartData} options={chartOptions} />
+                </Suspense>
               )}
             </div>
           </div>

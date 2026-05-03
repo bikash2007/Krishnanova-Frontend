@@ -321,13 +321,17 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
       {/* Form - Compact, Non-scrollable */}
       <form
         onSubmit={handleSubmit}
-        className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3"
+        className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4"
       >
         {error && (
           <div className="p-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-xs sm:text-sm">
             {error}
           </div>
         )}
+
+        <p className="text-xs text-blue-100/70">
+          Only title and story are required.
+        </p>
 
         {/* Title */}
         <div>
@@ -338,6 +342,7 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            autoFocus
             placeholder="e.g., The Day Krishna Answered My Prayer..."
             className="w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm"
           />
@@ -434,24 +439,34 @@ const CreateLilaModal = ({ isOpen, onClose, onSuccess }) => {
             "linear-gradient(to top, #4c1d95, #4c1d95ee, transparent)",
         }}
       >
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-xl font-bold text-sm sm:text-base shadow-lg shadow-fuchsia-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-fuchsia-500/30 transition-all"
-        >
-          {isSubmitting ? (
-            <>
-              <FaSpinner className="animate-spin" />
-              Sharing...
-            </>
-          ) : (
-            <>
-              <FaFeatherAlt />
-              Share Story
-            </>
-          )}
-        </button>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="py-3 sm:py-3.5 bg-white/10 text-blue-100 rounded-xl font-semibold text-sm sm:text-base border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="py-3 sm:py-3.5 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-xl font-bold text-sm sm:text-base shadow-lg shadow-fuchsia-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-fuchsia-500/30 transition-all"
+          >
+            {isSubmitting ? (
+              <>
+                <FaSpinner className="animate-spin" />
+                Sharing...
+              </>
+            ) : (
+              <>
+                <FaFeatherAlt />
+                Share Story
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </Modal>
   );
@@ -599,13 +614,17 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
       {/* Form - Compact */}
       <form
         onSubmit={handleSubmit}
-        className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3"
+        className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4"
       >
         {error && (
           <div className="p-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-xs sm:text-sm">
             {error}
           </div>
         )}
+
+        <p className="text-xs text-blue-100/70">
+          Fill required fields first: title, description, and date/time.
+        </p>
 
         {/* Title */}
         <div>
@@ -617,6 +636,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
             name="title"
             value={formData.title}
             onChange={handleChange}
+            autoFocus
             placeholder="e.g., Sunday Kirtan Mela"
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl text-blue-100 placeholder-blue-100/40 focus:outline-none focus:border-fuchsia-400/50 text-sm"
           />
@@ -627,7 +647,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
           <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
             Event Type
           </label>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {EVENT_TYPES.map((type) => (
               <button
                 key={type.id}
@@ -666,7 +686,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
 
         {/* Date & Duration - Side by side */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
             <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
               Date & Time *
@@ -700,7 +720,7 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
 
         {/* City & Max Participants */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
             <label className="block text-xs sm:text-sm font-medium text-fuchsia-200 mb-1.5">
               City
@@ -797,24 +817,34 @@ const CreateEventModal = ({ isOpen, onClose, onSuccess }) => {
             "linear-gradient(to top, #4c1d95, #4c1d95ee, transparent)",
         }}
       >
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-xl font-bold text-sm sm:text-base shadow-lg shadow-fuchsia-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-fuchsia-500/30 transition-all"
-        >
-          {isSubmitting ? (
-            <>
-              <FaSpinner className="animate-spin" />
-              Creating...
-            </>
-          ) : (
-            <>
-              <FaCalendarAlt />
-              Create Event
-            </>
-          )}
-        </button>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="py-3 sm:py-3.5 bg-white/10 text-blue-100 rounded-xl font-semibold text-sm sm:text-base border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="py-3 sm:py-3.5 bg-gradient-to-r from-[#d946ef] to-[#63297D] text-white rounded-xl font-bold text-sm sm:text-base shadow-lg shadow-fuchsia-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-fuchsia-500/30 transition-all"
+          >
+            {isSubmitting ? (
+              <>
+                <FaSpinner className="animate-spin" />
+                Creating...
+              </>
+            ) : (
+              <>
+                <FaCalendarAlt />
+                Create Event
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </Modal>
   );

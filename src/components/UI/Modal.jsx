@@ -4,10 +4,13 @@
  */
 import React, { useEffect, useRef, memo } from "react";
 import { gsap } from "gsap";
+import useLockBodyScroll from "../../utils/useLockBodyScroll";
 
 const Modal = memo(({ isOpen, onClose, children, className = "" }) => {
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
+
+  useLockBodyScroll(isOpen);
 
   useEffect(() => {
     if (!overlayRef.current || !contentRef.current) return;
@@ -61,13 +64,13 @@ const Modal = memo(({ isOpen, onClose, children, className = "" }) => {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-end sm:items-start justify-center bg-black/70 backdrop-blur-sm p-0 sm:px-4 sm:pt-[72px] sm:pb-4"
       style={{ display: isOpen ? "flex" : "none" }}
       onClick={handleOverlayClick}
     >
       <div
         ref={contentRef}
-        className={`w-full sm:max-w-2xl lg:max-w-3xl h-[94vh] sm:h-auto sm:max-h-[90vh] flex flex-col bg-gradient-to-br from-[#5b21b6] via-[#4c1d95] to-[#170726] rounded-t-3xl sm:rounded-2xl border-t sm:border border-fuchsia-400/30 shadow-2xl overflow-hidden ${className}`}
+        className={`w-full sm:max-w-2xl lg:max-w-3xl max-h-[88dvh] sm:max-h-[calc(100vh-5rem)] flex flex-col bg-gradient-to-br from-[#5b21b6] via-[#4c1d95] to-[#170726] rounded-t-2xl sm:rounded-2xl border-0 sm:border border-fuchsia-400/30 shadow-2xl overflow-hidden ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

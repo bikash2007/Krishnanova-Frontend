@@ -268,7 +268,6 @@ export default function SingleProduct() {
   const [qty, setQty] = useState(1);
   const [color, setColor] = useState(null);
   const [variant, setVariant] = useState(null);
-  const [preOrder, setPreOrder] = useState(false);
   const [toast, setToast] = useState("");
   const [wish, setWish] = useState(false);
 
@@ -333,7 +332,6 @@ export default function SingleProduct() {
           setVariant(p.variants.find((v) => v.isActive) || p.variants[0]);
         }
         if (p.colors?.length) setColor(p.colors[0]);
-        setPreOrder(!p.inStock && !!p.inventory?.allowBackorder);
         const all = Array.isArray(ar.data) ? ar.data : ar.data.products || [];
         setRelated(
           all
@@ -360,8 +358,11 @@ export default function SingleProduct() {
     ? variant.stock
     : (product?.totalStock ?? product?.inventory?.stock ?? 0);
   const isLow = product?.isLowStock;
-  const oos = stock === 0 && !product?.inventory?.allowBackorder;
-  const canBuy = !oos || preOrder;
+  const preOrderAvailable =
+    stock === 0 &&
+    (variant ? !!variant?.isPreOrder : !!product?.inventory?.allowBackorder);
+  const oos = stock === 0 && !preOrderAvailable;
+  const canBuy = stock >= qty || preOrderAvailable;
 
   const showToast = (msg) => {
     setToast(msg);
@@ -370,16 +371,28 @@ export default function SingleProduct() {
 
   const addCart = () => {
     if (!product || !canBuy) return;
-    addToCart(
+    const result = addToCart(
       {
         ...product,
         price,
         selectedColor: color?.name,
         selectedVariant: variant?.name,
+        selectedVariantId: variant?._id,
+        sku: variant?.sku,
+        availableStock: Number(stock || 0),
+        isPreOrder: preOrderAvailable,
       },
       qty,
     );
-    showToast(preOrder ? "Pre-order added to cart!" : "Added to cart!");
+
+    if (result?.ok === false) {
+      showToast(result.message || "Unable to add requested quantity");
+      return;
+    }
+
+    showToast(
+      preOrderAvailable ? "Pre-order added to cart!" : "Added to cart!",
+    );
   };
 
   const buyNow = () => {
@@ -811,7 +824,7 @@ export default function SingleProduct() {
                         Out of Stock
                       </span>
                     </>
-                  ) : preOrder ? (
+                  ) : preOrderAvailable ? (
                     <>
                       <span className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0 animate-pulse" />
                       <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider">
@@ -884,18 +897,18 @@ export default function SingleProduct() {
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {product.variants.map((v) => {
-                        const vOos = v.stock === 0;
-                        const isSel = variant?.name === v.name;
+                        const vBlocked = v.stock === 0 && !v.isPreOrder;
+                        const isSel = variant?._id === v._id;
                         return (
                           <button
                             key={v.name}
-                            onClick={() => !vOos && setVariant(v)}
-                            disabled={vOos}
+                            onClick={() => !vBlocked && setVariant(v)}
+                            disabled={vBlocked}
                             className={[
                               "px-4 py-2 rounded-xl border text-xs font-semibold tracking-wide transition-all duration-200",
                               isSel
                                 ? "border-purple-600 bg-purple-600 text-white shadow-sm"
-                                : vOos
+                                : vBlocked
                                   ? "border-stone-100 bg-stone-100 text-stone-300 cursor-not-allowed line-through"
                                   : "border-stone-200 bg-white text-stone-600 hover:border-purple-400 hover:text-purple-700",
                             ].join(" ")}
@@ -972,7 +985,7 @@ export default function SingleProduct() {
                     />
                     <FaShoppingCart className="text-base relative z-10" />
                     <span className="relative z-10">
-                      {preOrder
+                      {preOrderAvailable
                         ? "Pre-Order Now"
                         : oos
                           ? "Out of Stock"
@@ -1022,7 +1035,7 @@ export default function SingleProduct() {
                     }}
                   >
                     <FaShoppingCart className="text-sm" />
-                    {preOrder
+                    {preOrderAvailable
                       ? "Pre-Order Now"
                       : oos
                         ? "Out of Stock"
@@ -1098,7 +1111,7 @@ export default function SingleProduct() {
       <section className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <div className="max-w-7xl mx-auto">
           <div
-            className="max-w-3xl mx-auto rounded-3xl p-4 sm:p-8 lg:p-10 border border-white/10 shadow-2xl shadow-purple-950/50"
+            className="rounded-3xl p-4 sm:p-8 lg:p-10 border border-white/10 shadow-2xl shadow-purple-950/50"
             style={{
               background:
                 "linear-gradient(145deg, rgba(20,8,48,0.92) 0%, rgba(15,5,35,0.95) 100%)",

@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { TextPlugin } from "gsap/TextPlugin";
 import { useApi } from "../../Context/baseUrl";
 import { useAuth } from "../../Context/AuthContext";
 import axios from "axios";
@@ -718,7 +716,7 @@ const BlogPost = () => {
           name: "Krishnova",
           logo: {
             "@type": "ImageObject",
-            url: `${window.location.origin}/logo.png`,
+            url: `${window.location.origin}${import.meta.env.BASE_URL}logo.webp`,
           },
         },
         mainEntityOfPage: {
@@ -1567,7 +1565,7 @@ const BlogPost = () => {
 
       {/* Edit Post Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed h-screen inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}

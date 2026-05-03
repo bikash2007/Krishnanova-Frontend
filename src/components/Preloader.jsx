@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import krishna from "../Media/k.png"
+import krishna from "../Media/k.webp"
 const Preloader = ({ onFinish }) => {
   const [fading, setFading] = useState(false);
 

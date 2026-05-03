@@ -303,14 +303,6 @@ const Festival = () => {
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden py-6 sm:py-12 lg:py-20">
       {/* Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
 
       <div className="relative z-10 w-full px-4 sm:px-6 lg:container lg:mx-auto">
         {/* Header */}

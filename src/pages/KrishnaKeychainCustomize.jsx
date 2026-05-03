@@ -37,13 +37,13 @@ import { GiPrayerBeads, GiLotus, GiCandleLight } from "react-icons/gi";
 import { IoSparkles, IoDiamond, IoWater, IoEarOutline } from "react-icons/io5";
 
 // Audio imports
-import bellsound from "../Audio/bell.mp3";
-import omChant from "../Audio/om-chant.mp3";
-import sacredfire from "../Audio/sacred-fire.mp3";
-import celebration from "../Audio/celebration.mp3";
-import bgm from "../Audio/bgm.mp3";
-import water from "../Audio/water.mp3";
-import steptransition from "../Audio/step-transition.mp3";
+const bellsound = `${import.meta.env.BASE_URL}audio/Audio/bell.mp3`;
+const omChant = `${import.meta.env.BASE_URL}audio/meditation/om-chant.mp3`;
+const sacredfire = `${import.meta.env.BASE_URL}audio/Audio/sacred-fire.mp3`;
+const celebration = `${import.meta.env.BASE_URL}audio/Audio/celebration.mp3`;
+const bgm = `${import.meta.env.BASE_URL}audio/Audio/bgm.mp3`;
+const water = `${import.meta.env.BASE_URL}audio/Audio/water.mp3`;
+const steptransition = `${import.meta.env.BASE_URL}audio/Audio/step-transition.mp3`;
 // import vedicFire from "../Media/VedicFire.mp4";
 
 // Krishna Names Data

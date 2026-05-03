@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, Suspense, lazy } from "react";
 import { AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useAuth } from "../../Context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import kpng from "../../Media/k.png";
+import kpng from "../../Media/k.webp";
 
 // Layout Components
 import PortalHeader from "./components/Layout/PortalHeader";
@@ -31,10 +31,21 @@ import SavedConversationsModal from "./components/Shared/SavedConversationsModal
 import EnhancedKrishnaMessage from "./components/Chat/EnhancedKrishnaMessage";
 
 // Tab Components
-import AchievementsTab from "./components/Progress/AchievementsTab";
-import HistoryTab from "./components/History/HistoryTab";
-import MeditationModule from "./components/Meditation/MeditationModule";
-import MantraModule from "./components/Mantra/MantraModule";
+const AchievementsTab = lazy(() => import("./components/Progress/AchievementsTab"));
+const HistoryTab = lazy(() => import("./components/History/HistoryTab"));
+const MeditationModule = lazy(() => import("./components/Meditation/MeditationModule"));
+const MantraModule = lazy(() => import("./components/Mantra/MantraModule"));
+
+const TabSkeleton = () => (
+  <div className="w-full h-full min-h-[60vh] animate-pulse bg-white/5 rounded-2xl border border-white/10 flex flex-col p-6 mt-4">
+    <div className="h-8 bg-white/10 rounded w-1/4 mb-8"></div>
+    <div className="flex-1 space-y-4">
+      <div className="h-24 bg-white/5 rounded-xl"></div>
+      <div className="h-24 bg-white/5 rounded-xl"></div>
+      <div className="h-24 bg-white/5 rounded-xl"></div>
+    </div>
+  </div>
+);
 
 // Icons — only those actually used in the main component
 import { FaOm } from "react-icons/fa";
@@ -1547,68 +1558,76 @@ export default function WishdomPortal() {
           )}
 
           {activeTab === "meditation" && (
-            <MeditationModule
-              userId={user?._id || user?.id || user?.email}
-              showToast={showToast}
-            />
+            <Suspense fallback={<TabSkeleton />}>
+              <MeditationModule
+                userId={user?._id || user?.id || user?.email}
+                showToast={showToast}
+              />
+            </Suspense>
           )}
 
           {/* Chanting Tab */}
           {activeTab === "chanting" && (
-            <MantraModule
-              userId={user?._id || user?.id || user?.email}
-              showToast={showToast}
-            />
+            <Suspense fallback={<TabSkeleton />}>
+              <MantraModule
+                userId={user?._id || user?.id || user?.email}
+                showToast={showToast}
+              />
+            </Suspense>
           )}
 
           {/* Achievements Tab */}
           {activeTab === "achievements" && (
-            <AchievementsTab
-              practices={practices}
-              userStats={userStats}
-              isMobile={isMobile}
-              bhaktiProgress={bhaktiProgress}
-            />
+            <Suspense fallback={<TabSkeleton />}>
+              <AchievementsTab
+                practices={practices}
+                userStats={userStats}
+                isMobile={isMobile}
+                bhaktiProgress={bhaktiProgress}
+              />
+            </Suspense>
           )}
 
           {/* History Tab */}
           {activeTab === "history" && (
-            <HistoryTab
-              chatHistory={chatHistory}
-              onContinueSession={(session) => {
-                const formattedMessages = session.messages.map((msg, idx) => ({
-                  id: `${session.sessionId}-${idx}`,
-                  sender: msg.role === "user" ? "user" : "krishna",
-                  text: msg.content,
-                  content: msg.content,
-                  timestamp: msg.timestamp || session.createdAt,
-                  structured_message: msg.structured_message,
-                  blocks: msg.structured_message?.blocks,
-                  practice_category: msg.structured_message?.practice_category,
-                  practice_text: msg.structured_message?.practice_text,
-                }));
-                setChatMessages(formattedMessages);
-                setCurrentSessionId(session.sessionId);
-                setActiveTab("chat");
-                showToast("Continuing conversation — Krishna remembers the context");
-              }}
-              onDeleteSession={async (sessionId) => {
-                try {
-                  const username = getUserIdentifier();
-                  await axios.delete(
-                    `${baseUrl}/krishna/wisdom-portal/history/${username}/${sessionId}`,
-                  );
-                  setChatHistory((prev) =>
-                    prev.filter((s) => s.sessionId !== sessionId),
-                  );
-                  showToast("Conversation deleted");
-                } catch (error) {
-                  console.error("Error deleting session:", error);
-                  showToast("Failed to delete conversation");
-                }
-              }}
-              isMobile={isMobile}
-            />
+            <Suspense fallback={<TabSkeleton />}>
+              <HistoryTab
+                chatHistory={chatHistory}
+                onContinueSession={(session) => {
+                  const formattedMessages = session.messages.map((msg, idx) => ({
+                    id: `${session.sessionId}-${idx}`,
+                    sender: msg.role === "user" ? "user" : "krishna",
+                    text: msg.content,
+                    content: msg.content,
+                    timestamp: msg.timestamp || session.createdAt,
+                    structured_message: msg.structured_message,
+                    blocks: msg.structured_message?.blocks,
+                    practice_category: msg.structured_message?.practice_category,
+                    practice_text: msg.structured_message?.practice_text,
+                  }));
+                  setChatMessages(formattedMessages);
+                  setCurrentSessionId(session.sessionId);
+                  setActiveTab("chat");
+                  showToast("Continuing conversation — Krishna remembers the context");
+                }}
+                onDeleteSession={async (sessionId) => {
+                  try {
+                    const username = getUserIdentifier();
+                    await axios.delete(
+                      `${baseUrl}/krishna/wisdom-portal/history/${username}/${sessionId}`,
+                    );
+                    setChatHistory((prev) =>
+                      prev.filter((s) => s.sessionId !== sessionId),
+                    );
+                    showToast("Conversation deleted");
+                  } catch (error) {
+                    console.error("Error deleting session:", error);
+                    showToast("Failed to delete conversation");
+                  }
+                }}
+                isMobile={isMobile}
+              />
+            </Suspense>
           )}
         </AnimatePresence>
       </div>

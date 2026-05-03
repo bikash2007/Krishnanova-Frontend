@@ -88,6 +88,7 @@ const emptyVariant = {
   color: "",
   size: "",
   material: "",
+  isPreOrder: false,
   isActive: true,
 };
 const emptyColor = { name: "", hex: "#D4AF37", stock: 0 };
@@ -318,7 +319,7 @@ export default function ProductManagement() {
       tags: (product.tags || []).join(", "),
       status: product.status || "active",
       trackInventory: product.inventory?.trackInventory ?? true,
-      stock: product.inventory?.stock ?? 0,
+      stock: product.totalStock ?? product.inventory?.stock ?? 0,
       lowStockThreshold: product.inventory?.lowStockThreshold ?? 5,
       allowBackorder: product.inventory?.allowBackorder ?? false,
       hasVariants: product.hasVariants || false,
@@ -422,24 +423,37 @@ export default function ProductManagement() {
 
       // Variants
       data.append("hasVariants", formData.hasVariants);
+      const validVariants = variants.filter((v) => v.name.trim());
       if (formData.hasVariants) {
-        const validVariants = variants
-          .filter((v) => v.name.trim())
-          .map((v) => ({
-            ...v,
-            price: v.price ? parseFloat(v.price) : null,
-            originalPrice: v.originalPrice ? parseFloat(v.originalPrice) : null,
-            stock: parseInt(v.stock) || 0,
-          }));
-        data.append("variants", JSON.stringify(validVariants));
+        data.append(
+          "variants",
+          JSON.stringify(
+            validVariants.map((v) => ({
+              ...v,
+              price: v.price ? parseFloat(v.price) : null,
+              originalPrice: v.originalPrice
+                ? parseFloat(v.originalPrice)
+                : null,
+              stock: parseInt(v.stock, 10) || 0,
+            })),
+          ),
+        );
       }
 
       // Inventory
+      const usesSplitInventory = formData.hasVariants || validColors.length > 0;
+      const computedInventoryStock = formData.hasVariants
+        ? validVariants
+            .filter((v) => v.isActive !== false)
+            .reduce((sum, v) => sum + (parseInt(v.stock, 10) || 0), 0)
+        : validColors.reduce((sum, c) => sum + (parseInt(c.stock, 10) || 0), 0);
       data.append(
         "inventory",
         JSON.stringify({
           trackInventory: formData.trackInventory,
-          stock: parseInt(formData.stock) || 0,
+          stock: usesSplitInventory
+            ? computedInventoryStock
+            : parseInt(formData.stock, 10) || 0,
           lowStockThreshold: parseInt(formData.lowStockThreshold) || 5,
           allowBackorder: formData.allowBackorder,
         }),
@@ -540,6 +554,17 @@ export default function ProductManagement() {
       p.shortTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.category?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const validColorCount = colors.filter((c) => c.name.trim()).length;
+  const validVariantCount = variants.filter((v) => v.name.trim()).length;
+  const usesSplitInventory = formData.hasVariants || validColorCount > 0;
+  const computedInventoryStock = formData.hasVariants
+    ? variants
+        .filter((v) => v.name.trim() && v.isActive !== false)
+        .reduce((sum, v) => sum + (parseInt(v.stock, 10) || 0), 0)
+    : colors
+        .filter((c) => c.name.trim())
+        .reduce((sum, c) => sum + (parseInt(c.stock, 10) || 0), 0);
 
   // ---- RENDER GUARDS ----
   if (authLoading) return <LoadingSpinner />;
@@ -1196,6 +1221,21 @@ export default function ProductManagement() {
                               />
                               Active
                             </label>
+                            <label className="flex items-center gap-1.5 text-xs text-amber-300 whitespace-nowrap">
+                              <input
+                                type="checkbox"
+                                checked={!!v.isPreOrder}
+                                onChange={(e) =>
+                                  updateVariant(
+                                    i,
+                                    "isPreOrder",
+                                    e.target.checked,
+                                  )
+                                }
+                                className="w-3.5 h-3.5 text-amber-400 bg-[#0f1419] border-gray-700 rounded"
+                              />
+                              Pre-order
+                            </label>
                           </div>
                         </div>
                       ))}
@@ -1228,7 +1268,7 @@ export default function ProductManagement() {
                     />
                     Track inventory for this product
                   </label>
-                  {formData.trackInventory && !formData.hasVariants && (
+                  {formData.trackInventory && !usesSplitInventory && (
                     <div className="grid grid-cols-2 gap-4">
                       <Input
                         label="Stock Quantity"
@@ -1248,9 +1288,11 @@ export default function ProductManagement() {
                       />
                     </div>
                   )}
-                  {formData.hasVariants && (
+                  {formData.trackInventory && usesSplitInventory && (
                     <p className="text-xs text-gray-500">
-                      Stock is managed per variant above.
+                      {formData.hasVariants
+                        ? `Stock is managed per variant above (${validVariantCount} variant${validVariantCount === 1 ? "" : "s"}). Total stock is auto-calculated: ${computedInventoryStock}.`
+                        : `Stock is managed per color above (${validColorCount} color${validColorCount === 1 ? "" : "s"}). Total stock is auto-calculated: ${computedInventoryStock}.`}
                     </p>
                   )}
                   <label className="flex items-center gap-2 text-sm text-gray-300">
@@ -1737,6 +1779,10 @@ function InventoryView({
                 const hasVariantRows =
                   (Array.isArray(p.variants) && p.variants.length > 0) ||
                   !!p.hasVariants;
+                const hasColorRows =
+                  Array.isArray(p.colorInventory) &&
+                  p.colorInventory.length > 0;
+                const usesSplitInventory = hasVariantRows || hasColorRows;
 
                 return (
                   <Fragment key={p._id}>
@@ -1775,7 +1821,8 @@ function InventoryView({
                         {p.category}
                       </td>
                       <td className="px-4 py-3 text-center">
-                        {!hasVariantRows && editingStock === productEditKey ? (
+                        {!usesSplitInventory &&
+                        editingStock === productEditKey ? (
                           <div className="flex items-center justify-center gap-1">
                             <input
                               type="number"
@@ -1823,15 +1870,15 @@ function InventoryView({
                                 : p.isLowStock
                                   ? "text-yellow-400"
                                   : "text-green-400"
-                            } ${hasVariantRows ? "" : "cursor-pointer hover:underline"}`}
+                            } ${usesSplitInventory ? "" : "cursor-pointer hover:underline"}`}
                             onClick={() => {
-                              if (hasVariantRows) return;
+                              if (usesSplitInventory) return;
                               setEditingStock(productEditKey);
                               setStockInput(p.totalStock?.toString() || "0");
                             }}
                           >
-                            {hasVariantRows
-                              ? `${p.totalStock} (variants)`
+                            {usesSplitInventory
+                              ? `${p.totalStock} (${hasVariantRows ? "variants" : "colors"})`
                               : p.totalStock}
                           </span>
                         )}
@@ -1847,12 +1894,18 @@ function InventoryView({
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        {hasVariantRows ? (
+                        {usesSplitInventory ? (
                           <button
                             onClick={() => toggleExpanded(p._id)}
                             className="text-[#01abfd] hover:text-[#0189d1] text-xs"
                           >
-                            {rowExpanded ? "Hide Variants" : "View Variants"}
+                            {rowExpanded
+                              ? hasVariantRows
+                                ? "Hide Variants"
+                                : "Hide Colors"
+                              : hasVariantRows
+                                ? "View Variants"
+                                : "View Colors"}
                           </button>
                         ) : (
                           <button
@@ -1868,7 +1921,7 @@ function InventoryView({
                       </td>
                     </tr>
 
-                    {hasVariantRows && rowExpanded && (
+                    {usesSplitInventory && rowExpanded && (
                       <tr className="bg-[#151829]">
                         <td colSpan={5} className="px-4 py-4">
                           <div className="space-y-3">
@@ -1898,120 +1951,140 @@ function InventoryView({
                               </div>
                             )}
 
-                            <div className="overflow-x-auto rounded-lg border border-gray-700/50">
-                              <table className="w-full text-xs">
-                                <thead className="bg-[#1b1f33]">
-                                  <tr>
-                                    <th className="text-left px-3 py-2 text-gray-400 uppercase">
-                                      Variant
-                                    </th>
-                                    <th className="text-left px-3 py-2 text-gray-400 uppercase">
-                                      Color
-                                    </th>
-                                    <th className="text-left px-3 py-2 text-gray-400 uppercase">
-                                      SKU
-                                    </th>
-                                    <th className="text-center px-3 py-2 text-gray-400 uppercase">
-                                      Stock
-                                    </th>
-                                    <th className="text-center px-3 py-2 text-gray-400 uppercase">
-                                      Status
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-700/50">
-                                  {(p.variants || []).map((v) => {
-                                    const variantEditKey = getEditKey(
-                                      p._id,
-                                      v._id,
-                                    );
-                                    return (
-                                      <tr key={v._id || v.name}>
-                                        <td className="px-3 py-2 text-gray-200">
-                                          {v.name}
-                                        </td>
-                                        <td className="px-3 py-2 text-gray-300">
-                                          {v.color || "-"}
-                                        </td>
-                                        <td className="px-3 py-2 text-gray-400">
-                                          {v.sku || "-"}
-                                        </td>
-                                        <td className="px-3 py-2 text-center">
-                                          {editingStock === variantEditKey ? (
-                                            <div className="flex items-center justify-center gap-1">
-                                              <input
-                                                type="number"
-                                                min="0"
-                                                value={stockInput}
-                                                onChange={(e) =>
-                                                  setStockInput(e.target.value)
-                                                }
-                                                className="w-16 bg-[#0f1419] border border-[#01abfd] rounded px-2 py-1 text-white text-xs text-center outline-none"
-                                                autoFocus
-                                                onKeyDown={(e) => {
-                                                  if (e.key === "Enter") {
+                            {hasVariantRows && (
+                              <div className="overflow-x-auto rounded-lg border border-gray-700/50">
+                                <table className="w-full text-xs">
+                                  <thead className="bg-[#1b1f33]">
+                                    <tr>
+                                      <th className="text-left px-3 py-2 text-gray-400 uppercase">
+                                        Variant
+                                      </th>
+                                      <th className="text-left px-3 py-2 text-gray-400 uppercase">
+                                        Color
+                                      </th>
+                                      <th className="text-left px-3 py-2 text-gray-400 uppercase">
+                                        SKU
+                                      </th>
+                                      <th className="text-center px-3 py-2 text-gray-400 uppercase">
+                                        Stock
+                                      </th>
+                                      <th className="text-center px-3 py-2 text-gray-400 uppercase">
+                                        Pre-order
+                                      </th>
+                                      <th className="text-center px-3 py-2 text-gray-400 uppercase">
+                                        Status
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-gray-700/50">
+                                    {(p.variants || []).map((v) => {
+                                      const variantEditKey = getEditKey(
+                                        p._id,
+                                        v._id,
+                                      );
+                                      return (
+                                        <tr key={v._id || v.name}>
+                                          <td className="px-3 py-2 text-gray-200">
+                                            {v.name}
+                                          </td>
+                                          <td className="px-3 py-2 text-gray-300">
+                                            {v.color || "-"}
+                                          </td>
+                                          <td className="px-3 py-2 text-gray-400">
+                                            {v.sku || "-"}
+                                          </td>
+                                          <td className="px-3 py-2 text-center">
+                                            {editingStock === variantEditKey ? (
+                                              <div className="flex items-center justify-center gap-1">
+                                                <input
+                                                  type="number"
+                                                  min="0"
+                                                  value={stockInput}
+                                                  onChange={(e) =>
+                                                    setStockInput(
+                                                      e.target.value,
+                                                    )
+                                                  }
+                                                  className="w-16 bg-[#0f1419] border border-[#01abfd] rounded px-2 py-1 text-white text-xs text-center outline-none"
+                                                  autoFocus
+                                                  onKeyDown={(e) => {
+                                                    if (e.key === "Enter") {
+                                                      onStockUpdate(
+                                                        p._id,
+                                                        parseInt(stockInput),
+                                                        v._id,
+                                                        true,
+                                                      );
+                                                    }
+                                                  }}
+                                                />
+                                                <button
+                                                  onClick={() =>
                                                     onStockUpdate(
                                                       p._id,
                                                       parseInt(stockInput),
                                                       v._id,
                                                       true,
-                                                    );
+                                                    )
                                                   }
+                                                  className="text-green-400 hover:text-green-300"
+                                                >
+                                                  <FaCheckCircle />
+                                                </button>
+                                                <button
+                                                  onClick={() =>
+                                                    setEditingStock(null)
+                                                  }
+                                                  className="text-red-400 hover:text-red-300"
+                                                >
+                                                  <FaTimes />
+                                                </button>
+                                              </div>
+                                            ) : (
+                                              <button
+                                                onClick={() => {
+                                                  setEditingStock(
+                                                    variantEditKey,
+                                                  );
+                                                  setStockInput(
+                                                    v.stock?.toString() || "0",
+                                                  );
                                                 }}
-                                              />
-                                              <button
-                                                onClick={() =>
-                                                  onStockUpdate(
-                                                    p._id,
-                                                    parseInt(stockInput),
-                                                    v._id,
-                                                    true,
-                                                  )
-                                                }
-                                                className="text-green-400 hover:text-green-300"
+                                                className="font-semibold text-[#01abfd] hover:underline"
                                               >
-                                                <FaCheckCircle />
+                                                {v.stock}
                                               </button>
-                                              <button
-                                                onClick={() =>
-                                                  setEditingStock(null)
-                                                }
-                                                className="text-red-400 hover:text-red-300"
-                                              >
-                                                <FaTimes />
-                                              </button>
-                                            </div>
-                                          ) : (
-                                            <button
-                                              onClick={() => {
-                                                setEditingStock(variantEditKey);
-                                                setStockInput(
-                                                  v.stock?.toString() || "0",
-                                                );
-                                              }}
-                                              className="font-semibold text-[#01abfd] hover:underline"
+                                            )}
+                                          </td>
+                                          <td className="px-3 py-2 text-center">
+                                            {v.isPreOrder ? (
+                                              <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-purple-500/20 text-purple-300">
+                                                ENABLED
+                                              </span>
+                                            ) : (
+                                              <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-600/30 text-gray-300">
+                                                OFF
+                                              </span>
+                                            )}
+                                          </td>
+                                          <td className="px-3 py-2 text-center">
+                                            <span
+                                              className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${getStatusChipClass(
+                                                v.stockStatus,
+                                              )}`}
                                             >
-                                              {v.stock}
-                                            </button>
-                                          )}
-                                        </td>
-                                        <td className="px-3 py-2 text-center">
-                                          <span
-                                            className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${getStatusChipClass(
-                                              v.stockStatus,
-                                            )}`}
-                                          >
-                                            {v.stockStatus
-                                              ?.replace("_", " ")
-                                              .toUpperCase() || "N/A"}
-                                          </span>
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-                                </tbody>
-                              </table>
-                            </div>
+                                              {v.stockStatus
+                                                ?.replace("_", " ")
+                                                .toUpperCase() || "N/A"}
+                                            </span>
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>

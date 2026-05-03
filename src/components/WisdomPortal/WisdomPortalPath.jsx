@@ -15,8 +15,8 @@ const WisdomPortalPath = () => {
   const devotionPillars = [
     {
       id: "sravanam",
-      title: "Sravanam",
-      subtitle: "Listening",
+      title: "Divine Wisdom",
+      subtitle: "Seek Answers",
       icon: <IoEarOutline />,
       description: "Ask questions & receive divine wisdom",
       points: "Clarity Points",
@@ -25,8 +25,8 @@ const WisdomPortalPath = () => {
     },
     {
       id: "kirtanam",
-      title: "Kirtanam",
-      subtitle: "Chanting",
+      title: "Sacred Chants",
+      subtitle: "Raise Vibration",
       icon: <FaPray />,
       description: "Sacred mantra counter & vibrations",
       points: "Vibration Points",
@@ -35,8 +35,8 @@ const WisdomPortalPath = () => {
     },
     {
       id: "smaranam",
-      title: "Smaranam",
-      subtitle: "Remembrance",
+      title: "Daily Focus",
+      subtitle: "Stay Connected",
       icon: <IoSparkles />,
       description: "Daily practice & spiritual check-ins",
       points: "Presence Points",
@@ -45,8 +45,8 @@ const WisdomPortalPath = () => {
     },
     {
       id: "archanam",
-      title: "Archanam",
-      subtitle: "Meditation",
+      title: "Meditation",
+      subtitle: "Inner Peace",
       icon: <GiMeditation />,
       description: "Roop Dhyana & guided stillness",
       points: "Stillness Points",
@@ -96,7 +96,7 @@ const WisdomPortalPath = () => {
 
             {/* Headline */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-medium tracking-wide mb-2 sm:mb-3 text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-white to-amber-100">
-              Enter the Wisdom Portal
+              Your Spiritual Journey
             </h2>
 
             {/* Subtext */}
@@ -111,7 +111,7 @@ const WisdomPortalPath = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-[#d946ef] to-[#63297D] opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute inset-0 rounded-full border border-white/20 group-hover:border-white/50 transition-colors duration-300" />
                 <span className="relative z-10 flex items-center gap-2 text-white font-medium tracking-wider text-sm sm:text-base">
-                  Begin Divine Conversation
+                  Continue Conversation
                   <span className="group-hover:translate-x-1 transition-transform duration-300">
                     →
                   </span>
@@ -135,7 +135,7 @@ const WisdomPortalPath = () => {
             <div className="flex items-center gap-2 mb-4 justify-center lg:justify-start">
               <span className="text-amber-300 text-sm">✦</span>
               <span className="text-amber-200/80 text-xs sm:text-sm font-medium tracking-wider uppercase">
-                4 Pillars of Devotion
+                Daily Spiritual Practices
               </span>
               <span className="text-amber-300 text-sm">✦</span>
             </div>

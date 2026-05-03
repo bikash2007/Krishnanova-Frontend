@@ -1,0 +1,130 @@
+/* Product Card Transitions */
+.product-card-enter {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.product-card-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.product-card-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.product-card-exit-active {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+}
+
+/* Scrollbar Styling */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Scroll Smooth */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Animation Delay for Blob */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+/* Blob Animation */
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+/* Premium Hover Effects */
+.group:hover {
+  --tw-shadow: 0 20px 60px rgba(168, 85, 247, 0.15);
+  box-shadow: var(--tw-shadow);
+}
+
+/* Glassmorphism */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Smooth Transitions for Better Performance */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Remove transitions for transforms to keep them at 300ms */
+.group * {
+  transition-duration: 300ms;
+}
+
+/* Premium Shadows */
+.shadow-lg {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Button Focus States */
+button:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Input Focus States */
+input:focus,
+select:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+/* Premium Typography */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui;
+}
+
+/* Line Clamp */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Grid Auto Flow */
+[grid-auto-flow="dense"] {
+  grid-auto-flow: dense;
+}
+
+/* Reduce Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

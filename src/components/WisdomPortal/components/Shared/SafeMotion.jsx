@@ -5,8 +5,16 @@ import { motion } from "framer-motion";
  * iOS Detection — avoid framer-motion gestures on iOS Safari
  * where they cause scrolling / touch glitches.
  */
-const isIOSSafari = () =>
-  /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isIOSSafari = () => {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+  const isAppleMobileUA = /iPad|iPhone|iPod/.test(ua);
+  // iPadOS 13+ often reports itself as Macintosh with touch points.
+  const isIPadOSDesktopUA =
+    platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  return (isAppleMobileUA || isIPadOSDesktopUA) && !window.MSStream;
+};
 
 /**
  * SafeMotionDiv — renders a plain <div> on iOS Safari,
@@ -74,10 +82,6 @@ export const SafeMotionButton = ({
           ...props.style,
           touchAction: "manipulation",
           WebkitTapHighlightColor: "transparent",
-        }}
-        onTouchEnd={(e) => {
-          e.preventDefault();
-          if (props.onClick) props.onClick(e);
         }}
       >
         {children}

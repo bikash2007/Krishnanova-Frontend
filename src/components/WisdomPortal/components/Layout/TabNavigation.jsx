@@ -4,10 +4,21 @@ import { IoChatbubbles, IoTrophy } from "react-icons/io5";
 import { GiMeditation, GiPrayerBeads } from "react-icons/gi";
 import { MdHistory } from "react-icons/md";
 
+const isIOSSafari = () => {
+  if (typeof window === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+  const isAppleMobileUA = /iPad|iPhone|iPod/.test(ua);
+  const isIPadOSDesktopUA =
+    platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  return isAppleMobileUA || isIPadOSDesktopUA;
+};
+
 /**
  * TabNavigation - Tab switcher for different portal sections
  */
 const TabNavigation = ({ activeTab, setActiveTab, isMobile }) => {
+  const useNativeButton = isIOSSafari();
   const tabs = [
     {
       id: "chat",
@@ -40,28 +51,52 @@ const TabNavigation = ({ activeTab, setActiveTab, isMobile }) => {
     <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 mb-3 md:mb-5">
       <div className="backdrop-blur-md bg-gradient-to-br from-white/10 to-white/5 rounded-lg sm:rounded-xl md:rounded-2xl p-1 sm:p-1.5 md:p-2 border border-white/20">
         <div className="grid grid-cols-5 gap-0.5 sm:gap-1 md:gap-2">
-          {tabs.map((tab) => (
-            <motion.button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-1.5 sm:py-2 md:py-3 px-1.5 sm:px-2 md:px-4 rounded-md sm:rounded-lg md:rounded-xl font-semibold transition-all flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 text-[10px] sm:text-xs md:text-base min-h-[44px] ${
-                activeTab === tab.id
-                  ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg"
-                  : "text-blue-100/60 hover:text-amber-200 hover:bg-white/5"
-              }`}
-              style={{
-                touchAction: "manipulation",
-                WebkitTapHighlightColor: "transparent",
-                cursor: "pointer",
-              }}
-              whileHover={!isMobile ? { scale: 1.02 } : {}}
-              whileTap={{ scale: 0.98 }}
-              transition={{ duration: 0.1 }}
-            >
-              {tab.icon}
-              <span className="hidden sm:inline">{tab.label}</span>
-            </motion.button>
-          ))}
+          {tabs.map((tab) => {
+            const className = `py-1.5 sm:py-2 md:py-3 px-1.5 sm:px-2 md:px-4 rounded-md sm:rounded-lg md:rounded-xl font-semibold transition-all flex items-center justify-center gap-0.5 sm:gap-1 md:gap-2 text-[10px] sm:text-xs md:text-base min-h-[44px] ${
+              activeTab === tab.id
+                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg"
+                : "text-blue-100/60 md:hover:text-amber-200 md:hover:bg-white/5"
+            }`;
+
+            if (useNativeButton) {
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={className}
+                  style={{
+                    touchAction: "manipulation",
+                    WebkitTapHighlightColor: "transparent",
+                    cursor: "pointer",
+                  }}
+                >
+                  {tab.icon}
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </button>
+              );
+            }
+
+            return (
+              <motion.button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={className}
+                style={{
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "transparent",
+                  cursor: "pointer",
+                }}
+                whileHover={!isMobile ? { scale: 1.02 } : {}}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.1 }}
+              >
+                {tab.icon}
+                <span className="hidden sm:inline">{tab.label}</span>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
     </div>

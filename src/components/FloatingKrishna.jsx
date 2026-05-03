@@ -7,8 +7,8 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import kpng from "../Media/k.png";
-import laugh from "../Audio/laugh.mp3";
+import kpng from "../Media/k.webp";
+const laugh = `${import.meta.env.BASE_URL}audio/Audio/laugh.mp3`;
 import { useApi } from "../Context/baseUrl";
 import {
   FaGamepad,

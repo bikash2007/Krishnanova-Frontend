@@ -14,7 +14,8 @@
 }
 html,body{
   width: 100%;
-  height:100%
+  height: 100%;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 /* =========================================
    iOS Safari Safe Area & Viewport Fixes
@@ -231,7 +232,7 @@ html, body {
   overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
-  background: #0b1230;
+  background: #150831;
   /* Optimize text rendering */
   text-rendering: optimizeSpeed;
 }
@@ -267,7 +268,7 @@ html, body {
 /* Windows Chromium/Brave paint stability mode */
 html.windows-chromium,
 html.windows-chromium body {
-  background: #0b1230;
+  background: #150831;
 }
 
 html.windows-chromium.is-scrolling [class*="backdrop-blur"],

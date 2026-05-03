@@ -15,7 +15,7 @@ import { GiScrollUnfurled } from "react-icons/gi";
 import { MdMenuBook } from "react-icons/md";
 import KrishnaVoiceElevenLabs from "../KrishnaVoiceElevenLabs";
 import { SafeMotionDiv, SafeMotionButton } from "../Shared/SafeMotion";
-import kpng from "../../../../Media/k.png";
+import kpng from "../../../../Media/k.webp";
 
 /**
  * EnhancedKrishnaMessage — renders a single Krishna AI response

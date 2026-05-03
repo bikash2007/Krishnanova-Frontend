@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { IoStar, IoFlame } from "react-icons/io5";
 import { FaOm } from "react-icons/fa";
 import { GiFeather } from "react-icons/gi";
-import kpng from "../../../../Media/k.png";
+import kpng from "../../../../Media/k.webp";
 
 /**
  * PortalHeader - Top header section with Krishna avatar, portal title, and user badges

@@ -23,14 +23,7 @@ const Meditation = () => {
       className="relative min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 overflow-hidden flex items-center py-8 md:py-0"
     >
       {/* Background Elements */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #fbbf24 1px, transparent 1px)",
-          backgroundSize: "30px 30px",
-        }}
-      />
+
       <div
         className="pointer-events-none absolute w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         style={{

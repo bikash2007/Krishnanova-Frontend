@@ -18,7 +18,7 @@ import {
   IoClose,
 } from "react-icons/io5";
 import { GiScrollUnfurled, GiPrayerBeads } from "react-icons/gi";
-import kpng from "../../../../Media/k.png";
+import kpng from "../../../../Media/k.webp";
 
 /**
  * HistoryTab - Beautiful chat history viewer with inline preview.
